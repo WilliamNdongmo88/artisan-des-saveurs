@@ -24,7 +24,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # On copie uniquement le JAR qui a été créé à l'étape de build
-COPY --from=build /app/target/Artisan-des-saveurs-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/artisan-des-saveurs-0.0.1-SNAPSHOT.jar app.jar
 
 # On expose le port sur lequel l'application va tourner
 EXPOSE 8080
