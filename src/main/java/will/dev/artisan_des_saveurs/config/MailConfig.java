@@ -21,8 +21,8 @@ public class MailConfig {
         mailSender.setUsername(System.getenv("MAIL_USERNAME"));
         mailSender.setPassword(System.getenv("MAIL_PASSWORD"));
 
-        System.out.println("MAIL_USERNAME = " + System.getenv("MAIL_USERNAME"));
-        System.out.println("MAIL_PASSWORD = " + System.getenv("MAIL_PASSWORD"));
+        System.out.println("MAIL_USERNAME from JVM props = " + System.getProperty("MAIL_USERNAME"));
+        System.out.println("MAIL_PASSWORD from JVM props = " + System.getProperty("MAIL_PASSWORD"));
 
 
         Properties props = mailSender.getJavaMailProperties();
