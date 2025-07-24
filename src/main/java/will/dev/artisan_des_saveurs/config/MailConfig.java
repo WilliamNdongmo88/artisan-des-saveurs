@@ -30,6 +30,7 @@ public class MailConfig {
         mailSender.setPassword(System.getenv("MAIL_PASSWORD"));
 
         System.out.println("MAIL_USERNAME from JVM props = " + System.getProperty("MAIL_USERNAME"));
+        System.out.println("MAIL_USERNAME from ENV = " + System.getenv("MAIL_USERNAME"));
         System.out.println("MAIL_USERNAME from Spring env = " + environment.getProperty("MAIL_USERNAME"));
 
 
