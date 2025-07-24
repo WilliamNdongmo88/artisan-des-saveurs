@@ -2,6 +2,7 @@ package will.dev.artisan_des_saveurs.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
@@ -9,6 +10,13 @@ import java.util.Properties;
 
 @Configuration
 public class MailConfig {
+
+    private final Environment environment;
+
+    public MailConfig(Environment environment) {
+        this.environment = environment;
+    }
+
 
     @Bean
     public JavaMailSender getJavaMailSender() {
@@ -22,7 +30,7 @@ public class MailConfig {
         mailSender.setPassword(System.getenv("MAIL_PASSWORD"));
 
         System.out.println("MAIL_USERNAME from JVM props = " + System.getProperty("MAIL_USERNAME"));
-        System.out.println("MAIL_PASSWORD from JVM props = " + System.getProperty("MAIL_PASSWORD"));
+        System.out.println("MAIL_USERNAME from Spring env = " + environment.getProperty("MAIL_USERNAME"));
 
 
         Properties props = mailSender.getJavaMailProperties();
