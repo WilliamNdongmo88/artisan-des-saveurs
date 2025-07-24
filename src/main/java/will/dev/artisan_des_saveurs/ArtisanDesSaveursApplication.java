@@ -34,10 +34,16 @@ public class ArtisanDesSaveursApplication {
 
 	@PostConstruct
 	public void testDBEnvVars() {
-		System.out.println("DB URL: " + System.getenv("DATABASE_URL"));
-		System.out.println("DB USER: " + System.getenv("DATABASE_USERNAME"));
-//		System.out.println("accountSid = " + System.getenv("TWILIO_ACCOUNT_SID"));
-//		System.out.println("authToken = " + System.getenv("TWILIO_AUTH_TOKEN"));
-//		System.out.println("fromPhoneNumber = " + System.getenv("TWILIO_WHATSAPP_FROM"));
+		System.out.println("DB URL: " + System.getProperty("DATABASE_URL"));
+		System.out.println("DB USER: " + System.getProperty("DATABASE_USERNAME"));
+		System.out.println("MAIL USERNAME: " + System.getProperty("MAIL_USERNAME"));
+		System.out.println("MAIL PASSWORD: " + System.getProperty("MAIL_PASSWORD"));
+//		System.out.println("accountSid = " + System.getProperty("TWILIO_ACCOUNT_SID"));
+//		System.out.println("authToken = " + System.getProperty("TWILIO_AUTH_TOKEN"));
+//		System.out.println("fromPhoneNumber = " + System.getProperty("TWILIO_WHATSAPP_FROM"));
 	}
+
+
+	// C'est parfait pour passer de l'environnement local à la production.
+
 }
