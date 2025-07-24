@@ -12,7 +12,7 @@ import will.dev.artisan_des_saveurs.service.UserService;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/")
+    @GetMapping("/home")
     public String hello() {
         return "Bravo votre application fonctionne correctement ✅";
     }
