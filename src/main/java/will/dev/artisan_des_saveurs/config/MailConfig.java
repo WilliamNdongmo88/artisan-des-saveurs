@@ -15,8 +15,10 @@ public class MailConfig {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
-        mailSender.setUsername(System.getenv("MAIL_USERNAME"));
-        mailSender.setPassword(System.getenv("MAIL_PASSWORD"));
+        mailSender.setUsername(System.getProperty("MAIL_USERNAME"));
+        mailSender.setPassword(System.getProperty("MAIL_PASSWORD"));
+        System.out.println("PROD MAIL USERNAME: " + System.getProperty("MAIL_USERNAME"));
+        System.out.println("PROD MAIL PASSWORD: " + System.getProperty("MAIL_PASSWORD"));
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
