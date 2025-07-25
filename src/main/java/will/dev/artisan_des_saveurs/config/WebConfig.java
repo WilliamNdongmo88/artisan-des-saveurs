@@ -13,11 +13,12 @@ public class WebConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
+                System.out.println("✔️ Configuration CORS appliquée");
                 registry.addMapping("/**") // autorise tous les endpoints
-                        .allowedOrigins("http://localhost:4200") // ton frontend Angular
+                        .allowedOrigins("http://localhost:4200")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true); // si tu envoies des cookies / token
+                        .allowCredentials(false); // si envoies des cookies / token
             }
         };
     }

@@ -14,7 +14,6 @@ import will.dev.artisan_des_saveurs.service.UserService;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -29,6 +28,7 @@ public class UserController {
 
     @PostMapping("place-order")
     public ResponseEntity<MessageRetourDto> createUser(@RequestBody @Valid UserDto userDto) {
+        System.out.println("📦 Requête reçue pour créer un utilisateur : " + userDto.getEmail());
         return this.userService.createUser(userDto);
     }
 
