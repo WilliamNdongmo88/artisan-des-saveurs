@@ -1,6 +1,5 @@
 package will.dev.artisan_des_saveurs.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -12,19 +11,36 @@ import java.util.Properties;
 @Configuration
 public class MailConfig {
 
-    @Value("${spring.mail.username}")
-    private String mailUsername;
+    private final Environment environment;
 
-    @Value("${spring.mail.password}")
-    private String mailPassword;
-
-    // Getters pour mailUsername et mailPassword
-    public String getMailUsername() {
-        return mailUsername;
+    public MailConfig(Environment environment) {
+        this.environment = environment;
     }
 
-    public String getMailPassword() {
-        return mailPassword;
+
+    @Bean
+    public JavaMailSender getJavaMailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+
+        mailSender.setHost("smtp.gmail.com");
+        mailSender.setPort(587);
+
+        // Lire depuis les variables d'environnement système (Railway)
+        mailSender.setUsername(System.getenv("MAIL_USERNAME"));
+        mailSender.setPassword(System.getenv("MAIL_PASSWORD"));
+
+        System.out.println("MAIL_USERNAME from JVM props = " + System.getProperty("MAIL_USERNAME"));
+        System.out.println("MAIL_USERNAME from ENV = " + System.getenv("MAIL_USERNAME"));
+        System.out.println("MAIL_USERNAME from Spring env = " + environment.getProperty("MAIL_USERNAME"));
+
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.starttls.required", "true");
+        props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+
+        return mailSender;
     }
 
 //    @Bean
