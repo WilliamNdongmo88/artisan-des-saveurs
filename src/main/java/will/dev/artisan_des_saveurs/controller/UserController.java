@@ -14,7 +14,7 @@ import will.dev.artisan_des_saveurs.service.UserService;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins ="https://artisan-des-saveurs-production.up.railway.app")
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
