@@ -16,6 +16,7 @@ public class MailEnvCheck {
     @PostConstruct
     public void logMail() {
         System.out.println("===================================");
+        System.out.println("HELLO_WORLD from System.getenv = " + System.getenv("HELLO_WORLD"));
         System.out.println("MAIL_USERNAME = " + mailConfig.getMailUsername());
         System.out.println("MAIL_PASSWORD = " + mailConfig.getMailPassword());
         System.out.println("===================================");
