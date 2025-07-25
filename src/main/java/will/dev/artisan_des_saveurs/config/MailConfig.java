@@ -29,11 +29,6 @@ public class MailConfig {
         mailSender.setUsername(System.getenv("MAIL_USERNAME"));
         mailSender.setPassword(System.getenv("MAIL_PASSWORD"));
 
-        System.out.println("MAIL_USERNAME from JVM props = " + System.getProperty("MAIL_USERNAME"));
-        System.out.println("MAIL_USERNAME from ENV = " + System.getenv("MAIL_USERNAME"));
-        System.out.println("MAIL_USERNAME from Spring env = " + environment.getProperty("MAIL_USERNAME"));
-
-
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
