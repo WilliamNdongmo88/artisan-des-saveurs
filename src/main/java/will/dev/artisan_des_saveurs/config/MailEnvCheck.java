@@ -7,12 +7,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class MailEnvCheck {
 
-    @Value("${MAIL_USERNAME:undefined}")
-    private String mailUsername;
+    private final MailConfig mailConfig;
+
+    public MailEnvCheck(MailConfig mailConfig) {
+        this.mailConfig = mailConfig;
+    }
 
     @PostConstruct
-    public void show() {
-        System.out.println("MAIL_USERNAME from Spring = " + mailUsername);
-        System.out.println("MAIL_USERNAME from system property = " + System.getProperty("MAIL_USERNAME"));
+    public void logMail() {
+        System.out.println("===================================");
+        System.out.println("MAIL_USERNAME = " + mailConfig.getMailUsername());
+        System.out.println("MAIL_PASSWORD = " + mailConfig.getMailPassword());
+        System.out.println("===================================");
     }
 }

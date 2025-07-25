@@ -1,6 +1,5 @@
 package will.dev.artisan_des_saveurs.config;
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,11 +25,6 @@ public class MailConfig {
 
     public String getMailPassword() {
         return mailPassword;
-    }
-
-    @PostConstruct
-    public void logMail() {
-        System.out.println("#### MAIL_USERNAME ##########= " + getMailUsername());
     }
 
 //    @Bean
