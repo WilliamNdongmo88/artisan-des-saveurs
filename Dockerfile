@@ -31,4 +31,5 @@ EXPOSE 8080
 
 # C'est la commande qui sera lancée au démarrage du conteneur
 # On utilise la variable d'environnement PORT fournie par Render
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "echo MAIL_USERNAME=$MAIL_USERNAME && java -jar app.jar"]
+
