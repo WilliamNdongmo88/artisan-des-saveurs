@@ -20,5 +20,13 @@ public class MailEnvCheck {
         System.out.println("MAIL_USERNAME = " + mailConfig.getMailUsername());
         System.out.println("MAIL_PASSWORD = " + mailConfig.getMailPassword());
         System.out.println("===================================");
+
+        System.out.println("==== ENV VARS ====");
+        System.getenv().forEach((key, value) -> {
+            if (key.toLowerCase().contains("mail")) {
+                System.out.println(key + " = " + value);
+            }
+        });
+        System.out.println("==================");
     }
 }
