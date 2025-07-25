@@ -1,1 +1,2 @@
 web: java -jar target/*.jar
+web: java -DMAIL_USERNAME=$MAIL_USERNAME -DMAIL_PASSWORD=$MAIL_PASSWORD -Dspring.profiles.active=prod -jar target/artisan-des-saveurs-0.0.1-SNAPSHOT.jar
