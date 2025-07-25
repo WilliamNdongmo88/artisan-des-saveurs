@@ -39,7 +39,7 @@ public class ArtisanDesSaveursApplication {
 		System.out.println("===================================");
 		System.out.println("DB URL: " + System.getProperty("DATABASE_URL"));
 		System.out.println("DB USER: " + System.getProperty("DATABASE_USERNAME"));
-		System.out.println("MAIL_USERNAME = " + System.getenv("MAIL_USERNAME"));
+		System.out.println("MAIL_USERNAME = " + System.getProperty("MAIL_USERNAME"));
 		System.out.println("===================================");
 //		System.out.println("accountSid = " + System.getProperty("TWILIO_ACCOUNT_SID"));
 //		System.out.println("authToken = " + System.getProperty("TWILIO_AUTH_TOKEN"));
