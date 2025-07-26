@@ -15,6 +15,7 @@ public class OrderController {
 
     @PostMapping("place-order")
     public ResponseEntity<MessageRetourDto> createUser(@RequestBody OrderDTO orderDTO) {
+        System.out.println("✅ /api/orders/test atteint !");
         return this.orderService.sendOrder(orderDTO);
     }
 }
