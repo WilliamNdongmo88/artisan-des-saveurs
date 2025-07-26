@@ -21,16 +21,22 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
 
-    @GetMapping("/home")
+    @GetMapping("home")
     public String hello() {
         System.out.println("✅ /api/users/test atteint !");
         return "Bravo votre application fonctionne correctement ✅";
     }
 
-    @PostMapping("place-order")
+    @PostMapping("/place-order")
     public ResponseEntity<MessageRetourDto> createUser(@RequestBody @Valid UserDto userDto) {
         System.out.println("📦 Requête reçue pour créer un utilisateur : " + userDto.getEmail());
         return this.userService.createUser(userDto);
+    }
+
+    @RequestMapping(value = "/place-order", method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> corsCheck() {
+        System.out.println("🛰️ Préflight OPTIONS reçu !");
+        return ResponseEntity.ok().build();
     }
 
     // GET /users
