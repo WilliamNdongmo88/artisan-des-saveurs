@@ -27,6 +27,8 @@ public class SecurityConfig {
                     .requestMatchers("/users/**").permitAll()
                     //PERMETTRE EXPLICITEMENT LES REQUÊTES OPTIONS SANS AUTHENTIFICATION
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .requestMatchers("/").permitAll()
+                    .requestMatchers("/actuator/health").permitAll()
 
                     //définition des autres règles de sécurité
                     .requestMatchers("/api/auth/**").permitAll() // Ex: routes pour s'inscrire/se connecter
