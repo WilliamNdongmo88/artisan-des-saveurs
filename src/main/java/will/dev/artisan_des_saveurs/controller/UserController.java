@@ -21,7 +21,7 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
 
-    @GetMapping("home")
+    @GetMapping("/home")
     public String hello() {
         System.out.println("✅ /api/users/test atteint !");
         return "Bravo votre application fonctionne correctement ✅";
