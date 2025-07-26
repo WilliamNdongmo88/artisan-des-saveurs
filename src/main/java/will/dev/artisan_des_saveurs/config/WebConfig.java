@@ -2,34 +2,24 @@ package will.dev.artisan_des_saveurs.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig {
 
     @Bean
-    public FilterRegistrationBean<CorsFilter> corsFilter() {
-        CorsConfiguration config = new CorsConfiguration();
-
-        // Autorise les appels depuis Angular en local
-        config.setAllowCredentials(false);
-        config.addAllowedOriginPattern("http://localhost:4200"); // remplace addAllowedOrigin
-        //config.addAllowedOrigin("http://localhost:4200");
-
-        // Autorise tous les headers et méthodes HTTP
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-
-        // Applique la configuration à tous les chemins
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        // Enregistre le filtre CORS avec une priorité haute
-        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
-        bean.setOrder(0);
-        return bean;
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/api/**") // Applique la configuration à toutes les routes sous /api/
+                        .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs-app-will.vercel.app" ) // Autorise votre Angular local ET votre déploiement Vercel
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Méthodes HTTP autorisées
+                        .allowedHeaders("*") // Tous les en-têtes autorisés
+                        .allowCredentials(true); // Autorise les cookies et les informations d'authentification
+            }
+        };
     }
 }
+
