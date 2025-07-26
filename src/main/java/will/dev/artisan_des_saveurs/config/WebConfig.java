@@ -13,7 +13,7 @@ public class WebConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/users/**") // Applique la configuration à toutes les routes sous /api/
+                registry.addMapping("/users/**,/order/**") // Applique la configuration à toutes les routes sous /api/
                         .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs-app-will.vercel.app" ) // Autorise votre Angular local ET votre déploiement Vercel
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Méthodes HTTP autorisées
                         .allowedHeaders("*") // Tous les en-têtes autorisés
