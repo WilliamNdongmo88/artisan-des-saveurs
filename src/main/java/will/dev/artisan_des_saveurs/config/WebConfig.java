@@ -16,7 +16,7 @@ public class WebConfig {
 
         // Autorise les appels depuis Angular en local
         config.setAllowCredentials(false);
-        config.addAllowedOriginPattern("*"); // remplace addAllowedOrigin
+        config.addAllowedOriginPattern("http://localhost:4200"); // remplace addAllowedOrigin
         //config.addAllowedOrigin("http://localhost:4200");
 
         // Autorise tous les headers et méthodes HTTP
