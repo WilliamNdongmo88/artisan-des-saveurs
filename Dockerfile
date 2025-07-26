@@ -18,7 +18,7 @@ RUN mvn -f pom.xml clean package -DskipTests
 
 # Étape 2: Exécution de l'application
 # On part d'une image Java 17 très légère, juste pour l'exécution
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk AS base
 
 # Définit le répertoire de travail
 WORKDIR /app
