@@ -23,6 +23,7 @@ public class UserController {
 
     @GetMapping("/home")
     public String hello() {
+        System.out.println("✅ /api/users/test atteint !");
         return "Bravo votre application fonctionne correctement ✅";
     }
 
