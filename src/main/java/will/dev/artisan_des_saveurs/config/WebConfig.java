@@ -15,8 +15,9 @@ public class WebConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // Autorise les appels depuis Angular en local
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:4200");
+        config.setAllowCredentials(false);
+        config.addAllowedOriginPattern("*"); // remplace addAllowedOrigin
+        //config.addAllowedOrigin("http://localhost:4200");
 
         // Autorise tous les headers et méthodes HTTP
         config.addAllowedHeader("*");
