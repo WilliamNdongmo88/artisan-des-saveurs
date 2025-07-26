@@ -2,24 +2,33 @@ package will.dev.artisan_des_saveurs.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 
 @Configuration
 public class WebConfig {
 
     @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                System.out.println("✔️ Configuration CORS appliquée");
-                registry.addMapping("/**") // autorise tous les endpoints
-                        .allowedOrigins("http://localhost:4200")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(false); // si envoies des cookies / token
-            }
-        };
+    public FilterRegistrationBean<CorsFilter> corsFilter() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        // Autorise les appels depuis Angular en local
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:4200");
+
+        // Autorise tous les headers et méthodes HTTP
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+
+        // Applique la configuration à tous les chemins
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        // Enregistre le filtre CORS avec une priorité haute
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
+        bean.setOrder(0);
+        return bean;
     }
 }
