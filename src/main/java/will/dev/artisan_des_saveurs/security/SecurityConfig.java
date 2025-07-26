@@ -24,7 +24,7 @@ public class SecurityConfig {
 
             // Configuration des autorisations de requêtes
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/**").permitAll()
+                    .requestMatchers("/users/**").permitAll()
                     //PERMETTRE EXPLICITEMENT LES REQUÊTES OPTIONS SANS AUTHENTIFICATION
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
