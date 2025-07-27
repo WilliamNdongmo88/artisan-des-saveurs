@@ -14,13 +14,13 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/users/**")
-                        .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs-app-will.vercel.app")
+                        .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs.vercel.app")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
 
                 registry.addMapping("/orders/**")
-                        .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs-app-will.vercel.app")
+                        .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs.vercel.app")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
