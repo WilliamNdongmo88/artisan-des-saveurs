@@ -34,10 +34,10 @@ public class UserService {
 
     public ResponseEntity<MessageRetourDto> createUser(UserDto userDto) {
         try{
-            Optional<User> optionalUser = this.userRepository.findByEmail(userDto.getEmail());
-            if (optionalUser.isPresent()) {
-                throw new RuntimeException("Email déjà existant");
-            }else {
+//            Optional<User> optionalUser = this.userRepository.findByEmail(userDto.getEmail());
+//            if (optionalUser.isPresent()) {
+//                throw new RuntimeException("Email déjà existant"); Cette logique sera pour les utilisateurs ayant un compte
+//            }else {
                 User user = new User();
                 user.setFirstName(userDto.getFirstName());
                 user.setLastName(userDto.getLastName());
@@ -68,7 +68,7 @@ public class UserService {
                 messageRetourDto.setMessage(MESSAGE);
                 //return ResponseEntity.ok(UserDtoMapper.toDto(savedUser));
                 return ResponseEntity.ok(messageRetourDto);
-            }
+//            }
         } catch (RuntimeException e) {
             throw new RuntimeException("ERROR: "+ e);
         }
