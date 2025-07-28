@@ -58,7 +58,8 @@ public class UserService {
                 savedUser.setContactRequests(List.of(contactRequest));
 
                 Boolean isFromCart = false;
-                notificationService.envoyer(contactRequest, isFromCart);
+                notificationService.sentToCopany(contactRequest, isFromCart);
+                //notificationService.sentToCustomer(savedUser);
                 savedContactReq.markEmailSent();
                 whatsappNotification.sendWhatsappMessage(savedUser, company_number, contactRequest, isFromCart);
                 savedContactReq.markWhatsappSent();

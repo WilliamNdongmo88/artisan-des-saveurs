@@ -7,12 +7,14 @@ import org.springframework.stereotype.Service;
 import will.dev.artisan_des_saveurs.entity.ContactRequest;
 import will.dev.artisan_des_saveurs.entity.User;
 
+import java.time.LocalDate;
+
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
     private final JavaMailSender javaMailSender;
 
-    public void envoyer(ContactRequest contactRequest, Boolean isFromCart) {
+    public void sentToCopany(ContactRequest contactRequest, Boolean isFromCart) {
         try {
             User user = contactRequest.getUser();
             SimpleMailMessage message = new SimpleMailMessage();
@@ -40,4 +42,18 @@ public class NotificationService {
         }
     }
 
+    public void sentToCustomer(User savedUser, String customerMessage) {
+        try {
+            String subject = "Merci pour votre commande – L'Artisan des saveurs";
+            String message = customerMessage;
+
+            SimpleMailMessage mail = new SimpleMailMessage();
+            mail.setTo(savedUser.getEmail());
+            mail.setSubject(subject);
+            mail.setText(message);
+            javaMailSender.send(mail);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("NOTIFICATION_EMAIL_FOR_CUSTOMER__EXCEPTION: " + e);
+        }
+    }
 }

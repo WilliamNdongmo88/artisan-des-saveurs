@@ -12,6 +12,7 @@ import will.dev.artisan_des_saveurs.entity.User;
 import will.dev.artisan_des_saveurs.repository.ContactRequestRepository;
 import will.dev.artisan_des_saveurs.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,10 +30,10 @@ public class OrderService {
     public ResponseEntity<MessageRetourDto> sendOrder(OrderDTO orderDTO) {
         MessageRetourDto messageRetourDto = new MessageRetourDto();
         Optional<User> optionalUser = this.userRepository.findByEmail(orderDTO.getEmail());
-        if (optionalUser.isPresent()) {
-            // Envoie de la commande et sauvegarde de l'utilisateur
-            throw new RuntimeException("Email déjà existant");
-        }else {
+//        if (optionalUser.isPresent()) {
+//            // Envoie de la commande et sauvegarde de l'utilisateur
+//            throw new RuntimeException("Email déjà existant");
+//        }else {
             User user = new User();
             user.setFirstName(orderDTO.getFirstName());
             user.setLastName(orderDTO.getLastName());
@@ -55,12 +56,14 @@ public class OrderService {
             savedUser.setContactRequests(List.of(contactRequest));
 
             Boolean isFromCart = true;
-            notificationService.envoyer(contactRequest, isFromCart);
+            notificationService.sentToCopany(contactRequest, isFromCart);
+            String customerMessage = customerOrderMessage(orderDTO);
+            notificationService.sentToCustomer(savedUser, customerMessage);
             whatsappNotification.sendWhatsappMessage(savedUser, company_number, savedContactReq, isFromCart);
 
             messageRetourDto.setSuccess(true);
             messageRetourDto.setMessage(MESSAGE);
-        }
+//        }
         return ResponseEntity.ok(messageRetourDto);
     }
 
@@ -130,33 +133,58 @@ public class OrderService {
     }
 
 
-    public String buildOrderMessage(OrderDTO order) {
-        StringBuilder message = new StringBuilder();
+    public String customerOrderMessage(OrderDTO orderDto) {
+        List<OrderItemDTO> items = orderDto.getItems();
+        double total = orderDto.getTotal();
+        boolean freeShipping = orderDto.isFreeShipping();
 
-        message.append("Nouvelle commande client :\n\n");
+        // Vérification du panier
+        if (items == null || items.isEmpty()) {
+            return "Le panier est vide.";
+        }
 
-        // Parcours des articles commandés
-        message.append("🛒 Produits commandés:\n");
-        for (OrderItemDTO item : order.getItems()) {
-            String productName = item.getProduct().getName();
+        // Description des items
+        StringBuilder itemsDescription = new StringBuilder();
+        for (int i = 0; i < items.size(); i++) {
+            OrderItemDTO item = items.get(i);
+            String name = item.getProduct() != null && item.getProduct().getName() != null
+                    ? item.getProduct().getName()
+                    : "Produit inconnu";
             int quantity = item.getQuantity();
-            message.append("- ").append(productName)
-                    .append(" x").append(quantity).append("\n");
+            itemsDescription.append(String.format("%d. %s - Quantité : %d\n", i + 1, name, quantity));
         }
 
-        // Détails financiers
-        message.append("\n💰 Détails de la commande:\n");
-        message.append("Sous-total : ").append(order.getSubtotal()).append(" Rs\n");
-        message.append("Remise : ").append(order.getDiscount()).append(" Rs\n");
-        message.append("Total à payer : ").append(order.getTotal()).append(" Rs\n");
+        // Message livraison
+        String shippingMessage = freeShipping
+                ? "🚚 Livraison gratuite.✅"
+                : "🚚 Livraison : À votre charge\n";
 
-        // Livraison
-        if (order.isFreeShipping()) {
-            message.append("🚚 Livraison : Gratuite\n");
-        } else {
-            message.append("🚚 Livraison : À la charge du client\n");
-        }
+        // Construction du message final
+        String message = String.format("""
+            Bonjour %s,
+            Nous vous remercions pour votre commande n°%s passée le %s.
+            
+            🧾 Récapitulatif de votre commande :
+            %s
+            
+            💰 Total à payer : %.2f Rs
+            - %s
+            📦 Statut : En cours de préparation
+            
+            Vous recevrez un e-mail dès que votre commande sera prête à être livrée.
 
-        return message.toString();
+            Merci pour votre confiance !
+            Bien cordialement,
+            Service Client – L'Artisan-des-saveurs.
+            """,
+                orderDto.getFirstName()+" "+orderDto.getLastName(),
+                "CMD123456",
+                LocalDate.now(),
+                itemsDescription.toString(),
+                total,
+                shippingMessage
+        );
+
+        return message.trim();
     }
 }
