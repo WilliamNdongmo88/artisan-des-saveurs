@@ -151,7 +151,7 @@ public class OrderService {
                     ? item.getProduct().getName()
                     : "Produit inconnu";
             int quantity = item.getQuantity();
-            itemsDescription.append(String.format("%d. %s - Quantité : %d\n", i + 1, name, quantity));
+            itemsDescription.append(String.format("%d. %s - Quantité : %dKg\n", i + 1, name, quantity));
         }
 
         // Message livraison
@@ -168,7 +168,7 @@ public class OrderService {
             %s
             
             💰 Total à payer : %.2f Rs
-            - %s
+            %s
             📦 Statut : En cours de préparation
             
             Vous recevrez un e-mail dès que votre commande sera prête à être livrée.
@@ -178,7 +178,7 @@ public class OrderService {
             Service Client – L'Artisan-des-saveurs.
             """,
                 orderDto.getFirstName()+" "+orderDto.getLastName(),
-                "CMD123456",
+                "CMD000001",
                 LocalDate.now(),
                 itemsDescription.toString(),
                 total,
