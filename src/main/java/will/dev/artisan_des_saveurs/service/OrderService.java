@@ -58,7 +58,7 @@ public class OrderService {
             Boolean isFromCart = true;
             //notificationService.sentToCopany(contactRequest, isFromCart);
             String customerMessage = customerOrderMessage(orderDTO);
-            notificationService.sentToCustomer(savedUser, customerMessage);
+            //notificationService.sentToCustomer(savedUser, customerMessage);
             whatsappNotification.sendWhatsappMessage(savedUser, company_number, savedContactReq, isFromCart);
             whatsappNotification.sendWhatsappMessageToCustomer(savedUser, company_number, customerMessage);
 
