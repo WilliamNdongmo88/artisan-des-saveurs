@@ -29,10 +29,10 @@ public class OrderService {
     public ResponseEntity<MessageRetourDto> sendOrder(OrderDTO orderDTO) {
         MessageRetourDto messageRetourDto = new MessageRetourDto();
         Optional<User> optionalUser = this.userRepository.findByEmail(orderDTO.getEmail());
-        if (optionalUser.isPresent()) {
-            // Envoie de la commande et sauvegarde de l'utilisateur
-            throw new RuntimeException("Email déjà existant");
-        }else {
+//        if (optionalUser.isPresent()) {
+//            // Envoie de la commande et sauvegarde de l'utilisateur
+//            throw new RuntimeException("Email déjà existant");
+//        }else {
             User user = new User();
             user.setFirstName(orderDTO.getFirstName());
             user.setLastName(orderDTO.getLastName());
@@ -60,7 +60,7 @@ public class OrderService {
 
             messageRetourDto.setSuccess(true);
             messageRetourDto.setMessage(MESSAGE);
-        }
+//        }
         return ResponseEntity.ok(messageRetourDto);
     }
 
