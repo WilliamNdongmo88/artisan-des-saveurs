@@ -1,35 +1,30 @@
-# Étape 1: Build de l'application avec Maven
-# Utilise une image officielle de Maven avec Java 17 pour compiler le code
+# Étape 1 : Build avec Maven
 FROM maven:3.8.5-openjdk-17 AS build
 
-# Définit le répertoire de travail à l'intérieur du conteneur
 WORKDIR /app
 
-# Copie du fichier pom.xml pour profiter du cache de Docker
+# Étape 1.1 - Copier uniquement le pom.xml pour pré-télécharger les dépendances
 COPY pom.xml .
 
-# Copie du reste du code source de l'application
+# Télécharge les dépendances pour éviter les problèmes de compilation
+RUN mvn dependency:go-offline -B
+
+# Étape 1.2 - Copier le code source après les dépendances
 COPY src ./src
 
-# Lancement de la commande de build de Maven pour créer le JAR
-# -DskipTests pour accélérer le build en ignorant les tests
-RUN mvn -f pom.xml clean package -DskipTests
+# Compiler l'application
+RUN mvn clean package -DskipTests
 
+# Étape 2 : Exécution avec une image Java légère
+FROM eclipse-temurin:17-jdk
 
-# Étape 2: Exécution de l'application
-# On part d'une image Java 17 très légère, juste pour l'exécution
-FROM eclipse-temurin:17-jdk AS base
-
-# Définit le répertoire de travail
 WORKDIR /app
 
-# On copie uniquement le JAR qui a été créé à l'étape de build
-COPY --from=build /app/target/artisan-des-saveurs-0.0.1-SNAPSHOT.jar app.jar
+# Copier le JAR depuis l'étape de build
+COPY --from=build /app/target/*.jar app.jar
 
-# On expose le port sur lequel l'application va tourner
+# Exposer le port de l'application
 EXPOSE 8080
 
-# C'est la commande qui sera lancée au démarrage du conteneur
-# On utilise la variable d'environnement PORT fournie par Render
+# Affiche les variables utiles et démarre l'application
 ENTRYPOINT ["sh", "-c", "echo MAIL_USERNAME=$MAIL_USERNAME && java -jar app.jar"]
-
