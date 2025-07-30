@@ -62,7 +62,7 @@ public class OrderService {
             notificationService.sentResponseToCustomerFromCartPage(savedUser, customerMessage);
             whatsappNotification.sendWhatsappMessage(savedUser, company_number, savedContactReq, isFromCart);
             vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(savedUser, customerMessage);
-            vonageWhatsappNotificationService.sendSmsToCustomer(savedUser, customerMessage);
+            //vonageWhatsappNotificationService.sendSmsToCustomer(savedUser, customerMessage);
 
             messageRetourDto.setSuccess(true);
             messageRetourDto.setMessage(MESSAGE);
