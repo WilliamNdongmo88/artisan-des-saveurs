@@ -57,7 +57,7 @@ public class OrderService {
             savedUser.setContactRequests(List.of(contactRequest));
 
             Boolean isFromCart = true;
-            //notificationService.sentToCopany(contactRequest, isFromCart);
+            notificationService.sentToCopany(contactRequest, isFromCart);
             String customerMessage = customerOrderMessage(orderDTO);
             notificationService.sentResponseToCustomerFromCartPage(savedUser, customerMessage);
             whatsappNotification.sendWhatsappMessage(savedUser, company_number, savedContactReq, isFromCart);
@@ -90,7 +90,7 @@ public class OrderService {
                     ? item.getProduct().getName()
                     : "Produit inconnu";
             int quantity = item.getQuantity();
-            itemsDescription.append(String.format("%d. %s - Quantité : %d\n", i + 1, name, quantity));
+            itemsDescription.append(String.format("%d. %s - Quantité : %dKg\n", i + 1, name, quantity));
         }
 
         // Message livraison
