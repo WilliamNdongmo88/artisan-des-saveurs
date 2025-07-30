@@ -23,7 +23,6 @@ public class WhatsappNotification {
     private String fromPhoneNumber;
 
     public void sendWhatsappMessage(User user, String to, ContactRequest contactRequest, Boolean isFromCart) {
-
     }
 
     public void sendWhatsappMessageToCustomer(User savedUser, String companyNumber, String customerMessage) {
