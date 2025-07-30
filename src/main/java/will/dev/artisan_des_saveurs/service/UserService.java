@@ -59,11 +59,15 @@ public class UserService {
 
                 Boolean isFromCart = false;
                 notificationService.sentToCopany(contactRequest, isFromCart);
-                //notificationService.sentToCustomer(savedUser);
+
+                notificationService.sentResponseToCustomerFromContactPage(savedUser);
                 savedContactReq.markEmailSent();
+
                 whatsappNotification.sendWhatsappMessage(savedUser, company_number, contactRequest, isFromCart);
                 savedContactReq.markWhatsappSent();
+
                 contactRequestRepository.save(savedContactReq);
+
                 MessageRetourDto messageRetourDto = new MessageRetourDto();
                 messageRetourDto.setSuccess(true);
                 messageRetourDto.setMessage(MESSAGE);

@@ -26,6 +26,7 @@ public class OrderService {
     private final NotificationService notificationService;
     private final WhatsappNotification whatsappNotification;
     private final ContactRequestRepository contactRequestRepository;
+    private final VonageWhatsappNotificationService vonageWhatsappNotificationService;
 
     public ResponseEntity<MessageRetourDto> sendOrder(OrderDTO orderDTO) {
         MessageRetourDto messageRetourDto = new MessageRetourDto();
@@ -56,11 +57,12 @@ public class OrderService {
             savedUser.setContactRequests(List.of(contactRequest));
 
             Boolean isFromCart = true;
-            notificationService.sentToCopany(contactRequest, isFromCart);
+            //notificationService.sentToCopany(contactRequest, isFromCart);
             String customerMessage = customerOrderMessage(orderDTO);
-            notificationService.sentToCustomer(savedUser, customerMessage);
+            notificationService.sentResponseToCustomerFromCartPage(savedUser, customerMessage);
             whatsappNotification.sendWhatsappMessage(savedUser, company_number, savedContactReq, isFromCart);
-            whatsappNotification.sendWhatsappMessageToCustomer(savedUser, company_number, customerMessage);
+            vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(savedUser, customerMessage);
+            vonageWhatsappNotificationService.sendSmsToCustomer(savedUser, customerMessage);
 
             messageRetourDto.setSuccess(true);
             messageRetourDto.setMessage(MESSAGE);
