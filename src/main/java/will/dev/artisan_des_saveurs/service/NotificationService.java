@@ -94,7 +94,7 @@ public class NotificationService {
                 🚚 Livraison rapide et fiable
                 🤝 Service client à votre écoute avant et après la commande
 
-                Vous pouvez également consulter notre catalogue en ligne ici : [Lien vers votre catalogue/site]
+                Vous pouvez également consulter notre catalogue en ligne ici : https://artisan-des-saveurs.vercel.app/catalogue
 
                 Je reste à votre disposition pour toute question complémentaire, un devis ou un accompagnement personnalisé.
 
