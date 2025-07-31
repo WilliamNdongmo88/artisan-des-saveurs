@@ -24,7 +24,7 @@ public class VonageWhatsappNotificationService {
     @Value("${app.company.whatsappNumber}")
     private String companyNumber;
 
-    public void sendWhatsappMessageToCustomer(User savedUser, ContactRequest contactRequest) {
+    public void sendWhatsappMessageToCustomer(Boolean isFromCart, User user, ContactRequest contactRequest) {
         String url = "https://messages-sandbox.nexmo.com/v0.1/messages";
 
         RestTemplate restTemplate = new RestTemplate();
@@ -32,16 +32,32 @@ public class VonageWhatsappNotificationService {
         HttpHeaders headers = new HttpHeaders();
         headers.setBasicAuth(apiKey, apiSecret);
         headers.setContentType(MediaType.APPLICATION_JSON);
+        if (isFromCart){
+            Map<String, Object> body = Map.of(
+                    "from", Map.of("type", "whatsapp", "number", fromNumber),
+                    "to", Map.of("type", "whatsapp", "number", companyNumber),
+                    "message", Map.of("content", Map.of("type", "text", "text", contactRequest.getMessage()))
+            );
 
-        Map<String, Object> body = Map.of(
-                "from", Map.of("type", "whatsapp", "number", fromNumber),
-                "to", Map.of("type", "whatsapp", "number", companyNumber),
-                "message", Map.of("content", Map.of("type", "text", "text", contactRequest.getMessage()))
-        );
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+            restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+        }else {
+            String messages = "Client : "+user.getFullName()+"\n"
+                    + "Email : "+user.getEmail()+".\n"
+                    + "Téléphone: "+user.getPhone()+".\n\n"
+                    + "Sujet: "+contactRequest.getSubject()+".\n\n"
+                    + contactRequest.getMessage() + "\n\n";
+            Map<String, Object> body = Map.of(
+                    "from", Map.of("type", "whatsapp", "number", fromNumber),
+                    "to", Map.of("type", "whatsapp", "number", companyNumber),
+                    "message", Map.of("content", Map.of("type", "text", "text", messages))
+            );
 
-        restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+
+            restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+        }
     }
 }
 

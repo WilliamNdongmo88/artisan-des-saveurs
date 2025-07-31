@@ -31,6 +31,7 @@ public class UserService {
     private final ContactRequestRepository contactRequestRepository;
     private final NotificationService notificationService;
     private final WhatsappNotification whatsappNotification;
+    private final VonageWhatsappNotificationService vonageWhatsappNotificationService;
 
     public ResponseEntity<MessageRetourDto> createUser(UserDto userDto) {
         try{
@@ -64,6 +65,7 @@ public class UserService {
                 savedContactReq.markEmailSent();
 
                 whatsappNotification.sendWhatsappMessage(savedUser, company_number, contactRequest, isFromCart);
+                vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, savedUser, savedContactReq);
                 savedContactReq.markWhatsappSent();
 
                 contactRequestRepository.save(savedContactReq);
