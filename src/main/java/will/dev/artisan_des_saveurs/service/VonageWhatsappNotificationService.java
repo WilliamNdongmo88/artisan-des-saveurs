@@ -43,21 +43,26 @@ public class VonageWhatsappNotificationService {
 
             restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
         }else {
-            String messages = "Client : "+user.getFullName()+"\n"
-                    + "Email : "+user.getEmail()+".\n"
-                    + "Téléphone: "+user.getPhone()+".\n\n"
-                    + "Sujet: "+contactRequest.getSubject()+".\n\n"
-                    + contactRequest.getMessage() + "\n\n";
-            Map<String, Object> body = Map.of(
-                    "from", Map.of("type", "whatsapp", "number", fromNumber),
-                    "to", Map.of("type", "whatsapp", "number", companyNumber),
-                    "message", Map.of("content", Map.of("type", "text", "text", messages))
-            );
-
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+            HttpEntity<Map<String, Object>> entity = getMapHttpEntity(user, contactRequest, headers);
 
             restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
         }
+    }
+
+    private HttpEntity<Map<String, Object>> getMapHttpEntity(User user, ContactRequest contactRequest, HttpHeaders headers) {
+        String messages =
+                "Sujet: "+ contactRequest.getSubject()+".\n\n"
+                +"Client : "+ user.getFullName()+"\n"
+                + "Email : "+ user.getEmail()+".\n"
+                + "Téléphone: "+ user.getPhone()+".\n\n"
+                + contactRequest.getMessage() + "\n\n";
+        Map<String, Object> body = Map.of(
+                "from", Map.of("type", "whatsapp", "number", fromNumber),
+                "to", Map.of("type", "whatsapp", "number", companyNumber),
+                "message", Map.of("content", Map.of("type", "text", "text", messages))
+        );
+
+        return new HttpEntity<>(body, headers);
     }
 }
 
