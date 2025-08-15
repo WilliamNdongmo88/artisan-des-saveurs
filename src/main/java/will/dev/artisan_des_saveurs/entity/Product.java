@@ -68,6 +68,19 @@ public class Product {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    public Product() {}
+
+    public Product(String name, String description, BigDecimal price, String category, String origin, String preparation) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.category = category;
+        this.origin = origin;
+        this.preparation = preparation;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
