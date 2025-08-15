@@ -14,7 +14,7 @@ public class UserDto {
     private String email;
     private String phone;
     private Boolean consent;
-    private Boolean isActive;
+    private Boolean enabled;
 
     private List<ContactRequestDto> contactRequests;
 }

@@ -2,6 +2,7 @@ package will.dev.artisan_des_saveurs.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import will.dev.artisan_des_saveurs.dto.MessageRetourDto;
 import will.dev.artisan_des_saveurs.dto.order.OrderDTO;
@@ -20,6 +21,7 @@ public class OrderController {
     }
 
     @PostMapping("place-order")
+    //@PreAuthorize("hasAuthority('USER_CREATE')")
     public ResponseEntity<MessageRetourDto> createUser(@RequestBody OrderDTO orderDTO) {
         return this.orderService.sendOrder(orderDTO);
     }

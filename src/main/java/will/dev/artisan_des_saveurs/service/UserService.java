@@ -34,19 +34,57 @@ public class UserService {
     private final VonageWhatsappNotificationService vonageWhatsappNotificationService;
 
     public ResponseEntity<MessageRetourDto> createUser(UserDto userDto) {
+        System.out.println("userDto ::: " + userDto);
         try{
-//            Optional<User> optionalUser = this.userRepository.findByEmail(userDto.getEmail());
-//            if (optionalUser.isPresent()) {
-//                throw new RuntimeException("Email déjà existant"); Cette logique sera pour les utilisateurs ayant un compte
-//            }else {
+            Optional<User> optionalUser = this.userRepository.findByEmail(userDto.getEmail());
+            if (optionalUser.isPresent()) {
+                String email = userDto.getEmail();
+                System.out.println("email ::: " + email);
+
+                User userConnected = this.userRepository.findByEmailFromConnectedUser(email);
+
+                ContactRequest contactRequest = new ContactRequest();
+                contactRequest.setUser(userConnected);
+                contactRequest.setSubject(userDto.getContactRequests().get(0).getSubject());
+                contactRequest.setMessage(userDto.getContactRequests().get(0).getMessage());
+                contactRequest.setEmailSent(false);
+                contactRequest.setWhatsappSent(false);
+                ContactRequest savedContactReq = contactRequestRepository.save(contactRequest);
+
+                //userConnected.setContactRequests(List.of(contactRequest)); // Crée une nouvelle liste et génère l'erreur. Pour utiliser cette logique, mettre orphanRemoval = false dans l'entité User
+                userConnected.getContactRequests().clear();
+                userConnected.getContactRequests().add(contactRequest); // Modifie la liste
+
+                Boolean isFromCart = false;
+                notificationService.sentToCopany(contactRequest, isFromCart);
+
+                notificationService.sentResponseToCustomerFromContactPage(userConnected);
+                savedContactReq.markEmailSent();
+
+                whatsappNotification.sendWhatsappMessage(userConnected, company_number, contactRequest, isFromCart);
+                vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, userConnected, savedContactReq);
+                savedContactReq.markWhatsappSent();
+
+                contactRequestRepository.save(savedContactReq);
+
+                MessageRetourDto messageRetourDto = new MessageRetourDto();
+                messageRetourDto.setSuccess(true);
+                messageRetourDto.setMessage(MESSAGE);
+                //return ResponseEntity.ok(UserDtoMapper.toDto(savedUser));
+                return ResponseEntity.ok(messageRetourDto);
+
+            }else {
                 User user = new User();
                 user.setFirstName(userDto.getFirstName());
                 user.setLastName(userDto.getLastName());
                 user.setEmail(userDto.getEmail());
                 user.setPhone(userDto.getPhone());
                 user.setConsent(Boolean.TRUE.equals(userDto.getConsent()));
-                user.setIsActive(false);
+                user.setEnabled(false);
+                user.setUsername("anonymousUser");
+                user.setPassword("anonymousUser123");
                 User savedUser = userRepository.save(user);
+                System.out.println("savedUser ::: " + savedUser);
 
                 ContactRequest contactRequest = new ContactRequest();
                 contactRequest.setUser(savedUser);
@@ -75,9 +113,9 @@ public class UserService {
                 messageRetourDto.setMessage(MESSAGE);
                 //return ResponseEntity.ok(UserDtoMapper.toDto(savedUser));
                 return ResponseEntity.ok(messageRetourDto);
-//            }
+            }
         } catch (RuntimeException e) {
-            throw new RuntimeException("ERROR: "+ e);
+            throw new RuntimeException("ERROR::: "+ e);
         }
     }
 
@@ -97,7 +135,7 @@ public class UserService {
     @Scheduled(cron = "0 */10 * * * *")
     public void removeUselessJwt(){
         log.info("Suppresion des users non abonnée a {} %s".formatted(Instant.now()));
-        List<User> users = this.userRepository.findByIsActiveFalse(false) ;
+        List<User> users = this.userRepository.findByEnabledFalse(false) ;
         if (!users.isEmpty()) {
             userRepository.deleteAll(users);
             log.info("{} Users non abonnée supprimés.", users.size());

@@ -1,6 +1,8 @@
 package will.dev.artisan_des_saveurs.service;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -13,11 +15,59 @@ import java.time.LocalDate;
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
+    private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
     @Value("${app.company.email}")
     private String companyEmail;
 
     private final JavaMailSender javaMailSender;
+
+    public void sendActivationEmail(String to, String token) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(companyEmail);
+            message.setTo(to);
+            message.setSubject("Activation de votre compte - Artisan des Saveurs");
+            message.setText("Bonjour,\n\n" +
+                    "Merci de vous être inscrit sur Artisan des Saveurs!\n\n" +
+                    "Pour activer votre compte, veuillez cliquer sur le lien suivant:\n" +
+                    "http://localhost:4200/activate?token=" + token + "\n\n" +
+                    "Ce lien est valide pendant 24 heures.\n\n" +
+                    "Cordialement,\n" +
+                    "L'équipe Artisan des Saveurs");
+
+            javaMailSender.send(message);
+            logger.info("Email d'activation envoyé à: {}", to);
+        } catch (Exception e) {
+            logger.error("Erreur lors de l'envoi de l'email d'activation à {}: {}", to, e.getMessage());
+            // En mode développement, on log le token pour pouvoir tester
+            logger.info("Token d'activation pour {}: {}", to, token);
+        }
+    }
+
+    public void sendPasswordResetEmail(String to, String token) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(companyEmail);
+            message.setTo(to);
+            message.setSubject("Réinitialisation de votre mot de passe - Artisan des Saveurs");
+            message.setText("Bonjour,\n\n" +
+                    "Vous avez demandé la réinitialisation de votre mot de passe.\n\n" +
+                    "Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien suivant:\n" +
+                    "http://localhost:4200/reset-password?token=" + token + "\n\n" +
+                    "Ce lien est valide pendant 1 heure.\n\n" +
+                    "Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.\n\n" +
+                    "Cordialement,\n" +
+                    "L'équipe Artisan des Saveurs");
+
+            javaMailSender.send(message);
+            logger.info("Email de réinitialisation envoyé à: {}", to);
+        } catch (Exception e) {
+            logger.error("Erreur lors de l'envoi de l'email de réinitialisation à {}: {}", to, e.getMessage());
+            // En mode développement, on log le token pour pouvoir tester
+            logger.info("Token de réinitialisation pour {}: {}", to, token);
+        }
+    }
 
     public void sentToCopany(ContactRequest contactRequest, Boolean isFromCart) {
         try {

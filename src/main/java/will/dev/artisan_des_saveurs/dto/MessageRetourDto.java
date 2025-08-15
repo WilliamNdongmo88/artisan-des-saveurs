@@ -7,5 +7,3 @@ public class MessageRetourDto {
     private Boolean success;
     private String message;
 }
-//   success: true,
-//
