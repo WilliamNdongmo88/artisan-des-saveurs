@@ -86,19 +86,38 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.addMapping("/users/**")
+//                        .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs.vercel.app")
+//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+//                        .allowedHeaders("*")
+//                        .allowCredentials(true);
+//
+//                registry.addMapping("/orders/**")
+//                        .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs.vercel.app")
+//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+//                        .allowedHeaders("*")
+//                        .allowCredentials(true);
+//            }
+//        };
+//    }
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/users/**")
-                        .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs.vercel.app")
+                        .allowedOrigins("https://artisan-des-saveurs.vercel.app") // domaine de ton front
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
-
                 registry.addMapping("/orders/**")
-                        .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs.vercel.app")
+                        .allowedOrigins("https://artisan-des-saveurs.vercel.app") // domaine de ton front
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
