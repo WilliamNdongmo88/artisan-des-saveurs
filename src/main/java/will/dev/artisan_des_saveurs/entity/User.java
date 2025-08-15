@@ -11,9 +11,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Entité représentant un utilisateur dans le système
@@ -24,7 +29,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,8 +62,8 @@ public class User {
     private Boolean consent = false;
 
     @Builder.Default
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled = false;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -70,6 +75,42 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<ContactRequest> contactRequests;
+
+    @NotBlank
+    @Size(max = 50)
+    @Column(unique = true)
+    private String username;
+
+    @NotBlank
+    @Size(max = 120)
+    private String password;
+
+    //private boolean enabled = false;
+
+    private String activationToken;
+
+    private String resetPasswordToken;
+
+    private LocalDateTime resetPasswordExpiry;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.role.getLibelle().getAuthorities();
+    }
+
+    public User(String username, String email, String password, String firstName, String lastName) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 
     /**
      * Méthode utilitaire pour obtenir le nom complet
@@ -106,8 +147,8 @@ public class User {
         if (consent == null) {
             consent = false;
         }
-        if (isActive == null) {
-            isActive = true;
+        if (enabled == null) {
+            enabled = true;
         }
     }
 

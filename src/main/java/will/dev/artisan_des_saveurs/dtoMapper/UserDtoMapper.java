@@ -23,7 +23,7 @@ public class UserDtoMapper {
         dto.setEmail(user.getEmail());
         dto.setPhone(user.getFormattedPhone());
         dto.setConsent(user.getConsent());
-        dto.setIsActive(user.getIsActive());
+        dto.setEnabled(user.getEnabled());
 
         if (user.getContactRequests() != null) {
             dto.setContactRequests(
@@ -46,7 +46,7 @@ public class UserDtoMapper {
         user.setEmail(dto.getEmail());
         user.setPhone(dto.getPhone());
         user.setConsent(dto.getConsent() != null ? dto.getConsent() : false);
-        user.setIsActive(dto.getIsActive() != null ? dto.getIsActive() : true);
+        user.setEnabled(dto.getEnabled() != null ? dto.getEnabled() : true);
 
         return user;
     }

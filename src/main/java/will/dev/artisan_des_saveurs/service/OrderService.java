@@ -1,20 +1,21 @@
 package will.dev.artisan_des_saveurs.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import will.dev.artisan_des_saveurs.dto.MessageRetourDto;
 import will.dev.artisan_des_saveurs.dto.order.OrderDTO;
-import will.dev.artisan_des_saveurs.dto.order.OrderItemDTO;
-import will.dev.artisan_des_saveurs.entity.ContactRequest;
-import will.dev.artisan_des_saveurs.entity.User;
-import will.dev.artisan_des_saveurs.repository.ContactRequestRepository;
-import will.dev.artisan_des_saveurs.repository.UserRepository;
+import will.dev.artisan_des_saveurs.dto.order.ProductItemDTO;
+import will.dev.artisan_des_saveurs.entity.*;
+import will.dev.artisan_des_saveurs.repository.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,25 +25,71 @@ public class OrderService {
     private String company_number;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final OrderRepository orderRepository;
+    private final ProductRepository productRepository;
+    private final ProductItemRepository productItemRepository;
     private final WhatsappNotification whatsappNotification;
     private final ContactRequestRepository contactRequestRepository;
     private final VonageWhatsappNotificationService vonageWhatsappNotificationService;
 
+    //@Transient
+    //@Transactional
     public ResponseEntity<MessageRetourDto> sendOrder(OrderDTO orderDTO) {
+        System.out.println("orderDTO ::: " + orderDTO.getItems());
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         MessageRetourDto messageRetourDto = new MessageRetourDto();
-        Optional<User> optionalUser = this.userRepository.findByEmail(orderDTO.getEmail());
-//        if (optionalUser.isPresent()) {
-//            // Envoie de la commande et sauvegarde de l'utilisateur
-//            throw new RuntimeException("Email déjà existant");
-//        }else {
+        String email;
+
+        if (userRepository.existsByEmail(orderDTO.getUser().getEmail())) {
+            email = orderDTO.getUser().getEmail();
+            System.out.println("email ::: " + email);
+
+            User userConnected = this.userRepository.findByEmailFromConnectedUser(email);
+            String message = generateOrderMessage(orderDTO);
+
+            // Enregistrement de la requête de l'utilisateur
+            ContactRequest contactRequest = new ContactRequest();
+            contactRequest.setUser(userConnected);
+            contactRequest.setSubject("Nouvelle commande client");
+            contactRequest.setMessage(message);
+            contactRequest.setEmailSent(false);
+            contactRequest.setWhatsappSent(false);
+            ContactRequest savedContactReq = contactRequestRepository.save(contactRequest);
+
+            //userConnected.setContactRequests(List.of(savedContactReq));
+            userConnected.getContactRequests().add(savedContactReq);
+
+            // Création et enregistrement de la commande
+            saveOrderWithItems(orderDTO, userConnected);
+
+            Boolean isFromCart = true;
+            String customerMessage = customerOrderMessage(orderDTO);
+            notificationService.sentToCopany(savedContactReq, isFromCart);
+            notificationService.sentResponseToCustomerFromCartPage(userConnected, customerMessage);
+            savedContactReq.markEmailSent();
+
+            whatsappNotification.sendWhatsappMessage(userConnected, company_number, savedContactReq, isFromCart);
+            vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, userConnected, savedContactReq);
+            savedContactReq.markWhatsappSent();
+
+            messageRetourDto.setSuccess(true);
+            messageRetourDto.setMessage(MESSAGE);
+        }
+        else {
+            //User sans compte ou Nonconnecté
             User user = new User();
-            user.setFirstName(orderDTO.getFirstName());
-            user.setLastName(orderDTO.getLastName());
-            user.setEmail(orderDTO.getEmail());
-            user.setPhone(orderDTO.getPhone());
+            user.setFirstName(orderDTO.getUser().getFirstName());
+            user.setLastName(orderDTO.getUser().getLastName());
+            user.setEmail(orderDTO.getUser().getEmail());
+            user.setPhone(orderDTO.getUser().getPhone());
             user.setConsent(true);
-            user.setIsActive(false);
+            user.setEnabled(false);
+            user.setUsername("anonymousUser");
+            user.setPassword("anonymousUser123");
             User savedUser = userRepository.save(user);
+            System.out.println("savedUser ::: " + savedUser);
 
             String message = generateOrderMessage(orderDTO);
 
@@ -60,17 +107,21 @@ public class OrderService {
             notificationService.sentToCopany(contactRequest, isFromCart);
             String customerMessage = customerOrderMessage(orderDTO);
             notificationService.sentResponseToCustomerFromCartPage(savedUser, customerMessage);
+            contactRequest.setEmailSent(true);
+            contactRequest.setEmailSentAt(LocalDateTime.now());
             whatsappNotification.sendWhatsappMessage(savedUser, company_number, savedContactReq, isFromCart);
             vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, savedUser, savedContactReq);
+            contactRequest.setWhatsappSent(true);
+            contactRequest.setWhatsappSentAt(LocalDateTime.now());
 
             messageRetourDto.setSuccess(true);
             messageRetourDto.setMessage(MESSAGE);
-//        }
+        }
         return ResponseEntity.ok(messageRetourDto);
     }
 
     public String generateOrderMessage(OrderDTO orderDto) {
-        List<OrderItemDTO> items = orderDto.getItems();
+        List<ProductItemDTO> items = orderDto.getItems();
         double subtotal = orderDto.getSubtotal();
         double discount = orderDto.getDiscount();
         double total = orderDto.getTotal();
@@ -84,8 +135,8 @@ public class OrderService {
         // Description des items
         StringBuilder itemsDescription = new StringBuilder();
         for (int i = 0; i < items.size(); i++) {
-            OrderItemDTO item = items.get(i);
-            String name = item.getProduct() != null && item.getProduct().getName() != null
+            ProductItemDTO item = items.get(i);
+            String name = item.getProduct().getId() != null && item.getProduct().getName() != null
                     ? item.getProduct().getName()
                     : "Produit inconnu";
             int quantity = item.getQuantity();
@@ -121,9 +172,9 @@ public class OrderService {
             Cordialement,
             Votre plateforme L'Artisan-des-saveurs.
             """,
-                orderDto.getFirstName()+" "+orderDto.getLastName(),
-                orderDto.getEmail(),
-                orderDto.getPhone(),
+                orderDto.getUser().getFirstName()+" "+orderDto.getUser().getLastName(),
+                orderDto.getUser().getEmail(),
+                orderDto.getUser().getPhone(),
                 itemsDescription.toString(),
                 subtotal,
                 discount,
@@ -136,7 +187,7 @@ public class OrderService {
 
 
     public String customerOrderMessage(OrderDTO orderDto) {
-        List<OrderItemDTO> items = orderDto.getItems();
+        List<ProductItemDTO> items = orderDto.getItems();
         double total = orderDto.getTotal();
         boolean freeShipping = orderDto.isFreeShipping();
 
@@ -148,7 +199,7 @@ public class OrderService {
         // Description des items
         StringBuilder itemsDescription = new StringBuilder();
         for (int i = 0; i < items.size(); i++) {
-            OrderItemDTO item = items.get(i);
+            ProductItemDTO item = items.get(i);
             String name = item.getProduct() != null && item.getProduct().getName() != null
                     ? item.getProduct().getName()
                     : "Produit inconnu";
@@ -179,7 +230,7 @@ public class OrderService {
             Bien cordialement,
             Service Client – L'Artisan-des-saveurs.
             """,
-                orderDto.getFirstName()+" "+orderDto.getLastName(),
+                orderDto.getUser().getFirstName()+" "+orderDto.getUser().getLastName(),
                 "CMD000001",
                 LocalDate.now(),
                 itemsDescription.toString(),
@@ -189,4 +240,53 @@ public class OrderService {
 
         return message.trim();
     }
+
+    @Transactional
+    public void saveOrderWithItems(OrderDTO orderDto, User userConnected) {
+        System.out.println("::: saveOrderWithItems ::: ");
+        // Étape 1 : enregistrer la commande
+        Order order = new Order();
+        order.setSubtotal(orderDto.getSubtotal());
+        order.setDiscount(orderDto.getDiscount());
+        order.setTotal(orderDto.getTotal());
+        order.setFreeShipping(orderDto.isFreeShipping());
+        order.setUser(userConnected);
+        Order savedOrder = orderRepository.save(order);
+        System.out.println("savedOrder ::: " + savedOrder);
+
+        // Étape 2 : enregistrer les items s’ils existent
+        List<ProductItem> productItems = new ArrayList<>();
+        List<Product> products = productRepository.findAll();
+        System.out.println("Produits en base : ");
+        products.forEach(p -> System.out.println(" - " + p.getId() + " : " + p.getName()));
+
+        System.out.println("Produits dans orderDTO : ");
+        orderDto.getItems().forEach(i -> System.out.println(" - " + i.getProduct().getId() + " x" + i.getQuantity()));
+
+        for (ProductItemDTO pro : orderDto.getItems()) {
+            System.out.println("Processing product ID from DTO: " + pro.getProduct().getId());
+
+            Product product = products.stream()
+                    .filter(p -> p.getId().equals(pro.getProduct().getId()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (product != null) {
+                System.out.println("Product found in DB: " + product.getName());
+
+                ProductItem productItem = new ProductItem();
+                productItem.setProduct(product);
+                productItem.setQuantity(pro.getQuantity());
+                productItem.setOrder(savedOrder);
+                productItems.add(productItem);
+            } else {
+                System.out.println("❌ Aucun produit trouvé en base pour l’ID : " + pro.getId());
+            }
+        }
+
+        System.out.println("productItems ::: " + productItems);
+        productItemRepository.saveAll(productItems);
+
+    }
+
 }
