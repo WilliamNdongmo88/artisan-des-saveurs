@@ -31,7 +31,7 @@ public class NotificationService {
             message.setText("Bonjour,\n\n" +
                     "Merci de vous être inscrit sur Artisan des Saveurs!\n\n" +
                     "Pour activer votre compte, veuillez cliquer sur le lien suivant:\n" +
-                    "http://localhost:4200/activate?token=" + token + "\n\n" +
+                    "https://artisan-des-saveurs-production.up.railway.app/activate?token=" + token + "\n\n" +
                     "Ce lien est valide pendant 24 heures.\n\n" +
                     "Cordialement,\n" +
                     "L'équipe Artisan des Saveurs");
