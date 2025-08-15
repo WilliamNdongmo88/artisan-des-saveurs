@@ -54,7 +54,7 @@ public class NotificationService {
             message.setText("Bonjour,\n\n" +
                     "Vous avez demandé la réinitialisation de votre mot de passe.\n\n" +
                     "Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien suivant:\n" +
-                    "http://localhost:4200/reset-password?token=" + token + "\n\n" +
+                    "https://artisan-des-saveurs-production.up.railway.app/reset-password?token=" + token + "\n\n" + // http://localhost:4200/reset-password?token=
                     "Ce lien est valide pendant 1 heure.\n\n" +
                     "Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.\n\n" +
                     "Cordialement,\n" +
