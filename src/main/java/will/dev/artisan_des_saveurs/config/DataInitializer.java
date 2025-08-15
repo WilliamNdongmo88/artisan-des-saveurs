@@ -2,6 +2,7 @@ package will.dev.artisan_des_saveurs.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -21,6 +22,10 @@ public class DataInitializer {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    @Value("${app.company.username}")
+    private String companyUsername;
+    @Value("${app.company.pass}")
+    private String companyPass;
 
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
@@ -30,9 +35,9 @@ public class DataInitializer {
             userRole.setLibelle(TypeDeRole.ADMIN);
 
             User admin = new User();
-            admin.setUsername("admin");
+            admin.setUsername(companyUsername);
             admin.setEmail("btbimportationservice333@gmail.com");
-            admin.setPassword(passwordEncoder.encode("admin123"));
+            admin.setPassword(passwordEncoder.encode(companyPass));
             admin.setFirstName("William");
             admin.setLastName("Ndongmo");
             admin.setPhone("+23059221613");
