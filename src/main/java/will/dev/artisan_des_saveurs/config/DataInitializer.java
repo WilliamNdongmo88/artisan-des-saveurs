@@ -178,15 +178,18 @@ public class DataInitializer {
 
 
         for (Product product : products) {
-            will.dev.artisan_des_saveurs.entity.Files img = new Files();
-            img.setContent("data:image/webp;base64,UklGRi6D...");
-            img.setTemp("");
-
             product.setAvailable(true);
             product.setStockQuantity(50);
             product.setUnit("kg");
-            product.setProductImage(img);
-            productRepository.save(product);
+
+            Product productSaved = productRepository.save(product);
+
+            will.dev.artisan_des_saveurs.entity.Files img = new Files();
+            img.setContent("data:image/webp;base64,UklGRi6D...");
+            img.setTemp("");
+            img.setProduct(productSaved);
+
+            productSaved.setProductImage(img);
         }
         System.out.println("Products :: "+ products);
     }
