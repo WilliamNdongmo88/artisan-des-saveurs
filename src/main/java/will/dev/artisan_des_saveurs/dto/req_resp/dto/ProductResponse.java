@@ -14,7 +14,7 @@ public class ProductResponse {
     private String description;
     private BigDecimal price;
     private String category;
-    private Files productImage;
+    private FileDTO productImage;
     private boolean available;
     private boolean featured;
     private String origin;

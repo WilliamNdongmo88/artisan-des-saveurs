@@ -6,10 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import will.dev.artisan_des_saveurs.dto.order.ProductDTO;
-import will.dev.artisan_des_saveurs.dto.req_resp.dto.MessageResponse;
-import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductRequest;
-import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductResponse;
-import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductToSend;
+import will.dev.artisan_des_saveurs.dto.req_resp.dto.*;
 import will.dev.artisan_des_saveurs.service.ProductService;
 
 import java.io.IOException;
@@ -63,10 +60,10 @@ public class ProductController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('ADMIN_CREATE')")
-    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductToSend productToSend) {
+    public ResponseEntity<ProductToReponse> createProduct(@Valid @RequestBody ProductToSend productToSend) {
         System.out.println("productToSend :: "+ productToSend);
         try {
-            ProductResponse createdProduct = productService.createProduct(productToSend);
+            ProductToReponse createdProduct = productService.createProduct(productToSend);
             return ResponseEntity.ok(createdProduct);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -75,11 +72,10 @@ public class ProductController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN_UPDATE')")
-    public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id, 
+    public ResponseEntity<ProductToReponse> updateProduct(@PathVariable Long id,
                                                         @Valid @RequestBody ProductToSend productToSend) throws IOException {
-        Optional<ProductResponse> updatedProduct = productService.updateProduct(id, productToSend);
-        return updatedProduct.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        ProductToReponse updatedProduct = productService.updateProduct(id, productToSend);
+        return ResponseEntity.ok(updatedProduct);
     }
 
     @DeleteMapping("/{id}")
