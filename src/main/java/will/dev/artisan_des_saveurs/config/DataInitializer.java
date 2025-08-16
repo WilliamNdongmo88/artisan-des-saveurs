@@ -182,19 +182,15 @@ public class DataInitializer {
             product.setStockQuantity(50);
             product.setUnit("kg");
 
-            Product productSaved = productRepository.save(product);
-
             will.dev.artisan_des_saveurs.entity.Files img = new Files();
             img.setContent("data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBWRXhpZgAATU0AKgAAAAgABAEaA...");
-            img.setTemp("");
             img.setName("coteDePorc.jpg");
-            img.setProduct(productSaved);
 
-            productSaved.setProductImage(img);
+            product.setProductImage(img);
+            productRepository.save(product);
         }
         System.out.println("Products :: "+ products);
     }
-
 }
 
 

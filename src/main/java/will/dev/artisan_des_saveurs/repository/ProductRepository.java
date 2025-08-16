@@ -21,9 +21,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p JOIN FETCH p.productImage WHERE p.available = true")
     List<Product> findByAvailableTrueWithImage();
 
-    @Query("SELECT p FROM Product p JOIN FETCH p.productImage WHERE p.available = true")
-    List<Product> findByAvailableTrue();
-
     List<Product> findByCategory(String category);
     List<Product> findByCategoryAndAvailableTrue(String category);
     
