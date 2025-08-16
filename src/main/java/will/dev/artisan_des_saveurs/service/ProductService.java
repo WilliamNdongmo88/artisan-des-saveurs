@@ -147,7 +147,7 @@ public class ProductService {
             will.dev.artisan_des_saveurs.entity.Files nouvelleImage = fileDTOMapper.mapFileDtoToEntity(productToSend.getProductImage());
 
             // Si la nouvelle image a un temp null → c'est probablement l'ancienne image déjà enregistrée
-            if (nouvelleImage.getTemp() == null && nouvelleImage.getId() != null) {
+            if (nouvelleImage.getTemp() != null && nouvelleImage.getId() != null) {
                 // On ne touche pas à l'image
                 System.out.println("✅ Aucune nouvelle image, conservation de l'ancienne.");
             } else {
