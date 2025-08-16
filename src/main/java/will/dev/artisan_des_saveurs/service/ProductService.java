@@ -56,6 +56,7 @@ public class ProductService {
 
     public List<ProductDTO> getAvailableProducts() {
         List<Product> products = (List<Product>) this.productRepository.findByAvailableTrue();
+        System.out.println("products ::"+ products);
         List<ProductDTO> productDTOList = new java.util.ArrayList<>(List.of());
         for (Product product: products){
             productDTOList.add(productMapper.toDTO(product));
