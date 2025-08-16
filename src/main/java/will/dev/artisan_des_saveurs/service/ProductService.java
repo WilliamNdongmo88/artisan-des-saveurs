@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import will.dev.artisan_des_saveurs.dto.order.ProductDTO;
-import will.dev.artisan_des_saveurs.dto.req_resp.dto.FileDTO;
-import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductRequest;
-import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductResponse;
-import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductToSend;
+import will.dev.artisan_des_saveurs.dto.req_resp.dto.*;
 import will.dev.artisan_des_saveurs.dtoMapper.FileDTOMapper;
 import will.dev.artisan_des_saveurs.dtoMapper.ProductMapper;
 import will.dev.artisan_des_saveurs.entity.Product;
@@ -86,8 +83,9 @@ public class ProductService {
 
     //Create
     @Transactional(rollbackFor = Exception.class)
-    public ProductResponse createProduct(ProductToSend productToSend) {
+    public ProductToReponse createProduct(ProductToSend productToSend) {
         Product product = new Product();
+        FileDTO filedto = new FileDTO();
         Product savedProduct;
         try {
             product.setName(productToSend.getProductRequest().getName());
@@ -110,6 +108,12 @@ public class ProductService {
             String temp = System.currentTimeMillis() + "." + extension;
             imagePrincipale.setTemp(temp);
             imagePrincipale.setProduct(savedProduct);
+
+            will.dev.artisan_des_saveurs.entity.Files img = filesRepository.save(imagePrincipale);
+                filedto.setName(img.getName());
+                filedto.setTemp(img.getTemp());
+                filedto.setContent(img.getContent());
+
             product.setProductImage(imagePrincipale);
             writeOnDisk(imagePrincipale);
         }else {
@@ -119,8 +123,11 @@ public class ProductService {
             throw new RuntimeException(e);
         }
         ProductResponse productResponse = new ProductResponse(savedProduct);
-        System.out.println("productResponse :: "+ productResponse);
-        return productResponse;
+        ProductToReponse productToReponse = new ProductToReponse();
+        productToReponse.setProductResponse(productResponse);
+        productToReponse.setProductImage(filedto);
+        System.out.println("productToReponse :: "+ productToReponse);
+        return productToReponse;
     }
 
     @Transactional(rollbackFor = Exception.class)
