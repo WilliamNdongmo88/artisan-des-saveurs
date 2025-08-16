@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import will.dev.artisan_des_saveurs.dto.order.ProductDTO;
-import will.dev.artisan_des_saveurs.dto.req_resp.dto.*;
+import will.dev.artisan_des_saveurs.dto.req_resp.dto.FileDTO;
+import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductRequest;
+import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductResponse;
+import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductToSend;
 import will.dev.artisan_des_saveurs.dtoMapper.FileDTOMapper;
 import will.dev.artisan_des_saveurs.dtoMapper.ProductMapper;
 import will.dev.artisan_des_saveurs.entity.Product;
@@ -83,9 +86,8 @@ public class ProductService {
 
     //Create
     @Transactional(rollbackFor = Exception.class)
-    public ProductToReponse createProduct(ProductToSend productToSend) {
+    public ProductResponse createProduct(ProductToSend productToSend) {
         Product product = new Product();
-        FileDTO filedto = new FileDTO();
         Product savedProduct;
         try {
             product.setName(productToSend.getProductRequest().getName());
@@ -108,12 +110,6 @@ public class ProductService {
             String temp = System.currentTimeMillis() + "." + extension;
             imagePrincipale.setTemp(temp);
             imagePrincipale.setProduct(savedProduct);
-
-            will.dev.artisan_des_saveurs.entity.Files img = filesRepository.save(imagePrincipale);
-                filedto.setName(img.getName());
-                filedto.setTemp(img.getTemp());
-                filedto.setContent(img.getContent());
-
             product.setProductImage(imagePrincipale);
             writeOnDisk(imagePrincipale);
         }else {
@@ -123,19 +119,16 @@ public class ProductService {
             throw new RuntimeException(e);
         }
         ProductResponse productResponse = new ProductResponse(savedProduct);
-        ProductToReponse productToResponse = new ProductToReponse();
-        productToResponse.setProductResponse(productResponse);
-        productToResponse.setProductImage(filedto);
         System.out.println("productResponse :: "+ productResponse);
-        return productToResponse;
+        return productResponse;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ProductToReponse updateProduct(Long id, ProductToSend productToSend) throws IOException {
+    public Optional<ProductResponse> updateProduct(Long id, ProductToSend productToSend) throws IOException {
         // Vérifier que le produit existe
         Product productInBd = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
-        FileDTO filedto = new FileDTO();
+
         // Mise à jour des champs simples
         productInBd.setName(productToSend.getProductRequest().getName());
         productInBd.setDescription(productToSend.getProductRequest().getDescription());
@@ -162,12 +155,9 @@ public class ProductService {
                 String temp = System.currentTimeMillis() + "." + extension;
                 nouvelleImage.setTemp(temp);
                 nouvelleImage.setProduct(productInBd);
-                productInBd.setProductImage(nouvelleImage);
 
-                will.dev.artisan_des_saveurs.entity.Files img = filesRepository.save(nouvelleImage);
-                filedto.setName(img.getName());
-                filedto.setTemp(img.getTemp());
-                filedto.setContent(img.getContent());
+                filesRepository.save(nouvelleImage);
+                productInBd.setProductImage(nouvelleImage);
 
                 // Écrire sur disque
                 writeOnDisk(nouvelleImage);
@@ -175,11 +165,7 @@ public class ProductService {
         }
 
         Product updatedProductInBd = productRepository.save(productInBd);
-        ProductResponse productResponse = new ProductResponse(updatedProductInBd);
-        ProductToReponse productToResponse = new ProductToReponse();
-        productToResponse.setProductResponse(productResponse);
-        productToResponse.setProductImage(filedto);
-        return productToResponse;
+        return Optional.of(new ProductResponse(updatedProductInBd));
     }
 
     public boolean deleteProduct(Long id) {

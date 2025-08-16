@@ -14,7 +14,7 @@ public class ProductResponse {
     private String description;
     private BigDecimal price;
     private String category;
-    //private FileDTO productImage;
+    private Files productImage;
     private boolean available;
     private boolean featured;
     private String origin;
@@ -32,7 +32,7 @@ public class ProductResponse {
         this.description = product.getDescription();
         this.price = product.getPrice();
         this.category = product.getCategory();
-        //this.productImage = product.getProductImage();
+        this.productImage = product.getProductImage();
         this.available = product.isAvailable();
         this.featured = product.isFeatured();
         this.origin = product.getOrigin();
