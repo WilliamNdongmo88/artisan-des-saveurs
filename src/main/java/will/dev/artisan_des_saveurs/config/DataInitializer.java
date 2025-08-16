@@ -54,10 +54,10 @@ public class DataInitializer {
         }
 
         // Créer quelques produits de démonstration
-//        if (productRepository.count() == 0) {
-//            createSampleProducts();
-//            System.out.println("Produits de démonstration créés");
-//        }
+        if (productRepository.count() == 0) {
+            createSampleProducts();
+            System.out.println("Produits de démonstration créés");
+        }
     }
 
     private void createSampleProducts() {
