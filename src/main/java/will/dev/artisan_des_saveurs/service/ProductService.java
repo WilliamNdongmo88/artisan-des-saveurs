@@ -64,7 +64,7 @@ public class ProductService {
     }
 
     public Optional<ProductDTO> getProductById(Long id) {
-        Optional<Product> product = productRepository.findById(id);
+        Optional<Product> product = productRepository.findByIdWithProductImage(id);
         return Optional.ofNullable(productMapper.toDTO(product.get()));
     }
 
