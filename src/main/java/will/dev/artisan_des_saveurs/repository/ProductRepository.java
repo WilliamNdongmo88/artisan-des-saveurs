@@ -11,7 +11,10 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
+
+    @Query("SELECT p FROM Product p JOIN FETCH p.productImage")
     List<Product> findByAvailableTrue();
+
     List<Product> findByCategory(String category);
     List<Product> findByCategoryAndAvailableTrue(String category);
     
@@ -26,5 +29,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p JOIN FETCH p.productImage WHERE p.id = :id")
     Optional<Product> findByIdWithProductImage(@Param("id") Long id);
+
+    /**
+     * Récupère TOUS les produits en chargeant immédiatement ("FETCH")
+     * leurs relations 'image' associées pour éviter les LazyInitializationException.
+     *
+     * @return Une liste de produits avec leurs images déjà chargées.
+     */
+    @Query("SELECT p FROM Product p JOIN FETCH p.image")
+    List<Product> findAllWithImage();
 }
 
