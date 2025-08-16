@@ -38,10 +38,9 @@ public class Product {
     @Size(max = 50)
     private String category;
 
-    //@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "files_id")
     @JsonManagedReference
-    @OneToOne(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Files productImage;
 
 
