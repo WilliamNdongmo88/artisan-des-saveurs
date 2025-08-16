@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import will.dev.artisan_des_saveurs.entity.Product;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -22,5 +23,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     
     @Query("SELECT DISTINCT p.category FROM Product p WHERE p.category IS NOT NULL")
     List<String> findDistinctCategories();
+
+    @Query("SELECT p FROM Product p JOIN FETCH p.productImage WHERE p.id = :id")
+    Optional<Product> findByIdWithProductImage(@Param("id") Long id);
 }
 

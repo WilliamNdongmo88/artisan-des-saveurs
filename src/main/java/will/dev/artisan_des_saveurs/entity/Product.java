@@ -43,7 +43,6 @@ public class Product {
     @JsonManagedReference
     private Files productImage;
 
-
     @Column(name = "is_available")
     private boolean available = true;
 
