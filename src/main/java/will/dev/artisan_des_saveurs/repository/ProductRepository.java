@@ -36,7 +36,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
      *
      * @return Une liste de produits avec leurs images déjà chargées.
      */
-    @Query("SELECT p FROM Product p JOIN FETCH p.image")
-    List<Product> findAllWithImage();
+//    @Query("SELECT p FROM Product p JOIN FETCH p.image")
+//    List<Product> findAllWithImage();
 }
 
