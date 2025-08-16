@@ -40,7 +40,7 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "files_id")
-    @JsonManagedReference
+    //@JsonManagedReference
     private Files productImage;
 
     @Column(name = "is_available")
