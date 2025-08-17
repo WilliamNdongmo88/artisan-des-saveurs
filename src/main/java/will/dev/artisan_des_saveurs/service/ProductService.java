@@ -114,7 +114,7 @@ public class ProductService {
             imagePrincipale.setTemp(temp);
             imagePrincipale.setProduct(savedProduct);
             product.setProductImage(imagePrincipale);
-            fileStorageService.writeOnDisk(imagePrincipale);
+                fileStorageService.writeOnDisk(imagePrincipale);
         }else {
             throw new RuntimeException("Image principale manquante ou invalide");
         }
@@ -144,65 +144,25 @@ public class ProductService {
         productInBd.setOrigin(productToSend.getProductRequest().getOrigin());
         productInBd.setPreparation(productToSend.getProductRequest().getPreparation());
 
-        // Gestion de l'image principale
-        if (productToSend.getProductImage() != null) {
-            // Cas 1: Une nouvelle image est envoyée (pas d'ID ni de temp)
-            if (productToSend.getProductImage().getId() == null && productToSend.getProductImage().getTemp() == null) {
-                will.dev.artisan_des_saveurs.entity.Files nouvelleImage = fileDTOMapper.mapFileDtoToEntity(productToSend.getProductImage());
-                String extension = FilenameUtils.getExtension(nouvelleImage.getName());
-                String temp = System.currentTimeMillis() + "." + extension;
-                nouvelleImage.setTemp(temp);
-                nouvelleImage.setProduct(productInBd);
-
-                // Si une ancienne image existait, on peut la supprimer si nécessaire
-                if (productInBd.getProductImage() != null) {
-                    // Logique pour supprimer l'ancienne image du disque et de la base de données
-                    filesRepository.delete(productInBd.getProductImage());
-                    fileStorageService.deleteFromDisk(productInBd.getProductImage());
-                }
-
-                filesRepository.save(nouvelleImage);
-                productInBd.setProductImage(nouvelleImage);
-                fileStorageService.writeOnDisk(nouvelleImage);
-                System.out.println("✅ Nouvelle image enregistrée.");
-            } else if (productToSend.getProductImage().getId() != null) {
-                // Cas 2: L'image envoyée est une image existante (elle a un ID)
-                // On vérifie si c'est la même image que celle déjà associée au produit
-                if (productInBd.getProductImage() == null || !productInBd.getProductImage().getId().equals(productToSend.getProductImage().getId())) {
-                    // L'image envoyée est différente de l'image actuelle du produit
-                    // On charge l'image existante par son ID
-                    Optional<will.dev.artisan_des_saveurs.entity.Files> existingImageOpt = filesRepository.findById(productToSend.getProductImage().getId());
-                    if (existingImageOpt.isPresent()) {
-                        will.dev.artisan_des_saveurs.entity.Files existingImage = existingImageOpt.get();
-                        // Si une ancienne image existait, on peut la supprimer si nécessaire
-                        if (productInBd.getProductImage() != null) {
-                            // Logique pour supprimer l'ancienne image du disque et de la base de données
-                            filesRepository.delete(productInBd.getProductImage());
-                            fileStorageService.deleteFromDisk(productInBd.getProductImage());
-                        }
-                        productInBd.setProductImage(existingImage);
-                        System.out.println("✅ Image existante associée au produit.");
-                    } else {
-                        // L'image avec cet ID n'existe pas, cela peut indiquer une erreur ou une tentative de suppression
-                        System.err.println("⚠️ L'image avec l'ID " + productToSend.getProductImage().getId() + " n'a pas été trouvée.");
-                        // Gérer ce cas, par exemple en ne mettant pas à jour l'image ou en lançant une exception
-                    }
-                } else {
-                    System.out.println("✅ Conservation de l'ancienne image (même image renvoyée).");
-                }
-            }
-        } else {
-            // Cas 3: Aucune image n'est envoyée dans productToSend (productImage est null)
-            // Si une image était associée au produit, on peut la supprimer si c'est l'intention
-            if (productInBd.getProductImage() != null) {
-                // Logique pour supprimer l'ancienne image du disque et de la base de données
-                filesRepository.delete(productInBd.getProductImage());
-                fileStorageService.deleteFromDisk(productInBd.getProductImage());
-                productInBd.setProductImage(null);
-                System.out.println("✅ Image du produit supprimée.");
-            }
+        // 🔁 MAJ de l'image principale
+        will.dev.artisan_des_saveurs.entity.Files oldMainImage = productInBd.getProductImage();
+        if (oldMainImage != null) {
+            filesRepository.delete(oldMainImage);
+            fileStorageService.deleteFromDisk(productInBd.getProductImage());
         }
-        // ... (fin de la méthode updateProduct)
+
+        will.dev.artisan_des_saveurs.entity.Files newMainImage = fileDTOMapper.mapFileDtoToEntity(productToSend.getProductImage());
+        if (newMainImage != null && newMainImage.getName() != null) {
+            String ext = FilenameUtils.getExtension(newMainImage.getName());
+            String temp = System.currentTimeMillis() + "." + ext;
+            newMainImage.setTemp(temp);
+            newMainImage.setProduct(productInBd);
+
+            will.dev.artisan_des_saveurs.entity.Files savedMainImage = filesRepository.save(newMainImage);
+            fileStorageService.writeOnDisk(savedMainImage);
+
+            productInBd.setProductImage(savedMainImage);
+        }
 
         Product updatedProductInBd = productRepository.save(productInBd);
         return Optional.of(new ProductResponse(updatedProductInBd));

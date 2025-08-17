@@ -43,13 +43,13 @@ public class FileStorageService {
             if (Files.exists(filePath)) {
                 try {
                     Files.delete(filePath);
-                    System.out.println("Fichier " + file.getTemp() + " supprimé du disque.");
+                    System.out.println("#### Fichier " + file.getTemp() + " supprimé du disque.");
                 } catch (IOException e) {
-                    System.err.println("Erreur lors de la suppression du fichier " + file.getTemp() + ": " + e.getMessage());
+                    System.err.println("#### Erreur lors de la suppression du fichier " + file.getTemp() + ": " + e.getMessage());
                     throw e;
                 }
             } else {
-                System.out.println("Le fichier " + file.getTemp() + " n'existe pas sur le disque.");
+                System.out.println("#### Le fichier " + file.getTemp() + " n'existe pas sur le disque.");
             }
         }
     }
