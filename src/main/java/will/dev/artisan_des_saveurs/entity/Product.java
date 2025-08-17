@@ -69,7 +69,7 @@ public class Product {
 
     public Product() {}
 
-    public Product(String name, String description, BigDecimal price, String category, String origin, String preparation) {
+    public Product(String name, String description, BigDecimal price, String category, String origin, boolean featured, String preparation) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -78,6 +78,7 @@ public class Product {
         this.preparation = preparation;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.featured = featured;
     }
 
     @PrePersist

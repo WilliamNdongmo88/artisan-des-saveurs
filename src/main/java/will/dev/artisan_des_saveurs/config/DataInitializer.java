@@ -55,10 +55,10 @@ public class DataInitializer {
 
         // Créer quelques produits de démonstration
         System.out.println("###### productRepository.count() :" + productRepository.count());
-//        if (productRepository.count() == 0) {
-//            createSampleProducts();
-//            System.out.println("Produits de démonstration créés");
-//        }
+        if (productRepository.count() == 0) {
+            createSampleProducts();
+            System.out.println("Produits de démonstration créés");
+        }
     }
 
     private void createSampleProducts() {
@@ -69,6 +69,7 @@ public class DataInitializer {
                         new BigDecimal("583"),
                         "cotes-travers",
                         "Île Maurice",
+                        true,
                         "Idéales grillées au barbecue ou à la plancha. Cuisson recommandée : 6-8 minutes de chaque côté à feu moyen."
                 ),
                 new Product(
@@ -77,6 +78,7 @@ public class DataInitializer {
                         new BigDecimal("583"),
                         "cotes-travers",
                         "Île Maurice",
+                        false,
                         "Cuisson lente au four à 180°C pendant 2h à 2h30, arrosée régulièrement de son jus. Peut aussi être mijotée en cocotte avec des légumes et des aromates."
                 ),
                 new Product(
@@ -85,6 +87,7 @@ public class DataInitializer {
                         new BigDecimal("550"),
                         "rotis-filets",
                         "Île Maurice",
+                        true,
                         "Cuisson au four à 180°C, compter 25 minutes par 500g. Laisser reposer 10 minutes avant de découper."
                 ),
                 new Product(
@@ -93,6 +96,7 @@ public class DataInitializer {
                         new BigDecimal("290"),
                         "rotis-filets",
                         "Île Maurice",
+                        false,
                         "Cuisson rapide à la poêle ou au four. 15-20 minutes à 200°C. Ne pas trop cuire pour garder la tendreté."
                 ),
                 new Product(
@@ -101,6 +105,7 @@ public class DataInitializer {
                         new BigDecimal("390"),
                         "rotis-filets",
                         "Île Maurice",
+                        true,
                         "Cuisson au four à 170°C pendant 45 minutes. Arroser régulièrement avec le jus de cuisson."
                 ),
                 new Product(
@@ -109,6 +114,7 @@ public class DataInitializer {
                         new BigDecimal("698"),
                         "saucisses-charcuterie",
                         "Fabrication Maison",
+                        true,
                         "Cuisson à la poêle à feu moyen pendant 12-15 minutes en les retournant régulièrement."
                 ),
                 new Product(
@@ -117,6 +123,7 @@ public class DataInitializer {
                         new BigDecimal("731.50"),
                         "saucisses-charcuterie",
                         "Fabrication Maison",
+                        false,
                         "Parfaites grillées au barbecue ou cuites à la poêle avec un peu d'huile d'olive."
                 ),
                 new Product(
@@ -125,6 +132,7 @@ public class DataInitializer {
                         new BigDecimal("885.50"),
                         "saucisses-charcuterie",
                         "Fabrication Maison",
+                        true,
                         "Prêt à consommer. Parfait en sandwich, salade ou plat chaud. Se conserve 5 jours au réfrigérateur."
                 ),
                 new Product(
@@ -133,6 +141,7 @@ public class DataInitializer {
                         new BigDecimal("220"),
                         "morceaux-braiser",
                         "Île Maurice",
+                        false,
                         "Idéal pour les plats mijotés. Cuisson lente 2-3h dans un bouillon avec légumes et aromates."
                 ),
                 new Product(
@@ -141,6 +150,7 @@ public class DataInitializer {
                         new BigDecimal("430"),
                         "morceaux-braiser",
                         "Île Maurice",
+                        false,
                         "Braiser au four à 160°C pendant 2h30 avec légumes et vin blanc. Viande fondante garantie."
                 ),
                 new Product(
@@ -149,6 +159,7 @@ public class DataInitializer {
                         new BigDecimal("506"),
                         "morceaux-braiser",
                         "Île Maurice",
+                        false,
                         "Pour petit salé : cuire 1h30 dans l'eau bouillante avec légumes. Pour lardons : découper et faire revenir."
                 ),
                 new Product(
@@ -157,6 +168,7 @@ public class DataInitializer {
                         new BigDecimal("250"),
                         "produits-transformes",
                         "Fabrication Maison",
+                        false,
                         "Faire revenir à sec dans une poêle chaude jusqu'à ce qu'ils soient dorés et croustillants."
                 ),
                 new Product(
@@ -165,6 +177,7 @@ public class DataInitializer {
                         new BigDecimal("590"),
                         "produits-transformes",
                         "Fabrication Maison",
+                        false,
                         "Cuire à la poêle 2-3 minutes de chaque côté jusqu'à obtenir la croustillance désirée."
                 ),
                 new Product(
@@ -173,6 +186,7 @@ public class DataInitializer {
                         new BigDecimal("390"),
                         "produits-transformes",
                         "Fabrication Maison",
+                        false,
                         "Prêt à consommer. Servir à température ambiante avec du pain frais et des cornichons."
                 )
         };
