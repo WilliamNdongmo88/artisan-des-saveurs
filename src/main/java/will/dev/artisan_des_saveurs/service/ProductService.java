@@ -126,6 +126,7 @@ public class ProductService {
         return productResponse;
     }
 
+    //Update
     @Transactional(rollbackFor = Exception.class)
     public Optional<ProductResponse> updateProduct(Long id, ProductToSend productToSend) throws IOException {
         // Vérifier que le produit existe
@@ -168,8 +169,15 @@ public class ProductService {
         return Optional.of(new ProductResponse(updatedProductInBd));
     }
 
-    public boolean deleteProduct(Long id) {
+    //Delete
+    public boolean deleteProduct(Long id) throws IOException {
         if (productRepository.existsById(id)) {
+            will.dev.artisan_des_saveurs.entity.Files oldMainImage = (will.dev.artisan_des_saveurs.entity.Files) filesRepository.findByProductId(id);
+            if (oldMainImage != null) {
+                filesRepository.delete(oldMainImage);
+                Optional<Product> productInBd = productRepository.findById(id);
+                fileStorageService.deleteFromDisk(productInBd.get().getProductImage());
+            }
             productRepository.deleteById(id);
             return true;
         }
