@@ -173,8 +173,11 @@ public class ProductService {
     public boolean deleteProduct(Long id) throws IOException {
         if (productRepository.existsById(id)) {
             will.dev.artisan_des_saveurs.entity.Files oldMainImage = (will.dev.artisan_des_saveurs.entity.Files) filesRepository.findByProductId(id);
+            System.out.println("oldMainImage before:: "+ oldMainImage);
             if (oldMainImage != null) {
-                filesRepository.delete(oldMainImage);
+                oldMainImage.setTemp("");
+                filesRepository.save(oldMainImage);
+                System.out.println("oldMainImage after:: "+ oldMainImage);
                 Optional<Product> productInBd = productRepository.findById(id);
                 fileStorageService.deleteFromDisk(productInBd.get().getProductImage());
             }
