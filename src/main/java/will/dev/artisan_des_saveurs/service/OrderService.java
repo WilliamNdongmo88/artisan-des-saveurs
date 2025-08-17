@@ -34,7 +34,7 @@ public class OrderService {
     private final VonageWhatsappNotificationService vonageWhatsappNotificationService;
 
     //@Transient
-    //@Transactional
+    @Transactional
     public ResponseEntity<MessageRetourDto> sendOrder(OrderDTO orderDTO) {
         System.out.println("orderDTO ::: " + orderDTO.getItems());
         //Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
