@@ -37,13 +37,13 @@ public class OrderService {
     //@Transactional
     public ResponseEntity<MessageRetourDto> sendOrder(OrderDTO orderDTO) {
         System.out.println("orderDTO ::: " + orderDTO.getItems());
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println("userDetails isEnabled::: " + userDetails.isEnabled());
+        //Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //System.out.println("userDetails isEnabled::: " + userDetails.isEnabled());
         MessageRetourDto messageRetourDto = new MessageRetourDto();
         String email;
 
-        if (userDetails.isEnabled()) { //userRepository.existsByEmail(orderDTO.getUser().getEmail()
+        if (userRepository.existsByEmail(orderDTO.getUser().getEmail())) { //
             email = orderDTO.getUser().getEmail();
             System.out.println("email ::: " + email);
 
