@@ -39,7 +39,7 @@ public class OrderService {
         System.out.println("orderDTO ::: " + orderDTO.getItems());
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+        System.out.println("userDetails isEnabled::: " + userDetails.isEnabled());
         MessageRetourDto messageRetourDto = new MessageRetourDto();
         String email;
 
