@@ -1,6 +1,7 @@
 package will.dev.artisan_des_saveurs.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -146,7 +148,8 @@ public class ProductService {
         // Gestion de l'image principale
         if (productToSend.getProductImage() != null) {
             will.dev.artisan_des_saveurs.entity.Files nouvelleImage = fileDTOMapper.mapFileDtoToEntity(productToSend.getProductImage());
-
+            log.info("nouvelleImage.getTemp() != null", nouvelleImage.getTemp());
+            log.info("nouvelleImage.getId() != null", nouvelleImage.getId());
             // Si la nouvelle image a un temp null → c'est probablement l'ancienne image déjà enregistrée
             if (nouvelleImage.getTemp() != null && nouvelleImage.getId() != null) {
                 // On ne touche pas à l'image
