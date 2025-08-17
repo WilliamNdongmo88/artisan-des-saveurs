@@ -153,6 +153,9 @@ public class ProductService {
             if (productToSend.getProductImage().getTemp() != null && productToSend.getProductImage().getId() != null) {
                 // On ne touche pas à l'image
                 System.out.println("✅ Aucune nouvelle image, conservation de l'ancienne.");
+                will.dev.artisan_des_saveurs.entity.Files imageInBd = filesRepository.findByTemp(productToSend.getProductImage().getTemp());
+                productInBd.setProductImage(imageInBd);
+                System.out.println("✅ Conservation de l'ancienne image.");
             } else {
                 // On enregistre une nouvelle image
                 String extension = FilenameUtils.getExtension(nouvelleImage.getName());
