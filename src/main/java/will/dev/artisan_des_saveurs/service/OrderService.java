@@ -11,6 +11,7 @@ import will.dev.artisan_des_saveurs.dto.order.OrderDTO;
 import will.dev.artisan_des_saveurs.dto.order.ProductItemDTO;
 import will.dev.artisan_des_saveurs.entity.*;
 import will.dev.artisan_des_saveurs.repository.*;
+import will.dev.artisan_des_saveurs.security.UserDetailsImpl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,12 +38,12 @@ public class OrderService {
     public ResponseEntity<MessageRetourDto> sendOrder(OrderDTO orderDTO) {
         System.out.println("orderDTO ::: " + orderDTO.getItems());
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        //UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         MessageRetourDto messageRetourDto = new MessageRetourDto();
         String email;
 
-        if (userRepository.existsByEmail(orderDTO.getUser().getEmail())) {
+        if (userDetails.isEnabled()) { //userRepository.existsByEmail(orderDTO.getUser().getEmail()
             email = orderDTO.getUser().getEmail();
             System.out.println("email ::: " + email);
 

@@ -132,7 +132,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
     }
 
-    @Scheduled(cron = "0 */10 * * * *")
+    @Scheduled(cron = "0 */0.5 * * * *")
     public void removeUselessJwt(){
         log.info("Suppresion des users non abonnée a {} %s".formatted(Instant.now()));
         List<User> users = this.userRepository.findByEnabledFalse(false) ;
