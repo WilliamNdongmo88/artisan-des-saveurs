@@ -152,7 +152,7 @@ public class ProductService {
             // Si la nouvelle image a un temp null → c'est probablement l'ancienne image déjà enregistrée
             if (productToSend.getProductImage().getTemp() != null && productToSend.getProductImage().getId() != null) {
                 // On ne touche pas à l'image
-                System.out.println("✅ Aucune nouvelle image, conservation de l'ancienne.");
+                System.out.println("✅ Aucune nouvelle image.");
                 will.dev.artisan_des_saveurs.entity.Files imageInBd = filesRepository.findByTemp(productToSend.getProductImage().getTemp());
                 productInBd.setProductImage(imageInBd);
                 System.out.println("✅ Conservation de l'ancienne image.");
