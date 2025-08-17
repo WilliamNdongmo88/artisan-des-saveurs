@@ -75,7 +75,7 @@ public class DataInitializer {
                 new Product(
                         "Rouelle de Porc",
                         "Morceau généreux découpé dans la cuisse du porc, avec os et gras, idéal pour les cuissons longues. Sa chair moelleuse et savoureuse en fait un plat familial traditionnel apprécié.",
-                        new BigDecimal("583"),
+                        new BigDecimal("462"),
                         "cotes-travers",
                         "Île Maurice",
                         false,
