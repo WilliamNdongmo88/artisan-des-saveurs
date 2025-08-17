@@ -84,7 +84,7 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('MANAGER_DELETE')")
-    public ResponseEntity<MessageResponse> deleteProduct(@PathVariable Long id) throws IOException {
+    public ResponseEntity<MessageResponse> deleteProduct(@PathVariable Long id) {
         boolean deleted = productService.deleteProduct(id);
         if (deleted) {
             return ResponseEntity.ok(new MessageResponse("Produit supprimé avec succès"));

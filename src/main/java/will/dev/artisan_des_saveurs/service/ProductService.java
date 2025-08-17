@@ -170,21 +170,26 @@ public class ProductService {
     }
 
     //Delete
-    public boolean deleteProduct(Long id) throws IOException {
-        if (productRepository.existsById(id)) {
-            will.dev.artisan_des_saveurs.entity.Files oldMainImage = (will.dev.artisan_des_saveurs.entity.Files) filesRepository.findByProductId(id);
-            System.out.println("oldMainImage before:: "+ oldMainImage);
-            if (oldMainImage != null) {
-                oldMainImage.setTemp("");
-                filesRepository.save(oldMainImage);
-                System.out.println("oldMainImage after:: "+ oldMainImage);
-                Optional<Product> productInBd = productRepository.findById(id);
-                fileStorageService.deleteFromDisk(productInBd.get().getProductImage());
+    @Transactional
+    public boolean deleteProduct(Long id) {
+        return productRepository.findById(id).map(product -> {
+
+            // ✅ Supprimer image principale
+            will.dev.artisan_des_saveurs.entity.Files mainImage = product.getProductImage();
+            if (mainImage != null) {
+                try {
+                    fileStorageService.deleteFromDisk(mainImage); // chemin du fichier
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                filesRepository.delete(mainImage);
             }
-            productRepository.deleteById(id);
+
+            // ✅ Supprimer le produit
+            productRepository.delete(product);
             return true;
-        }
-        return false;
+
+        }).orElse(false);
     }
 
     public Optional<ProductResponse> toggleProductAvailability(Long id) {
