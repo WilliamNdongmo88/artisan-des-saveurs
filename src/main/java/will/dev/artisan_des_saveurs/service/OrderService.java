@@ -33,7 +33,6 @@ public class OrderService {
     private final ContactRequestRepository contactRequestRepository;
     private final VonageWhatsappNotificationService vonageWhatsappNotificationService;
 
-    //@Transient
     @Transactional
     public ResponseEntity<MessageRetourDto> sendOrder(OrderDTO orderDTO) {
         System.out.println("orderDTO ::: " + orderDTO.getItems());

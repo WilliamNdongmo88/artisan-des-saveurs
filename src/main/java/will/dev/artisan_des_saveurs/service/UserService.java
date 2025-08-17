@@ -1,5 +1,6 @@
 package will.dev.artisan_des_saveurs.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +34,7 @@ public class UserService {
     private final WhatsappNotification whatsappNotification;
     private final VonageWhatsappNotificationService vonageWhatsappNotificationService;
 
+    @Transactional
     public ResponseEntity<MessageRetourDto> createUser(UserDto userDto) {
         System.out.println("userDto ::: " + userDto);
         try{
