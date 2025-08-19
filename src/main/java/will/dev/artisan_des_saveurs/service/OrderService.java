@@ -298,6 +298,7 @@ public class OrderService {
     public ResponseEntity<?> getUserOrders(Long id) {
         try {
             List<ProductItem> productItems = productItemRepository.findByUserId(id);
+            List<OrdersResponse> ordersResponses = new ArrayList<>();
             OrdersResponse ordersResponse = new OrdersResponse();
             for (ProductItem productItem : productItems){
                 ordersResponse.setDiscount(productItem.getOrder().getDiscount());
@@ -306,9 +307,10 @@ public class OrderService {
                 ordersResponse.setTotal(productItem.getOrder().getTotal());
                 ordersResponse.setUserid(productItem.getUserId());
                 ordersResponse.setProduct(productMapper.toDTO(productItem.getProduct()));
+                ordersResponses.add(ordersResponse);
             }
-            System.out.println("ordersResponse ::: " + ordersResponse);
-            return ResponseEntity.ok(ordersResponse);
+            System.out.println("ordersResponses ::: " + ordersResponses);
+            return ResponseEntity.ok(ordersResponses);
         } catch (RuntimeException e) {
             throw new RuntimeException("Erreur lors de la récupération des commandes" + e);
         }
