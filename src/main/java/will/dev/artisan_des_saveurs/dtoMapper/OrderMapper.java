@@ -1,5 +1,6 @@
 package will.dev.artisan_des_saveurs.dtoMapper;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import will.dev.artisan_des_saveurs.dto.order.OrderDTO;
 import will.dev.artisan_des_saveurs.entity.Order;
@@ -9,9 +10,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class OrderMapper {
+    private final ProductItemMapper productItemMapper;
 
-    public static OrderDTO toDTO(Order order) {
+    public OrderDTO toDTO(Order order) {
         if (order == null) return null;
 
         OrderDTO dto = new OrderDTO();
@@ -24,14 +27,14 @@ public class OrderMapper {
 
         if (order.getItems() != null) {
             dto.setItems(order.getItems().stream()
-                    .map(ProductItemMapper::toDTO)
+                    .map(productItemMapper::toDTO)
                     .collect(Collectors.toList()));
         }
 
         return dto;
     }
 
-    public static Order toEntity(OrderDTO dto) {
+    public Order toEntity(OrderDTO dto) {
         if (dto == null) return null;
 
         Order order = new Order();
@@ -44,7 +47,7 @@ public class OrderMapper {
 
         if (dto.getItems() != null) {
             List<ProductItem> items = dto.getItems().stream()
-                    .map(ProductItemMapper::toEntity)
+                    .map(productItemMapper::toEntity)
                     .peek(item -> item.setOrder(order)) // assigner la commande
                     .collect(Collectors.toList());
             order.setItems(items);

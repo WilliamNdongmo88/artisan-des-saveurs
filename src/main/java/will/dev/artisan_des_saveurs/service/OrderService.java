@@ -310,7 +310,7 @@ public class OrderService {
                 ordersResponse.setTotal(productItem.getOrder().getTotal());
                 ordersResponse.setUserid(productItem.getUserId());
                 System.out.println(" :: Before  :: ");
-                ordersResponse.setProductItem(ProductItemMapper.toDTO(productItem));
+                ordersResponse.setProductItem(productItemMapper.toDTO(productItem));
                 System.out.println(" :: After  :: ");
                 ordersResponses.add(ordersResponse);
                 System.out.println(" ::End for :: ");
@@ -319,7 +319,7 @@ public class OrderService {
             System.out.println("#### ordersResponses ::: " + ordersResponses);
             return ResponseEntity.ok(ordersResponses);
         } catch (RuntimeException e) {
-            throw new RuntimeException("Erreur lors de la récupération des commandes" + e);
+            throw new RuntimeException("Erreur lors de la récupération des commandes:: " + e);
         }
     }
 }
