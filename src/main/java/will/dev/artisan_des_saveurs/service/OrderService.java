@@ -11,6 +11,7 @@ import will.dev.artisan_des_saveurs.dto.order.OrderDTO;
 import will.dev.artisan_des_saveurs.dto.order.OrdersResponse;
 import will.dev.artisan_des_saveurs.dto.order.ProductDTO;
 import will.dev.artisan_des_saveurs.dto.order.ProductItemDTO;
+import will.dev.artisan_des_saveurs.dtoMapper.ProductItemMapper;
 import will.dev.artisan_des_saveurs.dtoMapper.ProductMapper;
 import will.dev.artisan_des_saveurs.entity.*;
 import will.dev.artisan_des_saveurs.repository.*;
@@ -27,7 +28,7 @@ public class OrderService {
     public static final String MESSAGE = "Votre commande a été envoyé avec succès !";
     @Value("${app.company.whatsapp.number:+23059221613}")
     private String company_number;
-    private final ProductMapper productMapper;
+    private final ProductItemMapper productItemMapper;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
     private final OrderRepository orderRepository;
@@ -307,7 +308,7 @@ public class OrderService {
                 ordersResponse.setFreeShipping(productItem.getOrder().isFreeShipping());
                 ordersResponse.setTotal(productItem.getOrder().getTotal());
                 ordersResponse.setUserid(productItem.getUserId());
-                ordersResponse.setProduct(productMapper.toDTO(productItem.getProduct()));
+                ordersResponse.setProductItem(ProductItemMapper.toDTO(productItem));
                 ordersResponses.add(ordersResponse);
             }
             System.out.println("productItems ::: " + productItems);

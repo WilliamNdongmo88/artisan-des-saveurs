@@ -11,5 +11,5 @@ public class OrdersResponse {
     private double total;
     private boolean freeShipping;
     private Long userid;
-    private ProductDTO product;
+    private ProductItemDTO productItem;
 }
