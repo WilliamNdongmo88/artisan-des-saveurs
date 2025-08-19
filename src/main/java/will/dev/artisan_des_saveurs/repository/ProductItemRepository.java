@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface ProductItemRepository extends JpaRepository<ProductItem, Long> {
 
-//    @Query("SELECT p FROM ProductItem p WHERE p.userid =:id")
-//    List<ProductItem> findByUserid(Long id);
+    @Query("SELECT p FROM ProductItem p WHERE p.user_id =:id")
+    List<ProductItem> findByUserId(Long id);
 }

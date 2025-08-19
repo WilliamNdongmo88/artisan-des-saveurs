@@ -25,4 +25,9 @@ public class OrderController {
     public ResponseEntity<MessageRetourDto> createUser(@RequestBody OrderDTO orderDTO) {
         return this.orderService.sendOrder(orderDTO);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserOrders(@PathVariable Long id){
+        return this.orderService.getUserOrders(id);
+    }
 }

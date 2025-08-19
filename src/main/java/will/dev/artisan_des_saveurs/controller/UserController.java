@@ -39,6 +39,12 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("personal-info")
+    public ResponseEntity<MessageRetourDto> updateUser(@RequestBody @Valid UserDto userDto){
+        System.out.println("📦 Requête reçue pour modifier un utilisateur : " + userDto.getEmail());
+        return this.userService.updateUser(userDto);
+    }
+
     // GET /users
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {

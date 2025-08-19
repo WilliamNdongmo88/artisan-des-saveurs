@@ -1,6 +1,7 @@
 package will.dev.artisan_des_saveurs.service;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -143,6 +144,23 @@ public class UserService {
             log.info("{} Users non abonnée supprimés.", users.size());
         } else {
             log.info("Aucun users à supprimer.");
+        }
+    }
+
+    public ResponseEntity<MessageRetourDto> updateUser(@Valid UserDto userDto) {
+        try {
+            User userConnected = this.userRepository.findByEmailFromConnectedUser(userDto.getEmail());
+            userConnected.setFirstName(userDto.getFirstName());
+            userConnected.setLastName(userDto.getLastName());
+            userConnected.setEmail(userDto.getEmail());
+            userConnected.setPhone(userDto.getPhone());
+            this.userRepository.save(userConnected);
+            MessageRetourDto messageRetourDto = new MessageRetourDto();
+            messageRetourDto.setSuccess(true);
+            messageRetourDto.setMessage("Information personnelles mis a jour avec succès");
+            return ResponseEntity.ok(messageRetourDto);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Erreur lors de la mise a jour des infos personnelles" + e);
         }
     }
 }

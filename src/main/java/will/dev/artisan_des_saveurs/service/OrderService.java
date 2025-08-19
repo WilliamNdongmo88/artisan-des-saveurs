@@ -8,7 +8,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import will.dev.artisan_des_saveurs.dto.MessageRetourDto;
 import will.dev.artisan_des_saveurs.dto.order.OrderDTO;
+import will.dev.artisan_des_saveurs.dto.order.OrdersResponse;
+import will.dev.artisan_des_saveurs.dto.order.ProductDTO;
 import will.dev.artisan_des_saveurs.dto.order.ProductItemDTO;
+import will.dev.artisan_des_saveurs.dtoMapper.ProductMapper;
 import will.dev.artisan_des_saveurs.entity.*;
 import will.dev.artisan_des_saveurs.repository.*;
 import will.dev.artisan_des_saveurs.security.UserDetailsImpl;
@@ -24,6 +27,7 @@ public class OrderService {
     public static final String MESSAGE = "Votre commande a été envoyé avec succès !";
     @Value("${app.company.whatsapp.number:+23059221613}")
     private String company_number;
+    private final ProductMapper productMapper;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
     private final OrderRepository orderRepository;
@@ -278,6 +282,7 @@ public class OrderService {
                 productItem.setProduct(product);
                 productItem.setQuantity(pro.getQuantity());
                 productItem.setOrder(savedOrder);
+                productItem.setUserId(savedOrder.getUser().getId());
                 productItems.add(productItem);
             } else {
                 System.out.println("❌ Aucun produit trouvé en base pour l’ID : " + pro.getId());
@@ -289,4 +294,22 @@ public class OrderService {
 
     }
 
+    public ResponseEntity<?> getUserOrders(Long id) {
+        try {
+            List<ProductItem> productItems = productItemRepository.findByUserId(id);
+            OrdersResponse ordersResponse = new OrdersResponse();
+            for (ProductItem productItem : productItems){
+                ordersResponse.setDiscount(productItem.getOrder().getDiscount());
+                ordersResponse.setSubtotal(productItem.getOrder().getSubtotal());
+                ordersResponse.setFreeShipping(productItem.getOrder().isFreeShipping());
+                ordersResponse.setTotal(productItem.getOrder().getTotal());
+                ordersResponse.setUserid(productItem.getUserId());
+                ordersResponse.setProduct(productMapper.toDTO(productItem.getProduct()));
+            }
+            System.out.println("ordersResponse ::: " + ordersResponse);
+            return ResponseEntity.ok(ordersResponse);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Erreur lors de la récupération des commandes" + e);
+        }
+    }
 }
