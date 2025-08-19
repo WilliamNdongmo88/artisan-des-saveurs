@@ -303,13 +303,17 @@ public class OrderService {
             List<OrdersResponse> ordersResponses = new ArrayList<>();
             OrdersResponse ordersResponse = new OrdersResponse();
             for (ProductItem productItem : productItems){
+                System.out.println(" ::Debut for :: ");
                 ordersResponse.setDiscount(productItem.getOrder().getDiscount());
                 ordersResponse.setSubtotal(productItem.getOrder().getSubtotal());
                 ordersResponse.setFreeShipping(productItem.getOrder().isFreeShipping());
                 ordersResponse.setTotal(productItem.getOrder().getTotal());
                 ordersResponse.setUserid(productItem.getUserId());
+                System.out.println(" :: Before  :: ");
                 ordersResponse.setProductItem(ProductItemMapper.toDTO(productItem));
+                System.out.println(" :: After  :: ");
                 ordersResponses.add(ordersResponse);
+                System.out.println(" ::End for :: ");
             }
             System.out.println("#### productItems ::: " + productItems);
             System.out.println("#### ordersResponses ::: " + ordersResponses);

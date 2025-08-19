@@ -23,6 +23,7 @@ public class ProductItemMapper {
     private final FileDTOMapper fileDTOMapper;
 
     public static ProductItemDTO toDTO(ProductItem item) {
+        System.out.println("item in productItemdto ::: " + item);
         if (item == null) return null;
 
         ProductItemDTO dto = new ProductItemDTO();
