@@ -311,8 +311,8 @@ public class OrderService {
                 ordersResponse.setProductItem(ProductItemMapper.toDTO(productItem));
                 ordersResponses.add(ordersResponse);
             }
-            System.out.println("productItems ::: " + productItems);
-            System.out.println("ordersResponses ::: " + ordersResponses);
+            System.out.println("#### productItems ::: " + productItems);
+            System.out.println("#### ordersResponses ::: " + ordersResponses);
             return ResponseEntity.ok(ordersResponses);
         } catch (RuntimeException e) {
             throw new RuntimeException("Erreur lors de la récupération des commandes" + e);
