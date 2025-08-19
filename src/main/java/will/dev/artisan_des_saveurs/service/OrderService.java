@@ -301,9 +301,9 @@ public class OrderService {
             List<ProductItem> productItems = productItemRepository.findByUserId(id);
             System.out.println("productItems ::: " + productItems);
             List<OrdersResponse> ordersResponses = new ArrayList<>();
-            OrdersResponse ordersResponse = new OrdersResponse();
             for (ProductItem productItem : productItems){
                 System.out.println(" ::Debut for :: ");
+                OrdersResponse ordersResponse = new OrdersResponse();
                 ordersResponse.setDiscount(productItem.getOrder().getDiscount());
                 ordersResponse.setSubtotal(productItem.getOrder().getSubtotal());
                 ordersResponse.setFreeShipping(productItem.getOrder().isFreeShipping());
