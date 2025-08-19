@@ -11,11 +11,50 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 
+//@Component
+//public class FileDTOMapper {
+//
+//    @Value("${application.files.base-path}")
+//    private String basePath;
+//
+//    public FileDTO map(will.dev.artisan_des_saveurs.entity.Files file) {
+//        FileDTO dto = new FileDTO();
+//        dto.setId(file.getId());
+//        dto.setName(file.getName());
+//        dto.setTemp(file.getTemp());
+//
+//        if (file.getTemp() != null) {
+//            try {
+//                Path path = Paths.get(basePath, file.getTemp());
+//                if (Files.exists(path)) {
+//                    byte[] bytes = Files.readAllBytes(path);
+//                    String base64 = Base64.getEncoder().encodeToString(bytes);
+//                    String extension = FilenameUtils.getExtension(file.getName());
+//                    dto.setContent("data:image/" + extension + ";base64," + base64);
+//                } else {
+//                    dto.setContent(null);
+//                }
+//            } catch (IOException e) {
+//                dto.setContent(null);
+//            }
+//        }
+//
+//        return dto;
+//    }
+//
+//    public will.dev.artisan_des_saveurs.entity.Files mapFileDtoToEntity(FileDTO dto) {
+//        will.dev.artisan_des_saveurs.entity.Files file = new will.dev.artisan_des_saveurs.entity.Files();
+//        file.setName(dto.getName());
+//        file.setContent(dto.getContent());
+//        return file;
+//    }
+//}
+
 @Component
 public class FileDTOMapper {
 
-    @Value("${application.files.base-path}")
-    private String basePath;
+    @Value("${application.files.public-url}") // exemple : https://cdn.monsite.com/uploads
+    private String publicUrl;
 
     public FileDTO map(will.dev.artisan_des_saveurs.entity.Files file) {
         FileDTO dto = new FileDTO();
@@ -24,19 +63,8 @@ public class FileDTOMapper {
         dto.setTemp(file.getTemp());
 
         if (file.getTemp() != null) {
-            try {
-                Path path = Paths.get(basePath, file.getTemp());
-                if (Files.exists(path)) {
-                    byte[] bytes = Files.readAllBytes(path);
-                    String base64 = Base64.getEncoder().encodeToString(bytes);
-                    String extension = FilenameUtils.getExtension(file.getName());
-                    dto.setContent("data:image/" + extension + ";base64," + base64);
-                } else {
-                    dto.setContent(null);
-                }
-            } catch (IOException e) {
-                dto.setContent(null);
-            }
+            // Génère une URL publique vers le fichier Nginx
+            dto.setContent(publicUrl + "/" + file.getTemp());
         }
 
         return dto;
@@ -45,8 +73,8 @@ public class FileDTOMapper {
     public will.dev.artisan_des_saveurs.entity.Files mapFileDtoToEntity(FileDTO dto) {
         will.dev.artisan_des_saveurs.entity.Files file = new will.dev.artisan_des_saveurs.entity.Files();
         file.setName(dto.getName());
-        file.setContent(dto.getContent());
+        file.setTemp(dto.getTemp());
+        // ⚠️ ne mets pas le content en DB, garde uniquement le chemin/filename
         return file;
     }
 }
-
