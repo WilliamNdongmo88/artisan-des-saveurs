@@ -310,6 +310,7 @@ public class OrderService {
                 ordersResponse.setProduct(productMapper.toDTO(productItem.getProduct()));
                 ordersResponses.add(ordersResponse);
             }
+            System.out.println("productItems ::: " + productItems);
             System.out.println("ordersResponses ::: " + ordersResponses);
             return ResponseEntity.ok(ordersResponses);
         } catch (RuntimeException e) {
