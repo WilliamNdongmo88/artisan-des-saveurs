@@ -20,7 +20,7 @@ public class ProductItem {
     @ToString.Exclude
     private Order order;
 
-    @JoinColumn(name = "user_id")
+    @Column(name = "user_id")
     private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
