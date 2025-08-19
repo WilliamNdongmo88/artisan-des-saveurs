@@ -294,6 +294,7 @@ public class OrderService {
 
     }
 
+    @Transactional
     public ResponseEntity<?> getUserOrders(Long id) {
         try {
             List<ProductItem> productItems = productItemRepository.findByUserId(id);
