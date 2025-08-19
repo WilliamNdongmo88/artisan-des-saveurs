@@ -1,15 +1,26 @@
 package will.dev.artisan_des_saveurs.dtoMapper;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import will.dev.artisan_des_saveurs.dto.order.ProductDTO;
 import will.dev.artisan_des_saveurs.dto.order.ProductItemDTO;
+import will.dev.artisan_des_saveurs.dto.req_resp.dto.FileDTO;
 import will.dev.artisan_des_saveurs.entity.ProductItem;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
 
 @Component
 @RequiredArgsConstructor
 public class ProductItemMapper {
-    private static final FileDTOMapper fileDTOMapper = new FileDTOMapper();
+    @Value("${application.files.base-path}")
+    private static String basePath;
+    private final FileDTOMapper fileDTOMapper;
 
     public static ProductItemDTO toDTO(ProductItem item) {
         if (item == null) return null;
@@ -27,7 +38,27 @@ public class ProductItemMapper {
         productDto.setCategory(item.getProduct().getCategory());
 
         if (item.getProduct().getProductImage() != null) {
-            productDto.setMainImage(fileDTOMapper.map(item.getProduct().getProductImage()));
+            will.dev.artisan_des_saveurs.entity.Files file = item.getProduct().getProductImage();
+            FileDTO fileDto = new FileDTO();
+            fileDto.setId(file.getId());
+            fileDto.setName(file.getName());
+            fileDto.setTemp(file.getTemp());
+
+            if (file.getTemp() != null) {
+                try {
+                    Path path = Paths.get(basePath, file.getTemp());
+                    if (Files.exists(path)) {
+                        byte[] bytes = Files.readAllBytes(path);
+                        String base64 = Base64.getEncoder().encodeToString(bytes);
+                        String extension = FilenameUtils.getExtension(file.getName());
+                        fileDto.setContent("data:image/" + extension + ";base64," + base64);
+                    } else {
+                        fileDto.setContent(null);
+                    }
+                } catch (IOException e) {
+                    fileDto.setContent(null);
+                }
+            }
         }
 
         productDto.setAvailable(item.getProduct().isAvailable());
@@ -40,6 +71,7 @@ public class ProductItemMapper {
         dto.setProduct(productDto);
         return dto;
     }
+
 
     public static ProductItem toEntity(ProductItemDTO dto) {
         if (dto == null) return null;
