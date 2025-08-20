@@ -52,7 +52,7 @@ public class ProductController {
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
             // Construit l’URL publique qui sera servie par Nginx
-            String publicUrl = "https://artisan-des-saveurs-production.up.railway.app/uploads/api/" + uniqueFileName;
+            String publicUrl = "https://artisan-des-saveurs-production.up.railway.app/api/uploads/" + uniqueFileName;
 
             // Retourne les infos au frontend
             FileDTO dto = new FileDTO();
