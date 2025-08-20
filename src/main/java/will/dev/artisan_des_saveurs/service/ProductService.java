@@ -1,16 +1,10 @@
 package will.dev.artisan_des_saveurs.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import will.dev.artisan_des_saveurs.dto.order.ProductDTO;
-import will.dev.artisan_des_saveurs.dto.req_resp.dto.FileDTO;
-import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductRequest;
 import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductResponse;
 import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductToSend;
 import will.dev.artisan_des_saveurs.dtoMapper.FileDTOMapper;
@@ -19,12 +13,7 @@ import will.dev.artisan_des_saveurs.entity.Product;
 import will.dev.artisan_des_saveurs.repository.FilesRepository;
 import will.dev.artisan_des_saveurs.repository.ProductRepository;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -88,91 +77,125 @@ public class ProductService {
     }
 
     //Create
+//    @Transactional(rollbackFor = Exception.class)
+//    public ProductResponse createProduct(ProductToSend productToSend) {
+//        Product product = new Product();
+//        Product savedProduct;
+//        try {
+//            product.setName(productToSend.getProductRequest().getName());
+//            product.setDescription(productToSend.getProductRequest().getDescription());
+//            product.setPrice(productToSend.getProductRequest().getPrice());
+//            product.setCategory(productToSend.getProductRequest().getCategory());
+//            product.setAvailable(productToSend.getProductRequest().isAvailable());
+//            product.setStockQuantity(productToSend.getProductRequest().getStockQuantity());
+//            product.setUnit(productToSend.getProductRequest().getUnit());
+//            product.setFeatured(productToSend.getProductRequest().isFeatured());
+//            product.setOrigin(productToSend.getProductRequest().getOrigin());
+//            product.setPreparation(productToSend.getProductRequest().getPreparation());
+//            savedProduct = productRepository.save(product);
+//
+//            // Traitement de l’image principale
+//            will.dev.artisan_des_saveurs.entity.Files imagePrincipale = fileDTOMapper.mapFileDtoToEntity(productToSend.getProductImage());
+//            System.out.println("imagePrincipale :: "+ imagePrincipale);
+//            if (imagePrincipale != null && imagePrincipale.getName() != null && imagePrincipale.getTemp() == null) {
+//            String extension = FilenameUtils.getExtension(imagePrincipale.getName());
+//            String temp = System.currentTimeMillis() + "." + extension;
+//            imagePrincipale.setTemp(temp);
+//            imagePrincipale.setProduct(savedProduct);
+//            product.setProductImage(imagePrincipale);
+//                fileStorageService.writeOnDisk(imagePrincipale);
+//        }else {
+//            throw new RuntimeException("Image principale manquante ou invalide");
+//        }
+//        } catch (IOException e) {
+//            throw new RuntimeException("Erreur lors de la creation" + e);
+//        }
+//        ProductResponse productResponse = new ProductResponse(savedProduct);
+//        System.out.println("productResponse :: "+ productResponse);
+//        return productResponse;
+//    }
+    //Create
     @Transactional(rollbackFor = Exception.class)
     public ProductResponse createProduct(ProductToSend productToSend) {
-        Product product = new Product();
-        Product savedProduct;
-        try {
-            product.setName(productToSend.getProductRequest().getName());
-            product.setDescription(productToSend.getProductRequest().getDescription());
-            product.setPrice(productToSend.getProductRequest().getPrice());
-            product.setCategory(productToSend.getProductRequest().getCategory());
-            product.setAvailable(productToSend.getProductRequest().isAvailable());
-            product.setStockQuantity(productToSend.getProductRequest().getStockQuantity());
-            product.setUnit(productToSend.getProductRequest().getUnit());
-            product.setFeatured(productToSend.getProductRequest().isFeatured());
-            product.setOrigin(productToSend.getProductRequest().getOrigin());
-            product.setPreparation(productToSend.getProductRequest().getPreparation());
-            savedProduct = productRepository.save(product);
-
-            // Traitement de l’image principale
-            will.dev.artisan_des_saveurs.entity.Files imagePrincipale = fileDTOMapper.mapFileDtoToEntity(productToSend.getProductImage());
-            System.out.println("imagePrincipale :: "+ imagePrincipale);
-            if (imagePrincipale != null && imagePrincipale.getName() != null && imagePrincipale.getTemp() == null) {
-            String extension = FilenameUtils.getExtension(imagePrincipale.getName());
-            String temp = System.currentTimeMillis() + "." + extension;
-            imagePrincipale.setTemp(temp);
-            imagePrincipale.setProduct(savedProduct);
-            product.setProductImage(imagePrincipale);
-                fileStorageService.writeOnDisk(imagePrincipale);
-        }else {
-            throw new RuntimeException("Image principale manquante ou invalide");
-        }
-        } catch (IOException e) {
-            throw new RuntimeException("Erreur lors de la creation" + e);
-        }
-        ProductResponse productResponse = new ProductResponse(savedProduct);
-        System.out.println("productResponse :: "+ productResponse);
-        return productResponse;
+        Product product = productMapper.toEntity(productToSend.getProductDto());
+        productRepository.save(product);
+        return productMapper.toDTO(product);
     }
 
     //Update
+//    @Transactional(rollbackFor = Exception.class)
+//    public Optional<ProductResponse> updateProduct(Long id, ProductToSend productToSend) throws IOException {
+//        try {
+//            // Vérifier que le produit existe
+//            Product productInBd = productRepository.findById(id)
+//                    .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
+//
+//            // Mise à jour des champs simples
+//            productInBd.setName(productToSend.getProductRequest().getName());
+//            productInBd.setDescription(productToSend.getProductRequest().getDescription());
+//            productInBd.setPrice(productToSend.getProductRequest().getPrice());
+//            productInBd.setCategory(productToSend.getProductRequest().getCategory());
+//            productInBd.setAvailable(productToSend.getProductRequest().isAvailable());
+//            productInBd.setStockQuantity(productToSend.getProductRequest().getStockQuantity());
+//            productInBd.setUnit(productToSend.getProductRequest().getUnit());
+//            productInBd.setFeatured(productToSend.getProductRequest().isFeatured());
+//            productInBd.setOrigin(productToSend.getProductRequest().getOrigin());
+//            productInBd.setPreparation(productToSend.getProductRequest().getPreparation());
+//
+//            // 🔁 MAJ de l'image principale
+//            will.dev.artisan_des_saveurs.entity.Files oldMainImage = productInBd.getProductImage();
+//            if (oldMainImage != null) {
+//                filesRepository.delete(oldMainImage);
+//                fileStorageService.deleteFromDisk(productInBd.getProductImage());
+//            }
+//
+//            will.dev.artisan_des_saveurs.entity.Files newMainImage = fileDTOMapper.mapFileDtoToEntity(productToSend.getProductImage());
+//            if (newMainImage != null && newMainImage.getName() != null) {
+//                String ext = FilenameUtils.getExtension(newMainImage.getName());
+//                String temp = System.currentTimeMillis() + "." + ext;
+//                newMainImage.setTemp(temp);
+//                newMainImage.setProduct(productInBd);
+//
+//                will.dev.artisan_des_saveurs.entity.Files savedMainImage = filesRepository.save(newMainImage);
+//                fileStorageService.writeOnDisk(savedMainImage);
+//
+//                productInBd.setProductImage(savedMainImage);
+//            }
+//
+//            Product updatedProductInBd = productRepository.save(productInBd);
+//            return Optional.of(new ProductResponse(updatedProductInBd));
+//        } catch (RuntimeException e) {
+//            throw new RuntimeException("Erreur lors de la mise a jour" + e);
+//        }
+//    }
+
+    //Update
     @Transactional(rollbackFor = Exception.class)
-    public Optional<ProductResponse> updateProduct(Long id, ProductToSend productToSend) throws IOException {
-        try {
-            // Vérifier que le produit existe
-            Product productInBd = productRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
+    public Optional<ProductResponse> updateProduct(Long id, ProductToSend productToSend) {
+        Product existing = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produit introuvable"));
 
-            // Mise à jour des champs simples
-            productInBd.setName(productToSend.getProductRequest().getName());
-            productInBd.setDescription(productToSend.getProductRequest().getDescription());
-            productInBd.setPrice(productToSend.getProductRequest().getPrice());
-            productInBd.setCategory(productToSend.getProductRequest().getCategory());
-            productInBd.setAvailable(productToSend.getProductRequest().isAvailable());
-            productInBd.setStockQuantity(productToSend.getProductRequest().getStockQuantity());
-            productInBd.setUnit(productToSend.getProductRequest().getUnit());
-            productInBd.setFeatured(productToSend.getProductRequest().isFeatured());
-            productInBd.setOrigin(productToSend.getProductRequest().getOrigin());
-            productInBd.setPreparation(productToSend.getProductRequest().getPreparation());
+        existing.setName(productToSend.getProductDto().getName());
+        existing.setPrice(productToSend.getProductDto().getPrice());
+        existing.setDescription(productToSend.getProductDto().getDescription());
+        existing.setPreparation(productToSend.getProductDto().getPreparation());
+        existing.setCategory(productToSend.getProductDto().getCategory());
+        existing.setAvailable(productToSend.getProductDto().isAvailable());
+        existing.setOrigin(productToSend.getProductDto().getOrigin());
+        existing.setUnit(productToSend.getProductDto().getUnit());
+        existing.setStockQuantity(productToSend.getProductDto().getStockQuantity());
+        existing.setFeatured(productToSend.getProductDto().isFeatured());
 
-            // 🔁 MAJ de l'image principale
-            will.dev.artisan_des_saveurs.entity.Files oldMainImage = productInBd.getProductImage();
-            if (oldMainImage != null) {
-                filesRepository.delete(oldMainImage);
-                fileStorageService.deleteFromDisk(productInBd.getProductImage());
-            }
-
-            will.dev.artisan_des_saveurs.entity.Files newMainImage = fileDTOMapper.mapFileDtoToEntity(productToSend.getProductImage());
-            if (newMainImage != null && newMainImage.getName() != null) {
-                String ext = FilenameUtils.getExtension(newMainImage.getName());
-                String temp = System.currentTimeMillis() + "." + ext;
-                newMainImage.setTemp(temp);
-                newMainImage.setProduct(productInBd);
-
-                will.dev.artisan_des_saveurs.entity.Files savedMainImage = filesRepository.save(newMainImage);
-                fileStorageService.writeOnDisk(savedMainImage);
-
-                productInBd.setProductImage(savedMainImage);
-            }
-
-            Product updatedProductInBd = productRepository.save(productInBd);
-            return Optional.of(new ProductResponse(updatedProductInBd));
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Erreur lors de la mise a jour" + e);
+        if (productToSend.getProductDto().getMainImage() != null) {
+            // ⚠️ On remplace uniquement temp + name
+            existing.setProductImage(
+                    fileDTOMapper.mapFileDtoToEntity(productToSend.getProductDto().getMainImage())
+            );
         }
-    }
 
+        productRepository.save(existing);
+        return productMapper.toDTO(existing);
+    }
     //Delete
     @Transactional
     public boolean deleteProduct(Long id) {
