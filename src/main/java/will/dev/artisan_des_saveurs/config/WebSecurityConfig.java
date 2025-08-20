@@ -111,16 +111,21 @@ public class WebSecurityConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/users/**")
+                registry.addMapping("/api/**")
                         .allowedOrigins("https://artisan-des-saveurs.vercel.app") // domaine de ton front
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
-                registry.addMapping("/orders/**")
-                        .allowedOrigins("https://artisan-des-saveurs.vercel.app") // domaine de ton front
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
+//                registry.addMapping("/orders/**")
+//                        .allowedOrigins("https://artisan-des-saveurs.vercel.app") // domaine de ton front
+//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+//                        .allowedHeaders("*")
+//                        .allowCredentials(true);
+//                registry.addMapping("/orders/**")
+//                        .allowedOrigins("https://artisan-des-saveurs.vercel.app") // domaine de ton front
+//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+//                        .allowedHeaders("*")
+//                        .allowCredentials(true);
             }
         };
     }
