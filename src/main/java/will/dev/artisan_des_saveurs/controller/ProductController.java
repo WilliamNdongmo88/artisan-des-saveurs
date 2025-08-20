@@ -3,12 +3,14 @@ package will.dev.artisan_des_saveurs.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import will.dev.artisan_des_saveurs.dto.order.ProductDTO;
 import will.dev.artisan_des_saveurs.dto.req_resp.dto.*;
+import will.dev.artisan_des_saveurs.service.FileService;
 import will.dev.artisan_des_saveurs.service.FileStorageService;
 import will.dev.artisan_des_saveurs.service.ProductService;
 
@@ -24,13 +26,19 @@ public class ProductController {
 
     private final ProductService productService;
 
-    private final FileStorageService fileStorageService;
+    private final FileService fileService;
 
     @PostMapping("/files-upload")
     public ResponseEntity<FileDTO> uploadFile(@RequestParam("file") MultipartFile file) {
-        FileDTO dto = fileStorageService.storeFile(file);
-        return ResponseEntity.ok(dto);
+        try {
+            FileDTO dto = fileService.save(file);
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(null);
+        }
     }
+
 
     @GetMapping
     public ResponseEntity<List<ProductResponse>> getAllProducts() {

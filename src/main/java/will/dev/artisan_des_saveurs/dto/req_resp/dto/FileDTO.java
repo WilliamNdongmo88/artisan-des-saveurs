@@ -8,6 +8,7 @@ public class FileDTO {
     private String name;
     private String temp;
     private String content;
-
+    private String fileName;
+    private String filePath; // URL publique nginx
     // getters, setters
 }

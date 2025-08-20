@@ -21,9 +21,11 @@ public class Files {
     private Long id;
     private String name;
     private String temp;
-
     @Transient
     private String content;
+
+    private String fileName;
+    private String filePath; // URL publique nginx
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id") // clé étrangère vers Product

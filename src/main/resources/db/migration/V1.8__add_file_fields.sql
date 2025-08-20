@@ -1,0 +1,5 @@
+ALTER TABLE files
+ADD COLUMN file_name VARCHAR(255);
+
+ALTER TABLE files
+ADD COLUMN file_path VARCHAR(500);
