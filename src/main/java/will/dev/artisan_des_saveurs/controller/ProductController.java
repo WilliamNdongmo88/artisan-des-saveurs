@@ -19,10 +19,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/products")
+@CrossOrigin(origins = "https://artisan-des-saveurs.vercel.app") // autorise Vercel
 public class ProductController {
 
     private final ProductService productService;
