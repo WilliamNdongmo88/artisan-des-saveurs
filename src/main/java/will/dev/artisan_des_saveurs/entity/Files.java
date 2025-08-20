@@ -22,8 +22,8 @@ public class Files {
     private String name;
     private String temp;
 
-//    @Transient
-//    private String content;
+    @Transient
+    private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id") // clé étrangère vers Product
