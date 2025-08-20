@@ -111,21 +111,21 @@ public class WebSecurityConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")
+                registry.addMapping("/users/**")
                         .allowedOrigins("https://artisan-des-saveurs.vercel.app") // domaine de ton front
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
-//                registry.addMapping("/orders/**")
-//                        .allowedOrigins("https://artisan-des-saveurs.vercel.app") // domaine de ton front
-//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-//                        .allowedHeaders("*")
-//                        .allowCredentials(true);
-//                registry.addMapping("/orders/**")
-//                        .allowedOrigins("https://artisan-des-saveurs.vercel.app") // domaine de ton front
-//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-//                        .allowedHeaders("*")
-//                        .allowCredentials(true);
+                registry.addMapping("/orders/**")
+                        .allowedOrigins("https://artisan-des-saveurs.vercel.app") // domaine de ton front
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
+                registry.addMapping("/products/**")
+                        .allowedOrigins("https://artisan-des-saveurs.vercel.app") // domaine de ton front
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }
