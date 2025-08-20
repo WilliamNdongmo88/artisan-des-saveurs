@@ -10,5 +10,14 @@ public class FileDTO {
     private String content;
     private String fileName;
     private String filePath; // URL publique nginx
+
+    public FileDTO() {
+    }
+
+    public FileDTO(Long id, String fileName, String filePath) {
+        this.id = id;
+        this.fileName = fileName;
+        this.filePath = filePath;
+    }
     // getters, setters
 }

@@ -16,29 +16,68 @@ import will.dev.artisan_des_saveurs.service.FileStorageService;
 import will.dev.artisan_des_saveurs.service.ProductService;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/products")
-@CrossOrigin(origins = "https://artisan-des-saveurs.vercel.app") // autorise Vercel
 public class ProductController {
 
     private final ProductService productService;
 
     private final FileService fileService;
 
-    @PostMapping(value = "/files-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    private static final String UPLOAD_DIR = "/app/uploads/";
+
+    @PostMapping("/files-upload")
     public ResponseEntity<FileDTO> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            FileDTO dto = fileService.save(file);
+            // Vérifie que le dossier existe, sinon crée-le
+            Path uploadPath = Paths.get(UPLOAD_DIR);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // Génère un nom unique
+            String uniqueFileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
+
+            // Sauvegarde le fichier sur disque
+            Path filePath = uploadPath.resolve(uniqueFileName);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // Construit l’URL publique qui sera servie par Nginx
+            String publicUrl = "https://artisan-des-saveurs-production.up.railway.app/uploads/" + uniqueFileName;
+
+            // Retourne les infos au frontend
+            FileDTO dto = new FileDTO();
+            dto.setFileName(uniqueFileName);
+            dto.setFilePath(publicUrl);
+            dto.setTemp("ok"); // champ libre si tu veux marquer l’état
+
             return ResponseEntity.ok(dto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(null);
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new FileDTO(null, null, null));
         }
     }
+
+//    @PostMapping(value = "/files-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<FileDTO> uploadFile(@RequestParam("file") MultipartFile file) {
+//        try {
+//            FileDTO dto = fileService.save(file);
+//            return ResponseEntity.ok(dto);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(null);
+//        }
+//    }
 
 
     @GetMapping
