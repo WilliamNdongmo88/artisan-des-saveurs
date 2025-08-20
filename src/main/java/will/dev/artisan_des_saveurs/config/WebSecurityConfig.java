@@ -52,7 +52,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/actuator/health").permitAll()
 
                                 // Autoriser accès libre aux fichiers
-                                .requestMatchers("/app/uploads/**").permitAll()
+                                .requestMatchers("/api/uploads/**").permitAll()
 
                                 //définition des autres règles de sécurité
                                 .requestMatchers("/api/auth/**").permitAll() // Ex: routes pour s'inscrire/se connecter
