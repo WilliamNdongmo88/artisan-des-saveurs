@@ -7,6 +7,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import jakarta.annotation.PostConstruct;
+import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.io.FileWriter;
+
 @SpringBootApplication
 @EnableScheduling
 public class ArtisanDesSaveursApplication {
@@ -32,6 +38,21 @@ public class ArtisanDesSaveursApplication {
 //		Dotenv dotenv = Dotenv.load();
 		dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
 		SpringApplication.run(ArtisanDesSaveursApplication.class, args);
+	}
+
+	@PostConstruct
+	public void init() throws Exception {
+		File dir = new File("/app/uploads/");
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+
+		File testFile = new File(dir, "test.txt");
+		if (!testFile.exists()) {
+			try (FileWriter writer = new FileWriter(testFile)) {
+				writer.write("Hello depuis Railway !");
+			}
+		}
 	}
 
 	@PostConstruct
