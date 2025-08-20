@@ -1,10 +1,16 @@
 package will.dev.artisan_des_saveurs.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import will.dev.artisan_des_saveurs.dto.order.ProductDTO;
+import will.dev.artisan_des_saveurs.dto.req_resp.dto.FileDTO;
+import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductRequest;
 import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductResponse;
 import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductToSend;
 import will.dev.artisan_des_saveurs.dtoMapper.FileDTOMapper;
@@ -13,7 +19,12 @@ import will.dev.artisan_des_saveurs.entity.Product;
 import will.dev.artisan_des_saveurs.repository.FilesRepository;
 import will.dev.artisan_des_saveurs.repository.ProductRepository;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -114,10 +125,9 @@ public class ProductService {
 //        System.out.println("productResponse :: "+ productResponse);
 //        return productResponse;
 //    }
-    //Create
-    @Transactional(rollbackFor = Exception.class)
-    public ProductResponse createProduct(ProductToSend productToSend) {
-        Product product = productMapper.toEntity(productToSend.getProductDto());
+
+    public ProductDTO createProduct(ProductDTO dto) {
+        Product product = productMapper.toEntity(dto);
         productRepository.save(product);
         return productMapper.toDTO(product);
     }
@@ -171,31 +181,32 @@ public class ProductService {
 
     //Update
     @Transactional(rollbackFor = Exception.class)
-    public Optional<ProductResponse> updateProduct(Long id, ProductToSend productToSend) {
+    public ProductDTO updateProduct(Long id, ProductDTO dto) {
         Product existing = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produit introuvable"));
 
-        existing.setName(productToSend.getProductDto().getName());
-        existing.setPrice(productToSend.getProductDto().getPrice());
-        existing.setDescription(productToSend.getProductDto().getDescription());
-        existing.setPreparation(productToSend.getProductDto().getPreparation());
-        existing.setCategory(productToSend.getProductDto().getCategory());
-        existing.setAvailable(productToSend.getProductDto().isAvailable());
-        existing.setOrigin(productToSend.getProductDto().getOrigin());
-        existing.setUnit(productToSend.getProductDto().getUnit());
-        existing.setStockQuantity(productToSend.getProductDto().getStockQuantity());
-        existing.setFeatured(productToSend.getProductDto().isFeatured());
+        existing.setName(dto.getName());
+        existing.setPrice(dto.getPrice());
+        existing.setDescription(dto.getDescription());
+        existing.setPreparation(dto.getPreparation());
+        existing.setCategory(dto.getCategory());
+        existing.setAvailable(dto.isAvailable());
+        existing.setOrigin(dto.getOrigin());
+        existing.setUnit(dto.getUnit());
+        existing.setStockQuantity(dto.getStockQuantity());
+        existing.setFeatured(dto.isFeatured());
 
-        if (productToSend.getProductDto().getMainImage() != null) {
+        if (dto.getMainImage() != null) {
             // ⚠️ On remplace uniquement temp + name
             existing.setProductImage(
-                    fileDTOMapper.mapFileDtoToEntity(productToSend.getProductDto().getMainImage())
+                    fileDTOMapper.mapFileDtoToEntity(dto.getMainImage())
             );
         }
 
         productRepository.save(existing);
         return productMapper.toDTO(existing);
     }
+
     //Delete
     @Transactional
     public boolean deleteProduct(Long id) {

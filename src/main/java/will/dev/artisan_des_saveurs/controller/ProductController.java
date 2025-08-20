@@ -61,25 +61,44 @@ public class ProductController {
         return ResponseEntity.ok(categories);
     }
 
+//    @PostMapping("/create")
+//    @PreAuthorize("hasAuthority('ADMIN_CREATE')")
+//    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductToSend productToSend) {
+//        System.out.println("productToSend :: "+ productToSend);
+//        try {
+//            ProductResponse createdProduct = productService.createProduct(productToSend);
+//            return ResponseEntity.ok(createdProduct);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//    }
+
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('ADMIN_CREATE')")
-    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductToSend productToSend) {
-        System.out.println("productToSend :: "+ productToSend);
+    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDto) {
+        System.out.println("productToSend :: "+ productDto);
         try {
-            ProductResponse createdProduct = productService.createProduct(productToSend);
+            ProductDTO createdProduct = productService.createProduct(productDto);
             return ResponseEntity.ok(createdProduct);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
+//    @PutMapping("/{id}")
+//    @PreAuthorize("hasAuthority('ADMIN_UPDATE')")
+//    public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id,
+//                                                        @Valid @RequestBody ProductToSend productToSend) throws IOException {
+//        Optional<ProductResponse> updatedProduct = productService.updateProduct(id, productToSend);
+//        return updatedProduct.map(ResponseEntity::ok)
+//                .orElse(ResponseEntity.notFound().build());
+//    }
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN_UPDATE')")
-    public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id,
-                                                        @Valid @RequestBody ProductToSend productToSend) throws IOException {
-        Optional<ProductResponse> updatedProduct = productService.updateProduct(id, productToSend);
-        return updatedProduct.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id,
+                                                         @Valid @RequestBody ProductDTO productDto) throws IOException {
+        ProductDTO updatedProduct = productService.updateProduct(id, productDto);
+        return ResponseEntity.ok(updatedProduct);
     }
 
     @DeleteMapping("/{id}")
