@@ -3,13 +3,17 @@ package will.dev.artisan_des_saveurs.service;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+import will.dev.artisan_des_saveurs.dto.req_resp.dto.FileDTO;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Base64;
+import java.util.UUID;
 
 @Component
 public class FileStorageService {
@@ -17,25 +21,56 @@ public class FileStorageService {
     @Value("${application.files.base-path}")
     private String basePath;
 
-    public void writeOnDisk(will.dev.artisan_des_saveurs.entity.Files file) throws IOException {
-        String fullPath = String.format("%s/%s", basePath, file.getTemp());
-        Path folder = Paths.get(fullPath).getParent();
-        Files.createDirectories(folder);
+    @Value("${application.files.upload-dir}")
+    private String uploadDir;
 
-        String base64Data = file.getContent();
-        if (base64Data.contains(",")) {
-            base64Data = base64Data.split(",")[1]; // Supprime le préfixe base64
+    @Value("${application.files.public-url}")
+    private String publicUrl;
+
+    public FileDTO storeFile(MultipartFile file) {
+        try {
+            // 1. Nom unique
+            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            Path targetLocation = Paths.get(uploadDir).resolve(filename);
+
+            // 2. Crée le dossier si inexistant
+            Files.createDirectories(targetLocation.getParent());
+
+            // 3. Sauvegarde physique
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            // 4. Retour DTO
+            FileDTO dto = new FileDTO();
+            dto.setName(file.getOriginalFilename());
+            dto.setTemp(filename); // chemin relatif stocké en DB
+            dto.setContent(publicUrl + "/" + filename); // URL publique
+
+            return dto;
+
+        } catch (IOException ex) {
+            throw new RuntimeException("Impossible de stocker le fichier : " + file.getOriginalFilename(), ex);
         }
-
-        byte[] decodedFile = Base64.getDecoder().decode(base64Data);
-        File destinationFile = new File(fullPath);
-
-        if (destinationFile.exists()) {
-            FileUtils.deleteQuietly(destinationFile);
-        }
-
-        FileUtils.writeByteArrayToFile(destinationFile, decodedFile);
     }
+
+//    public void writeOnDisk(will.dev.artisan_des_saveurs.entity.Files file) throws IOException {
+//        String fullPath = String.format("%s/%s", basePath, file.getTemp());
+//        Path folder = Paths.get(fullPath).getParent();
+//        Files.createDirectories(folder);
+//
+//        String base64Data = file.getContent();
+//        if (base64Data.contains(",")) {
+//            base64Data = base64Data.split(",")[1]; // Supprime le préfixe base64
+//        }
+//
+//        byte[] decodedFile = Base64.getDecoder().decode(base64Data);
+//        File destinationFile = new File(fullPath);
+//
+//        if (destinationFile.exists()) {
+//            FileUtils.deleteQuietly(destinationFile);
+//        }
+//
+//        FileUtils.writeByteArrayToFile(destinationFile, decodedFile);
+//    }
 
     public void deleteFromDisk(will.dev.artisan_des_saveurs.entity.Files file) throws IOException {
         if (file != null && file.getTemp() != null) {

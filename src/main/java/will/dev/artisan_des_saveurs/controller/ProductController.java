@@ -1,15 +1,15 @@
 package will.dev.artisan_des_saveurs.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import will.dev.artisan_des_saveurs.dto.order.ProductDTO;
-import will.dev.artisan_des_saveurs.dto.req_resp.dto.MessageResponse;
-import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductRequest;
-import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductResponse;
-import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductToSend;
+import will.dev.artisan_des_saveurs.dto.req_resp.dto.*;
+import will.dev.artisan_des_saveurs.service.FileStorageService;
 import will.dev.artisan_des_saveurs.service.ProductService;
 
 import java.io.IOException;
@@ -18,11 +18,19 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/products")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
+
+    private final FileStorageService fileStorageService;
+
+    @PostMapping("/files-upload")
+    public ResponseEntity<FileDTO> uploadFile(@RequestParam("file") MultipartFile file) {
+        FileDTO dto = fileStorageService.storeFile(file);
+        return ResponseEntity.ok(dto);
+    }
 
     @GetMapping
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
