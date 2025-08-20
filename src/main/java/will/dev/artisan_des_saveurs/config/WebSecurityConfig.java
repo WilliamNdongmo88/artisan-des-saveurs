@@ -51,6 +51,9 @@ public class WebSecurityConfig {
                                 .requestMatchers("/").permitAll()
                                 .requestMatchers("/actuator/health").permitAll()
 
+                                // Autoriser accès libre aux fichiers
+                                .requestMatchers("/uploads/**").permitAll()
+
                                 //définition des autres règles de sécurité
                                 .requestMatchers("/api/auth/**").permitAll() // Ex: routes pour s'inscrire/se connecter
                                 .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
@@ -85,26 +88,6 @@ public class WebSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-//    @Bean
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurer() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/users/**")
-//                        .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs.vercel.app")
-//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-//                        .allowedHeaders("*")
-//                        .allowCredentials(true);
-//
-//                registry.addMapping("/orders/**")
-//                        .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs.vercel.app")
-//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-//                        .allowedHeaders("*")
-//                        .allowCredentials(true);
-//            }
-//        };
-//    }
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
