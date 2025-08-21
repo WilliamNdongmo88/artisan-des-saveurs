@@ -94,6 +94,11 @@ public class WebSecurityConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/api/**")       // tous les endpoints API
+                        .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs.vercel.app") // ton front
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);  // si tu utilises cookies ou JWT
                 registry.addMapping("/users/**")
                         .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs.vercel.app")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
