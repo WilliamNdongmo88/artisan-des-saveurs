@@ -1,8 +1,10 @@
 package will.dev.artisan_des_saveurs.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -17,16 +19,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import com.example.security.jwt.AuthEntryPointJwt;
-import com.example.security.jwt.AuthTokenFilter;
-import com.example.security.services.UserDetailsServiceImpl;
+import will.dev.artisan_des_saveurs.security.UserDetailsServiceImpl;
+import will.dev.artisan_des_saveurs.security.jwt.AuthEntryPointJwt;
+import will.dev.artisan_des_saveurs.security.jwt.AuthTokenFilter;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
