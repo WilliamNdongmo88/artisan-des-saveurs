@@ -12,7 +12,7 @@ services:
     volumes:
       - ../files:/tmp/files
       - "D:/Projets/JavaProject/files:/tmp/files"
-  #      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+  #      - ./files.conf:/etc/nginx/conf.d/files.conf
 
   dev-db:
     image: postgres:17
