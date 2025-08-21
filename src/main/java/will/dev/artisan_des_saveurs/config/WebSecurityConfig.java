@@ -60,7 +60,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/uploads/**").permitAll()
 
                                 //définition des autres règles de sécurité
-                                .requestMatchers("/api/auth/**").permitAll() // Ex: routes pour s'inscrire/se connecter
+                                //.requestMatchers("/api/auth/**").permitAll() // Ex: routes pour s'inscrire/se connecter
                                 .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
                 );
 
