@@ -9,10 +9,25 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**")       // tous les endpoints API
-                .allowedOrigins("https://artisan-des-saveurs.vercel.app") // ton front
+        registry.addMapping("/auth/**")       // tous les endpoints API
+                .allowedOrigins("https://artisan-des-saveurs.vercel.app")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true);  // si tu utilises cookies ou JWT
+                .allowCredentials(true); // si tu utilises cookies ou JWT
+        registry.addMapping("/users/**")
+                .allowedOrigins("https://artisan-des-saveurs.vercel.app")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
+        registry.addMapping("/orders/**")
+                .allowedOrigins("https://artisan-des-saveurs.vercel.app")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
+        registry.addMapping("/products/**")
+                .allowedOrigins("https://artisan-des-saveurs.vercel.app")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }
