@@ -1,34 +1,32 @@
-# Étape 1: Build de l'application avec Maven
-# Utilise une image officielle de Maven avec Java 17 pour compiler le code
-FROM maven:3.8.5-openjdk-17 AS build
-
-# Définit le répertoire de travail à l'intérieur du conteneur
+# Étape 1 : build du JAR
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
-
-# Copie du fichier pom.xml pour profiter du cache de Docker
 COPY pom.xml .
-
-# Copie du reste du code source de l'application
 COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Lancement de la commande de build de Maven pour créer le JAR
-# -DskipTests pour accélérer le build en ignorant les tests
-RUN mvn -f pom.xml clean package -DskipTests
+# Étape 2 : image finale avec Nginx + JAR
+FROM nginx:1.25
 
+# Installer Java (pour Spring Boot)
+RUN apt-get update && apt-get install -y openjdk-17-jre && rm -rf /var/lib/apt/lists/*
 
-# Étape 2: Exécution de l'application
-# On part d'une image Java 17 très légère, juste pour l'exécution
-FROM eclipse-temurin:17-jdk AS base
-
-# Définit le répertoire de travail
+# Dossier de l'application
 WORKDIR /app
 
-# On copie uniquement le JAR qui a été créé à l'étape de build
-COPY --from=build /app/target/artisan-des-saveurs-0.0.1-SNAPSHOT.jar app.jar
+# Copier le jar
+COPY --from=build /app/target/*.jar app.jar
 
-# On expose le port sur lequel l'application va tourner
+# Copier la conf Nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Créer dossier uploads
+RUN mkdir -p /app/uploads && chmod -R 755 /app/uploads
+
+# Script de démarrage : lancer Spring Boot + Nginx
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 EXPOSE 8080
 
-# C'est la commande qui sera lancée au démarrage du conteneur
-# On utilise la variable d'environnement PORT fournie par Render
-ENTRYPOINT ["sh", "-c", "echo MAIL_USERNAME=$MAIL_USERNAME && java -jar app.jar"]
+CMD ["/start.sh"]
