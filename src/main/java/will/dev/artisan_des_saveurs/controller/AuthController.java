@@ -19,7 +19,6 @@ import will.dev.artisan_des_saveurs.service.AuthService;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
