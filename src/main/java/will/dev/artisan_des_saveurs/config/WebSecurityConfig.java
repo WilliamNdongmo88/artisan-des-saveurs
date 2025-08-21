@@ -16,16 +16,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import will.dev.artisan_des_saveurs.security.UserDetailsServiceImpl;
 import will.dev.artisan_des_saveurs.security.jwt.AuthEntryPointJwt;
 import will.dev.artisan_des_saveurs.security.jwt.AuthTokenFilter;
-
-import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -42,26 +37,29 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 👈 Active CORS
-
+                .cors(withDefaults( ))
+                .csrf(csrf -> csrf.disable())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 👈 Autorise toutes les preflight
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/users/**").permitAll()
-                        .requestMatchers("/orders/**").permitAll()
-                        .requestMatchers("/products/**").permitAll()
-                        //PERMETTRE EXPLICITEMENT LES REQUÊTES OPTIONS SANS AUTHENTIFICATION
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/actuator/health").permitAll()
-                        .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
+                .authorizeHttpRequests(auth ->
+                        auth.requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/users/**").permitAll()
+                                .requestMatchers("/orders/**").permitAll()
+                                .requestMatchers("/products/**").permitAll()
+                                //PERMETTRE EXPLICITEMENT LES REQUÊTES OPTIONS SANS AUTHENTIFICATION
+                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                .requestMatchers("/").permitAll()
+                                .requestMatchers("/actuator/health").permitAll()
+
+                                //définition des autres règles de sécurité
+                                .requestMatchers("/api/auth/**").permitAll() // Ex: routes pour s'inscrire/se connecter
+                                .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
                 );
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+
         return http.build();
     }
 
@@ -109,17 +107,22 @@ public class WebSecurityConfig {
 //    }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://artisan-des-saveurs.vercel.app")); // 👈 ton front
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-
-        return source;
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/auth/**")
+                        .allowedOrigins("https://artisan-des-saveurs.vercel.app") // domaine de ton front
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
+                registry.addMapping("/orders/**")
+                        .allowedOrigins("https://artisan-des-saveurs.vercel.app") // domaine de ton front
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
+            }
+        };
     }
 }
 
