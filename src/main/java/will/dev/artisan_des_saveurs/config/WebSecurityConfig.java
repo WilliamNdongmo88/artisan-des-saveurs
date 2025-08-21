@@ -49,7 +49,8 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 👈 Autorise toutes les preflight
                         .requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/users/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/users/**").permitAll()
                                 .requestMatchers("/orders/**").permitAll()
                                 .requestMatchers("/products/**").permitAll()
                                 //PERMETTRE EXPLICITEMENT LES REQUÊTES OPTIONS SANS AUTHENTIFICATION
