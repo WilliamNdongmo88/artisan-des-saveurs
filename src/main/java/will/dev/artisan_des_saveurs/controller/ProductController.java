@@ -85,9 +85,9 @@ public class ProductController {
 //                    .body(null);
 //        }
 //    }
-    @PostMapping("/create")
+    @PostMapping(path = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN_CREATE')")
-    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDto,
+    public ResponseEntity<ProductDTO> createProduct(@RequestPart("product") ProductDTO productDto,
                                                     @RequestParam("file") MultipartFile file) {
         System.out.println("productToSend :: "+ productDto);
         try {
@@ -98,10 +98,10 @@ public class ProductController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN_UPDATE')")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id,
-                                                    @Valid @RequestBody ProductDTO productDto,
+                                                    @RequestPart("product") ProductDTO productDto,
                                                     @RequestParam("file") MultipartFile file) throws IOException {
         ProductDTO updatedProduct = productService.updateProduct(id, productDto, file);
         return ResponseEntity.ok(updatedProduct);
