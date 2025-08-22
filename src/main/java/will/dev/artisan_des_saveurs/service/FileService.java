@@ -26,7 +26,7 @@ public class FileService {
     private String uploadDir;
 
     // URL publique de Nginx (pour exposer les fichiers uploadés)
-    @Value("${app.upload.url:https://artisan-des-saveurs-production.up.railway.app/uploads}")
+    @Value("${app.upload.url:https://artisan-des-saveurs-production.up.railway.app/api/uploads/}")
     private String uploadUrl;
 
     public FileService(FileRepository fileRepository) {
@@ -59,6 +59,8 @@ public class FileService {
 
         // Construire l’URL publique
         String fileUrl = uploadUrl + "/" + fileName;
+        // Construit l’URL publique qui sera servie par Nginx
+
 
         // Sauvegarder en DB
         will.dev.artisan_des_saveurs.entity.Files fileEntity = new will.dev.artisan_des_saveurs.entity.Files();
