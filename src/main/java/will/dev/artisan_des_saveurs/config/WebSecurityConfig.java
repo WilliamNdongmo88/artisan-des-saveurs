@@ -51,12 +51,13 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/users/**").permitAll()
-                                .requestMatchers("/orders/**").permitAll()
-                                .requestMatchers("/products/**").permitAll()
-                                //PERMETTRE EXPLICITEMENT LES REQUÊTES OPTIONS SANS AUTHENTIFICATION
-                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                .requestMatchers("/").permitAll()
-                                .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/orders/**").permitAll()
+                        .requestMatchers("/products/**").permitAll()
+                        //PERMETTRE EXPLICITEMENT LES REQUÊTES OPTIONS SANS AUTHENTIFICATION
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/api/uploads/**").permitAll()
                          .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
                 );
 
