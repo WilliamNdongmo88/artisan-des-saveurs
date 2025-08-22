@@ -33,51 +33,9 @@ public class ProductController {
 
     private final FileService fileService;
 
-    private static final String UPLOAD_DIR = "/app/uploads/";
+
 
 //    @PostMapping("/files-upload")
-//    public ResponseEntity<FileDTO> uploadFile(@RequestParam("file") MultipartFile file) {
-//        try {
-//            // Vérifie que le dossier existe, sinon crée-le
-//            Path uploadPath = Paths.get(UPLOAD_DIR);
-//            if (!Files.exists(uploadPath)) {
-//                Files.createDirectories(uploadPath);
-//            }
-//
-//            // Génère un nom unique
-//            String uniqueFileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
-//
-//            // Sauvegarde le fichier sur disque
-//            Path filePath = uploadPath.resolve(uniqueFileName);
-//            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-//
-//            // Construit l’URL publique qui sera servie par Nginx
-//            String publicUrl = "https://artisan-des-saveurs-production.up.railway.app/api/uploads/" + uniqueFileName;
-//
-//            // Retourne les infos au frontend
-//            FileDTO dto = new FileDTO();
-//            dto.setFileName(uniqueFileName);
-//            dto.setFilePath(publicUrl);
-//            dto.setTemp("ok"); // champ libre si tu veux marquer l’état
-//
-//            return ResponseEntity.ok(dto);
-//
-//        } catch (IOException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(new FileDTO(null, null, null));
-//        }
-//    }
-
-    @PostMapping(value = "/files-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<FileDTO> uploadFile(@RequestParam("file") MultipartFile file) {
-        try {
-            FileDTO dto = fileService.save(file);
-            return ResponseEntity.ok(dto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(null);
-        }
-    }
 
 
     @GetMapping
@@ -117,43 +75,35 @@ public class ProductController {
         return ResponseEntity.ok(categories);
     }
 
-//    @PostMapping("/create")
-//    @PreAuthorize("hasAuthority('ADMIN_CREATE')")
-//    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductToSend productToSend) {
-//        System.out.println("productToSend :: "+ productToSend);
+//    @PostMapping(value = "/files-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<FileDTO> uploadFile(@RequestParam("file") MultipartFile file) {
 //        try {
-//            ProductResponse createdProduct = productService.createProduct(productToSend);
-//            return ResponseEntity.ok(createdProduct);
+//            FileDTO dto = fileService.save(file);
+//            return ResponseEntity.ok(dto);
 //        } catch (Exception e) {
-//            return ResponseEntity.badRequest().build();
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(null);
 //        }
 //    }
-
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('ADMIN_CREATE')")
-    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDto) {
+    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDto,
+                                                    @RequestParam("file") MultipartFile file) {
         System.out.println("productToSend :: "+ productDto);
         try {
-            ProductDTO createdProduct = productService.createProduct(productDto);
+            ProductDTO createdProduct = productService.createProduct(productDto, file);
             return ResponseEntity.ok(createdProduct);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
-//    @PutMapping("/{id}")
-//    @PreAuthorize("hasAuthority('ADMIN_UPDATE')")
-//    public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id,
-//                                                        @Valid @RequestBody ProductToSend productToSend) throws IOException {
-//        Optional<ProductResponse> updatedProduct = productService.updateProduct(id, productToSend);
-//        return updatedProduct.map(ResponseEntity::ok)
-//                .orElse(ResponseEntity.notFound().build());
-//    }
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN_UPDATE')")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id,
-                                                         @Valid @RequestBody ProductDTO productDto) throws IOException {
-        ProductDTO updatedProduct = productService.updateProduct(id, productDto);
+                                                    @Valid @RequestBody ProductDTO productDto,
+                                                    @RequestParam("file") MultipartFile file) throws IOException {
+        ProductDTO updatedProduct = productService.updateProduct(id, productDto, file);
         return ResponseEntity.ok(updatedProduct);
     }
 

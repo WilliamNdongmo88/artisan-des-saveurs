@@ -61,11 +61,9 @@ public class FileDTOMapper {
         dto.setId(file.getId());
         dto.setName(file.getName());
         dto.setTemp(file.getTemp());
+        dto.setFileName(file.getFileName());
+        dto.setFilePath(file.getFilePath());
 
-        if (file.getTemp() != null) {
-            // Génère une URL publique vers le fichier Nginx
-            dto.setContent(publicUrl + "/" + file.getTemp());
-        }
 
         return dto;
     }
@@ -74,6 +72,8 @@ public class FileDTOMapper {
         will.dev.artisan_des_saveurs.entity.Files file = new will.dev.artisan_des_saveurs.entity.Files();
         file.setName(dto.getName());
         file.setTemp(dto.getTemp());
+        file.setFileName(dto.getFileName());
+        file.setFilePath(dto.getFilePath());
         // ⚠️ ne mets pas le content en DB, garde uniquement le chemin/filename
         return file;
     }

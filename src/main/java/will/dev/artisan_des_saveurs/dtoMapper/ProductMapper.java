@@ -79,7 +79,6 @@ public class ProductMapper {
         if (product.getProductImage() != null) {
             dto.setMainImage(fileDTOMapper.map(product.getProductImage()));
         }
-
         dto.setAvailable(product.isAvailable());
         dto.setOrigin(product.getOrigin());
         dto.setUnit(product.getUnit());

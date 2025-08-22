@@ -1,5 +1,6 @@
 package will.dev.artisan_des_saveurs.service;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import will.dev.artisan_des_saveurs.dto.order.ProductDTO;
 import will.dev.artisan_des_saveurs.dto.req_resp.dto.FileDTO;
 import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductRequest;
@@ -15,15 +17,16 @@ import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductResponse;
 import will.dev.artisan_des_saveurs.dto.req_resp.dto.ProductToSend;
 import will.dev.artisan_des_saveurs.dtoMapper.FileDTOMapper;
 import will.dev.artisan_des_saveurs.dtoMapper.ProductMapper;
+import will.dev.artisan_des_saveurs.entity.Files;
 import will.dev.artisan_des_saveurs.entity.Product;
 import will.dev.artisan_des_saveurs.repository.FilesRepository;
 import will.dev.artisan_des_saveurs.repository.ProductRepository;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -38,15 +41,17 @@ public class ProductService {
     private final ProductMapper productMapper;
     private final FileDTOMapper fileDTOMapper;
     private final FileStorageService fileStorageService;
+    private final FileService fileService;
 
     public ProductService(
             @Value("${application.files.base-path}") final String basePath,
             ProductRepository productRepository, ProductMapper productMapper, FileStorageService fileStorageService,
-            FilesRepository filesRepository, FileDTOMapper fileDTOMapper) {
+            FilesRepository filesRepository, FileDTOMapper fileDTOMapper, FileService fileService) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
         this.fileDTOMapper = fileDTOMapper;
         this.fileStorageService = fileStorageService;
+        this.fileService = fileService;
         this.filesRepository = filesRepository;
     }
 
@@ -59,7 +64,7 @@ public class ProductService {
     public List<ProductDTO> getAvailableProducts() {
         List<Product> products = (List<Product>) this.productRepository.findByAvailableTrueWithImage();
         System.out.println("products ::"+ products);
-        List<ProductDTO> productDTOList = new java.util.ArrayList<>(List.of());
+        List<ProductDTO> productDTOList = new ArrayList<>(List.of());
         for (Product product: products){
             productDTOList.add(productMapper.toDTO(product));
         }
@@ -126,10 +131,21 @@ public class ProductService {
 //        return productResponse;
 //    }
 
-    public ProductDTO createProduct(ProductDTO dto) {
-        Product product = productMapper.toEntity(dto);
-        productRepository.save(product);
-        return productMapper.toDTO(product);
+    @Transactional
+    public ProductDTO createProduct(@Valid ProductDTO productDto, MultipartFile file) throws IOException {
+
+        Product product = productMapper.toEntity(productDto);
+
+        FileDTO fileDto = fileService.uploadFile(file).getBody();
+        Product savedProd = new Product();
+        if (fileDto != null){
+            will.dev.artisan_des_saveurs.entity.Files newFile = fileDTOMapper.mapFileDtoToEntity(fileDto);
+            filesRepository.save(newFile);
+            product.setProductImage(newFile);
+            savedProd = productRepository.save(product);
+        }
+
+        return productMapper.toDTO(savedProd);
     }
 
     //Update
@@ -181,7 +197,7 @@ public class ProductService {
 
     //Update
     @Transactional(rollbackFor = Exception.class)
-    public ProductDTO updateProduct(Long id, ProductDTO dto) {
+    public ProductDTO updateProduct(Long id, ProductDTO dto, MultipartFile file) throws IOException {
         Product existing = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produit introuvable"));
 
@@ -196,15 +212,19 @@ public class ProductService {
         existing.setStockQuantity(dto.getStockQuantity());
         existing.setFeatured(dto.isFeatured());
 
-        if (dto.getMainImage() != null) {
-            // ⚠️ On remplace uniquement temp + name
-            existing.setProductImage(
-                    fileDTOMapper.mapFileDtoToEntity(dto.getMainImage())
-            );
+        Product savedProd = new Product();
+        FileDTO fileDto = fileService.uploadFile(file).getBody();
+        if (fileDto != null && dto.getMainImage().getContent() != null) {
+            will.dev.artisan_des_saveurs.entity.Files newFile = fileDTOMapper.mapFileDtoToEntity(fileDto);
+            filesRepository.save(newFile);
+            existing.setProductImage(newFile);
+            savedProd = productRepository.save(existing);
+        }else if (dto.getMainImage().getContent() == null){
+            System.out.println("L'image n'a pas changé ::: " + dto.getMainImage());
+            savedProd = productRepository.save(existing);
         }
 
-        productRepository.save(existing);
-        return productMapper.toDTO(existing);
+        return productMapper.toDTO(savedProd);
     }
 
     //Delete
@@ -213,7 +233,7 @@ public class ProductService {
         return productRepository.findById(id).map(product -> {
 
             // ✅ Supprimer image principale
-            will.dev.artisan_des_saveurs.entity.Files mainImage = product.getProductImage();
+            Files mainImage = product.getProductImage();
             if (mainImage != null) {
                 try {
                     fileStorageService.deleteFromDisk(mainImage); // chemin du fichier
