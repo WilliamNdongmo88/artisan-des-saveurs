@@ -7,5 +7,6 @@ CREATE TABLE orders (
     delivered VARCHAR(20) DEFAULT 'processing',
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
+    user_id BIGINT,
     CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
