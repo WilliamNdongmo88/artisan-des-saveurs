@@ -102,7 +102,7 @@ public class ProductController {
     @PreAuthorize("hasAuthority('ADMIN_UPDATE')")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id,
                                                     @RequestPart("product") ProductDTO productDto,
-                                                    @RequestParam("file") MultipartFile file) throws IOException {
+                                                    @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
         ProductDTO updatedProduct = productService.updateProduct(id, productDto, file);
         return ResponseEntity.ok(updatedProduct);
     }
