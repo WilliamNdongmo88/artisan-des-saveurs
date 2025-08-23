@@ -20,7 +20,7 @@ public class Order {
     private double discount;
     private double total;
     private boolean freeShipping;
-    private boolean delivered;
+    private String delivered;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)

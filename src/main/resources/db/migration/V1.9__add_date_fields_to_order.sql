@@ -1,5 +1,5 @@
 ALTER TABLE orders
-ADD COLUMN delivered BOOLEAN DEFAULT FALSE;
+ADD COLUMN delivered ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled') DEFAULT 'processing';
 
 ALTER TABLE orders
 ADD COLUMN created_at TIMESTAMP;
