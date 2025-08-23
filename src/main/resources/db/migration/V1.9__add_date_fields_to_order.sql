@@ -1,10 +1,5 @@
 ALTER TABLE orders
-ALTER COLUMN delivered TYPE VARCHAR(20)
-USING CASE
-    WHEN delivered = TRUE THEN 'processing'
-    WHEN delivered = FALSE THEN 'delivered'
-    ELSE NULL
-END;
+ADD COLUMN delivered VARCHAR(20) DEFAULT 'processing';
 
 ALTER TABLE orders
 ADD COLUMN created_at TIMESTAMP;
