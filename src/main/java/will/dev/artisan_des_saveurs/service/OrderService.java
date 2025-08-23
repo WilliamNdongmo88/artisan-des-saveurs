@@ -300,7 +300,6 @@ public class OrderService {
     public ResponseEntity<?> getUserOrders(Long id) {
         try {
             List<ProductItem> productItems = productItemRepository.findByUserId(id);
-            System.out.println("productItems ::: " + productItems);
             List<OrdersResponse> ordersResponses = new ArrayList<>();
             for (ProductItem productItem : productItems){
                 OrdersResponse ordersResponse = new OrdersResponse();
