@@ -70,6 +70,7 @@ public class AuthController {
 
     @GetMapping("/activate")
     public ResponseEntity<?> activateUser(@RequestParam String token) {
+        System.out.println("::: Activation du compte :::" );
         try {
             String message = authService.activateUser(token);
             return ResponseEntity.ok(new MessageResponse(message));

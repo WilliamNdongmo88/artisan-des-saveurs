@@ -256,6 +256,7 @@ public class OrderService {
         order.setTotal(orderDto.getTotal());
         order.setFreeShipping(orderDto.isFreeShipping());
         order.setUser(userConnected);
+        order.setCreatedAt(LocalDateTime.now());
         Order savedOrder = orderRepository.save(order);
         System.out.println("savedOrder ::: " + savedOrder);
 
@@ -302,18 +303,15 @@ public class OrderService {
             System.out.println("productItems ::: " + productItems);
             List<OrdersResponse> ordersResponses = new ArrayList<>();
             for (ProductItem productItem : productItems){
-                System.out.println(" ::Debut for :: ");
                 OrdersResponse ordersResponse = new OrdersResponse();
                 ordersResponse.setDiscount(productItem.getOrder().getDiscount());
                 ordersResponse.setSubtotal(productItem.getOrder().getSubtotal());
                 ordersResponse.setFreeShipping(productItem.getOrder().isFreeShipping());
                 ordersResponse.setTotal(productItem.getOrder().getTotal());
                 ordersResponse.setUserid(productItem.getUserId());
-                System.out.println(" :: Before  :: ");
+                ordersResponse.setCreateAt(productItem.getOrder().getCreatedAt());
                 ordersResponse.setProductItem(productItemMapper.toDTO(productItem));
-                System.out.println(" :: After  :: ");
                 ordersResponses.add(ordersResponse);
-                System.out.println(" ::End for :: ");
             }
             System.out.println("#### productItems ::: " + productItems);
             System.out.println("#### ordersResponses ::: " + ordersResponses);

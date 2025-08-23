@@ -60,17 +60,14 @@ public class AuthService {
     }
 
     public String activateUser(String token) {
-        System.out.println("::: Activation du compte :::" );
         Optional<User> userOpt = userRepository.findByActivationToken(token);
         if (userOpt.isEmpty()) {
             throw new RuntimeException("Token d'activation invalide!");
         }
-        System.out.println("::: Before :::" );
         User user = userOpt.get();
         user.setEnabled(true);
         user.setActivationToken(token);
         userRepository.save(user);
-        System.out.println("::: After :::" );
         return "Compte activé avec succès!";
     }
 
