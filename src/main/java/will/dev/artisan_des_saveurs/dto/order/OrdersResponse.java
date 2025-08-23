@@ -12,6 +12,7 @@ public class OrdersResponse {
     private double discount;
     private double total;
     private boolean freeShipping;
+    private String delivered;
     private LocalDateTime createAt;
     private Long userid;
     private ProductItemDTO productItem;

@@ -308,6 +308,7 @@ public class OrderService {
                 ordersResponse.setFreeShipping(productItem.getOrder().isFreeShipping());
                 ordersResponse.setTotal(productItem.getOrder().getTotal());
                 ordersResponse.setUserid(productItem.getUserId());
+                ordersResponse.setDelivered(productItem.getOrder().getDelivered());
                 ordersResponse.setCreateAt(productItem.getOrder().getCreatedAt());
                 ordersResponse.setProductItem(productItemMapper.toDTO(productItem));
                 ordersResponses.add(ordersResponse);
