@@ -1,8 +1,0 @@
-ALTER TABLE orders
-ADD COLUMN delivered VARCHAR(20) DEFAULT 'processing';
-
-ALTER TABLE orders
-ADD COLUMN created_at TIMESTAMP;
-
-ALTER TABLE orders
-ADD COLUMN updated_at TIMESTAMP;

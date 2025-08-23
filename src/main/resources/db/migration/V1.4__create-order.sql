@@ -4,7 +4,9 @@ CREATE TABLE orders (
     discount NUMERIC(10, 2) NOT NULL,
     total NUMERIC(10, 2) NOT NULL,
     free_shipping BOOLEAN NOT NULL,
+    delivered VARCHAR(20) DEFAULT 'processing',
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
     user_id BIGINT,
     CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
-
