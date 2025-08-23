@@ -140,6 +140,7 @@ public class ProductService {
         Product savedProd = new Product();
         if (fileDto != null){
             will.dev.artisan_des_saveurs.entity.Files newFile = fileDTOMapper.mapFileDtoToEntity(fileDto);
+            //newFile.setProduct(product);
             filesRepository.save(newFile);
             product.setProductImage(newFile);
             savedProd = productRepository.save(product);

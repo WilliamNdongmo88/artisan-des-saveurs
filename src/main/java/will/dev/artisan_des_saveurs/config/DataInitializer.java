@@ -55,10 +55,10 @@ public class DataInitializer {
 
         // Créer quelques produits de démonstration
         System.out.println("###### productRepository.count() :" + productRepository.count());
-//        if (productRepository.count() == 0) {
-//            createSampleProducts();
-//            System.out.println("Produits de démonstration créés");
-//        }
+        if (productRepository.count() == 0) {
+            createSampleProducts();
+            System.out.println("Produits de démonstration créés");
+        }
     }
 
     private void createSampleProducts() {
@@ -198,8 +198,9 @@ public class DataInitializer {
             product.setUnit("kg");
 
             will.dev.artisan_des_saveurs.entity.Files img = new Files();
-            img.setContent("data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBWRXhpZgAATU0AKgAAAAgABAEaA...");
-            img.setName("coteDePorc.jpg");
+            img.setFilePath("""
+                    https://artisan-des-saveurs-production.up.railway.app/api/uploads/cb6e36c4-df21-4e61-99b9-d1c3d950e240-chipo_aux_herbes.png""");
+            img.setFileName("cb6e36c4-df21-4e61-99b9-d1c3d950e240-chipo_aux_herbes.png");
 
             product.setProductImage(img);
             productRepository.save(product);
