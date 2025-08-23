@@ -14,6 +14,7 @@ public class ProductDTO {
     private String preparation;
     private boolean available;
     private FileDTO mainImage;
+    private String imageUrl;
     private String origin;
     private BigDecimal price;
     private String unit;

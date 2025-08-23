@@ -20,9 +20,6 @@ COPY --from=build /app/target/*.jar app.jar
 # Copier la conf Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Créer dossier uploads
-RUN mkdir -p /app/uploads && chmod -R 755 /app/uploads
-
 # Script de démarrage : lancer Spring Boot + Nginx
 COPY start.sh /start.sh
 RUN chmod +x /start.sh

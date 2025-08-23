@@ -42,17 +42,20 @@ public class ProductService {
     private final FileDTOMapper fileDTOMapper;
     private final FileStorageService fileStorageService;
     private final FileService fileService;
+    private final CloudinaryService cloudinaryService;
 
     public ProductService(
             @Value("${application.files.base-path}") final String basePath,
             ProductRepository productRepository, ProductMapper productMapper, FileStorageService fileStorageService,
-            FilesRepository filesRepository, FileDTOMapper fileDTOMapper, FileService fileService) {
+            FilesRepository filesRepository, FileDTOMapper fileDTOMapper, FileService fileService,
+            CloudinaryService cloudinaryService) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
         this.fileDTOMapper = fileDTOMapper;
         this.fileStorageService = fileStorageService;
         this.fileService = fileService;
         this.filesRepository = filesRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     public List<ProductResponse> getAllProducts() {
@@ -133,18 +136,18 @@ public class ProductService {
 
     @Transactional
     public ProductDTO createProduct(@Valid ProductDTO productDto, MultipartFile file) throws IOException {
-
         Product product = productMapper.toEntity(productDto);
 
-        FileDTO fileDto = fileService.uploadFile(file).getBody();
-        Product savedProd = new Product();
-        if (fileDto != null){
-            will.dev.artisan_des_saveurs.entity.Files newFile = fileDTOMapper.mapFileDtoToEntity(fileDto);
-            //newFile.setProduct(product);
-            filesRepository.save(newFile);
-            product.setProductImage(newFile);
-            savedProd = productRepository.save(product);
-        }
+        //FileDTO fileDto = fileService.uploadFile(file).getBody();
+        String imageUrl = cloudinaryService.uploadFile(file);
+        FileDTO fileDto = new FileDTO();
+        fileDto.setFileName(imageUrl);
+        fileDto.setFilePath(imageUrl);
+        will.dev.artisan_des_saveurs.entity.Files newFile = fileDTOMapper.mapFileDtoToEntity(fileDto);
+        filesRepository.save(newFile);
+        product.setProductImage(newFile);
+        Product savedProd = productRepository.save(product);
+
 
         return productMapper.toDTO(savedProd);
     }
@@ -214,8 +217,12 @@ public class ProductService {
         existing.setFeatured(dto.isFeatured());
 
         Product savedProd = new Product();
-        FileDTO fileDto = fileService.uploadFile(file).getBody();
-        if (fileDto != null && dto.getMainImage().getContent() != null) {
+        //FileDTO fileDto = fileService.uploadFile(file).getBody();
+        if (dto.getMainImage().getContent() != null) {
+            String imageUrl = cloudinaryService.uploadFile(file);
+            FileDTO fileDto = new FileDTO();
+            fileDto.setFileName(imageUrl);
+            fileDto.setFilePath(imageUrl);
             will.dev.artisan_des_saveurs.entity.Files newFile = fileDTOMapper.mapFileDtoToEntity(fileDto);
             filesRepository.save(newFile);
             existing.setProductImage(newFile);
