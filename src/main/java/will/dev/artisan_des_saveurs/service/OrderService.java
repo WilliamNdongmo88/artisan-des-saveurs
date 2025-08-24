@@ -298,52 +298,47 @@ public class OrderService {
     }
 
     @Transactional
-    public ResponseEntity<?> getUserOrders(Long userid) {
+    public ResponseEntity<?> getUserOrders(Long userId) {
         try {
-            List<ProductItem> productItems = productItemRepository.findByUserId(userid);
+            // Récupérer toutes les commandes de l'utilisateur
+            List<Order> orders = orderRepository.findAllByUserId(userId);
 
-            if (productItems.isEmpty()) {
+            if (orders.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
 
             List<OrdersResponse> ordersResponseList = new ArrayList<>();
 
-            // On suppose que tous les productItems appartiennent à la même commande
-            OrdersResponse ordersResponse = new OrdersResponse();
+            for (Order order : orders) {
+                OrdersResponse ordersResponse = new OrdersResponse();
+                ordersResponse.setId(order.getId());
+                ordersResponse.setCreatedAt(order.getCreatedAt());
+                ordersResponse.setDelivered(order.getDelivered());
+                ordersResponse.setDiscount(order.getDiscount());
+                ordersResponse.setSubtotal(order.getSubtotal());
+                ordersResponse.setFreeShipping(order.isFreeShipping());
+                ordersResponse.setTotal(order.getTotal());
+                ordersResponse.setUserid(userId);
 
-            // On prend la commande du premier productItem
-            Optional<User> user = userRepository.findById(userid);
-            List<Order> newOrderList = new ArrayList<>();
-            if (user.isPresent()){
-                newOrderList = orderRepository.findAllByUser(user.get());
+                // Récupérer les productItems de cette commande
+                List<ProductItem> productItems = productItemRepository.findByOrderId(order.getId());
+
+                // Mapper en DTO
+                List<ProductItemDTO> productItemDTOs = productItems.stream()
+                        .map(productItemMapper::toDTO)
+                        .toList();
+
+                ordersResponse.setProductItems(productItemDTOs);
+
+                ordersResponseList.add(ordersResponse);
             }
-            for(Order order : newOrderList){
-                if (order.getId() == productItems.get(0).getId()){
-                    //Order order = productItems.get(0).getOrder();
 
-                    ordersResponse.setId(order.getId());
-                    ordersResponse.setCreatedAt(order.getCreatedAt());
-                    ordersResponse.setDelivered(order.getDelivered());
-                    ordersResponse.setDiscount(order.getDiscount());
-                    ordersResponse.setSubtotal(order.getSubtotal());
-                    ordersResponse.setFreeShipping(order.isFreeShipping());
-                    ordersResponse.setTotal(order.getTotal());
-                    ordersResponse.setUserid(productItems.get(0).getUserId());
-                }
-            }
-
-            // Mapper la liste des productItems
-            List<ProductItemDTO> productItemDTOs = productItems.stream()
-                    .map(productItemMapper::toDTO)
-                    .toList();
-
-            ordersResponse.setProductItems(productItemDTOs);
-            ordersResponseList.add(ordersResponse);
             return ResponseEntity.ok(ordersResponseList);
 
         } catch (RuntimeException e) {
             throw new RuntimeException("Erreur lors de la récupération des commandes:: " + e.getMessage(), e);
         }
     }
+
 
 }

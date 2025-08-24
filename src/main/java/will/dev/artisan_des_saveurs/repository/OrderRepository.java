@@ -12,4 +12,6 @@ public  interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("Select o From Order o Where o.user=:user")
     List<Order> findAllByUser(User user);
+
+    List<Order> findAllByUserId(Long userId);
 }

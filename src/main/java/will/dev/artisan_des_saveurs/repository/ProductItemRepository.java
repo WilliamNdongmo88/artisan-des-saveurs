@@ -11,4 +11,6 @@ public interface ProductItemRepository extends JpaRepository<ProductItem, Long> 
 
     @Query("SELECT p FROM ProductItem p WHERE p.userId =:id")
     List<ProductItem> findByUserId(Long id);
+
+    List<ProductItem> findByOrderId(Long id);
 }
