@@ -70,7 +70,7 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("hasAuthority('USER_READ','USER_CREATE')")
+    @PreAuthorize("hasAuthority('USER_CREATE')")
     @PostMapping(path = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<FileDTO> uploadFile(@RequestParam("file") MultipartFile file) {
         System.out.println("✅ Appel réussi !");
