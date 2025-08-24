@@ -305,6 +305,8 @@ public class OrderService {
                 return ResponseEntity.notFound().build();
             }
 
+            List<OrdersResponse> ordersResponseList = new ArrayList<>();
+
             // On suppose que tous les productItems appartiennent à la même commande
             OrdersResponse ordersResponse = new OrdersResponse();
 
@@ -326,8 +328,8 @@ public class OrderService {
                     .toList();
 
             ordersResponse.setProductItems(productItemDTOs);
-
-            return ResponseEntity.ok(ordersResponse);
+            ordersResponseList.add(ordersResponse);
+            return ResponseEntity.ok(ordersResponseList);
 
         } catch (RuntimeException e) {
             throw new RuntimeException("Erreur lors de la récupération des commandes:: " + e.getMessage(), e);
