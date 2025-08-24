@@ -33,7 +33,8 @@ public class JwtUtils {
                 "firstname", userPrincipal.getFirstName(),
                 "lastname", userPrincipal.getLastName(),
                 "phone", userPrincipal.getPhone(),
-                "email",userPrincipal.getEmail()
+                "email",userPrincipal.getEmail(),
+                "avatar",userPrincipal.getAvatar()
         );
 
         return Jwts.builder()

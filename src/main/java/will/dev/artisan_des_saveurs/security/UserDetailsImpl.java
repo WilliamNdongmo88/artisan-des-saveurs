@@ -27,10 +27,11 @@ public class UserDetailsImpl implements UserDetails {
     private String firstName;
     private String lastName;
     private String phone;
+    private String avatar;
     private Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(Long id, String username, String email, String password,
-                           Boolean enabled, String firstName, String lastName,
+                           Boolean enabled, String firstName, String lastName,String avatar,
                            String phone, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
@@ -39,6 +40,7 @@ public class UserDetailsImpl implements UserDetails {
         this.enabled = enabled;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.avatar = avatar;
         this.phone = phone;
         this.authorities = authorities;
     }
@@ -56,6 +58,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getEnabled(),
                 user.getFirstName(),
                 user.getLastName(),
+                user.getAvatar(),
                 user.getPhone(),
                 authorities);
     }
