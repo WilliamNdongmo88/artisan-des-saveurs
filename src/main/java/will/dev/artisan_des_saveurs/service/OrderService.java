@@ -258,6 +258,7 @@ public class OrderService {
         order.setFreeShipping(orderDto.isFreeShipping());
         order.setUser(userConnected);
         order.setCreatedAt(LocalDateTime.now());
+        order.setDelivered("processing");
         Order savedOrder = orderRepository.save(order);
         System.out.println("savedOrder ::: " + savedOrder);
 
