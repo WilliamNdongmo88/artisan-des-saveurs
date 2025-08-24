@@ -2,10 +2,15 @@ package will.dev.artisan_des_saveurs.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import will.dev.artisan_des_saveurs.dto.MessageRetourDto;
 import will.dev.artisan_des_saveurs.dto.UserDto;
+import will.dev.artisan_des_saveurs.dto.req_resp.dto.FileDTO;
 import will.dev.artisan_des_saveurs.dtoMapper.UserDtoMapper;
 import will.dev.artisan_des_saveurs.entity.User;
 import will.dev.artisan_des_saveurs.repository.UserRepository;
@@ -63,5 +68,17 @@ public class UserController {
         return userRepository.findById(id)
                 .map(user -> ResponseEntity.ok(UserDtoMapper.toDto(user)))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PreAuthorize("hasAnyAuthority('USER_READ','USER_CREATE')")
+    @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<FileDTO> uploadFile(@RequestParam("file") MultipartFile file) {
+        try {
+            FileDTO dto = userService.saveAvatar(file);
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(null);
+        }
     }
 }

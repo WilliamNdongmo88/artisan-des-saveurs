@@ -85,7 +85,7 @@ public class User implements UserDetails {
     @Size(max = 120)
     private String password;
 
-    //private boolean enabled = false;
+    private String avatar;
 
     private String activationToken;
 

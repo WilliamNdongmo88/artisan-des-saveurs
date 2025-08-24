@@ -7,18 +7,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import will.dev.artisan_des_saveurs.dto.MessageRetourDto;
 import will.dev.artisan_des_saveurs.dto.UserDto;
+import will.dev.artisan_des_saveurs.dto.req_resp.dto.FileDTO;
 import will.dev.artisan_des_saveurs.dtoMapper.UserDtoMapper;
 import will.dev.artisan_des_saveurs.entity.ContactRequest;
 import will.dev.artisan_des_saveurs.entity.User;
 import will.dev.artisan_des_saveurs.repository.ContactRequestRepository;
 import will.dev.artisan_des_saveurs.repository.UserRepository;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+
+import static will.dev.artisan_des_saveurs.service.ProductService.extractFileName;
 
 @Service
 @Slf4j
@@ -29,6 +35,7 @@ public class UserService {
     @Value("${app.company.whatsapp.number:+23059221613}")
     private String company_number;
 
+    private final CloudinaryService cloudinaryService;
     private final UserRepository userRepository;
     private final ContactRequestRepository contactRequestRepository;
     private final NotificationService notificationService;
@@ -162,6 +169,17 @@ public class UserService {
         } catch (RuntimeException e) {
             throw new RuntimeException("Erreur lors de la mise a jour des infos personnelles" + e);
         }
+    }
+
+    public FileDTO saveAvatar(MultipartFile file) throws IOException {
+        User userConnected = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String imageUrl = cloudinaryService.uploadFile(file);
+        FileDTO fileDto = new FileDTO();
+        fileDto.setFileName(extractFileName(imageUrl));
+        fileDto.setFilePath(imageUrl);
+        userConnected.setAvatar(fileDto.getFilePath());
+        userRepository.save(userConnected);
+        return fileDto;
     }
 }
 
