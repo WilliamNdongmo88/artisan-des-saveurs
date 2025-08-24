@@ -300,18 +300,21 @@ public class OrderService {
     public ResponseEntity<?> getUserOrders(Long id) {
         try {
             List<ProductItem> productItems = productItemRepository.findByUserId(id);
+            OrdersResponse ordersResponse = new OrdersResponse();
+
+            ordersResponse.setDiscount(productItems.get(0).getOrder().getDiscount());
+            ordersResponse.setSubtotal(productItems.get(0).getOrder().getSubtotal());
+            ordersResponse.setFreeShipping(productItems.get(0).getOrder().isFreeShipping());
+            ordersResponse.setTotal(productItems.get(0).getOrder().getTotal());
+            ordersResponse.setDelivered(productItems.get(0).getOrder().getDelivered());
+            ordersResponse.setCreatedAt(productItems.get(0).getOrder().getCreatedAt());
+
             List<OrdersResponse> ordersResponses = new ArrayList<>();
             for (ProductItem productItem : productItems){
-                OrdersResponse ordersResponse = new OrdersResponse();
-                ordersResponse.setDiscount(productItem.getOrder().getDiscount());
-                ordersResponse.setSubtotal(productItem.getOrder().getSubtotal());
-                ordersResponse.setFreeShipping(productItem.getOrder().isFreeShipping());
-                ordersResponse.setTotal(productItem.getOrder().getTotal());
-                ordersResponse.setUserid(productItem.getUserId());
-                ordersResponse.setDelivered(productItem.getOrder().getDelivered());
-                ordersResponse.setCreatedAt(productItem.getOrder().getCreatedAt());
-                ordersResponse.setProductItem(productItemMapper.toDTO(productItem));
-                ordersResponses.add(ordersResponse);
+                OrdersResponse newOrdersResponse = new OrdersResponse();
+                newOrdersResponse.setUserid(productItem.getUserId());
+                newOrdersResponse.setProductItem(productItemMapper.toDTO(productItem));
+                ordersResponses.add(newOrdersResponse);
             }
             System.out.println("#### productItems ::: " + productItems);
             System.out.println("#### ordersResponses ::: " + ordersResponses);

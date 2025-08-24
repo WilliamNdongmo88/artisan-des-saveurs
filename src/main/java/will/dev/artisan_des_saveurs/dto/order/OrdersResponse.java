@@ -14,7 +14,6 @@ public class OrdersResponse {
     private boolean freeShipping;
     private String delivered;
     private LocalDateTime createdAt;
-    //private String createdAt;
     private Long userid;
     private ProductItemDTO productItem;
 }
