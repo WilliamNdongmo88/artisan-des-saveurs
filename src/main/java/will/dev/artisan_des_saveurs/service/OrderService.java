@@ -297,27 +297,38 @@ public class OrderService {
     }
 
     @Transactional
-    public ResponseEntity<?> getUserOrders(Long id) {
+    public ResponseEntity<?> getUserOrders(Long userid) {
         try {
-            List<ProductItem> productItems = productItemRepository.findByUserId(id);
+            List<ProductItem> productItems = productItemRepository.findByUserId(userid);
+
+            // Liste de commandes avec leurs productItems associés
             List<OrdersResponse> ordersResponses = new ArrayList<>();
-            for (ProductItem productItem : productItems){
+
+            for (ProductItem productItem : productItems) {
                 OrdersResponse ordersResponse = new OrdersResponse();
+
+                // Informations sur la commande (order lié au productItem)
+                ordersResponse.setId(productItem.getOrder().getId());
+                ordersResponse.setCreatedAt(productItem.getOrder().getCreatedAt());
+                ordersResponse.setDelivered(productItem.getOrder().getDelivered());
                 ordersResponse.setDiscount(productItem.getOrder().getDiscount());
                 ordersResponse.setSubtotal(productItem.getOrder().getSubtotal());
                 ordersResponse.setFreeShipping(productItem.getOrder().isFreeShipping());
                 ordersResponse.setTotal(productItem.getOrder().getTotal());
-                ordersResponse.setDelivered(productItem.getOrder().getDelivered());
-                ordersResponse.setCreatedAt(productItem.getOrder().getCreatedAt());
                 ordersResponse.setUserid(productItem.getUserId());
+
+                // Mapper le productItem (incluant product complet, quantité, etc.)
                 ordersResponse.setProductItem(productItemMapper.toDTO(productItem));
+
+                // Ajouter dans la liste finale
                 ordersResponses.add(ordersResponse);
             }
-            System.out.println("#### productItems ::: " + productItems);
-            System.out.println("#### ordersResponses ::: " + ordersResponses);
+
             return ResponseEntity.ok(ordersResponses);
+
         } catch (RuntimeException e) {
-            throw new RuntimeException("Erreur lors de la récupération des commandes:: " + e);
+            throw new RuntimeException("Erreur lors de la récupération des commandes:: " + e.getMessage(), e);
         }
     }
+
 }
