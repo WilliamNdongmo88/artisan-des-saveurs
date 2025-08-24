@@ -73,6 +73,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('USER_READ','USER_CREATE')")
     @PostMapping(path = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<FileDTO> uploadFile(@RequestParam("file") MultipartFile file) {
+        System.out.println("✅ Appel réussi !");
         try {
             FileDTO dto = userService.saveAvatar(file);
             return ResponseEntity.ok(dto);

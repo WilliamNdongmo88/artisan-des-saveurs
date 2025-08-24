@@ -172,6 +172,7 @@ public class UserService {
     }
 
     public FileDTO saveAvatar(MultipartFile file) throws IOException {
+        System.out.println("✅ Appel du service !");
         User userConnected = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String imageUrl = cloudinaryService.uploadFile(file);
         FileDTO fileDto = new FileDTO();
