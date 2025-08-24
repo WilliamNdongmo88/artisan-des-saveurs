@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -311,7 +312,11 @@ public class OrderService {
             OrdersResponse ordersResponse = new OrdersResponse();
 
             // On prend la commande du premier productItem
-            List<Order> newOrderList = orderRepository.findAllByUserId(userid);
+            Optional<User> user = userRepository.findById(userid);
+            List<Order> newOrderList = new ArrayList<>();
+            if (user.isPresent()){
+                newOrderList = orderRepository.findAllByUser(user.get());
+            }
             for(Order order : newOrderList){
                 if (order.getId() == productItems.get(0).getId()){
                     //Order order = productItems.get(0).getOrder();
