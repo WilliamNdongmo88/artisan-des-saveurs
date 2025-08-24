@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import will.dev.artisan_des_saveurs.dto.MessageRetourDto;
@@ -173,24 +174,46 @@ public class UserService {
     }
 
     public FileDTO saveAvatar(MultipartFile file) throws IOException {
-        System.out.println("✅ Appel du service !");
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> userConnected = userRepository.findById(userDetails.getId());
-        System.out.println(" userConnected::: " + userConnected);
+        System.out.println("✅ Appel du service saveAvatar !");
 
-        String imageUrl = cloudinaryService.uploadFile(file);
-        FileDTO fileDto = new FileDTO();
-        if (userConnected.isPresent()){
-            fileDto.setFileName(extractFileName(imageUrl));
-            fileDto.setFilePath(imageUrl);
-            userConnected.get().setAvatar(fileDto.getFilePath());
-            System.out.println("✅ fileDto :: "+ fileDto);
-            System.out.println("✅ userConnected :: "+ userConnected);
-            userRepository.save(userConnected.get());
+        // Récupération de l'utilisateur connecté
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        Optional<User> userConnectedOpt = userRepository.findById(userDetails.getId());
+
+        if (userConnectedOpt.isEmpty()) {
+            throw new UsernameNotFoundException("Utilisateur non trouvé avec l'ID : " + userDetails.getId());
         }
+
+        User userConnected = userConnectedOpt.get();
+        System.out.println("👤 Utilisateur connecté : " + userConnected.getUsername());
+
+        // Upload du fichier sur Cloudinary
+        String imageUrl = cloudinaryService.uploadFile(file);
+        if (imageUrl == null || imageUrl.isBlank()) {
+            throw new IOException("Échec de l'upload de l'image sur Cloudinary !");
+        }
+
+        // Construction du DTO
+        FileDTO fileDto = new FileDTO();
+        fileDto.setFileName(extractFileName(imageUrl)); // ⚠️ Vérifie ton extractFileName
+        fileDto.setFilePath(imageUrl);
+
+        System.out.println("✅ Image uploadée : " + imageUrl);
+        System.out.println("✅ FileDTO créé : " + fileDto);
+
+        // Mise à jour de l'utilisateur avec l'avatar
+        userConnected.setAvatar(fileDto.getFilePath());
+        userRepository.save(userConnected);
+
+        System.out.println("✅ Avatar mis à jour pour l'utilisateur : " + userConnected.getUsername());
 
         return fileDto;
     }
+
 }
 
 
