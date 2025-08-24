@@ -301,30 +301,33 @@ public class OrderService {
         try {
             List<ProductItem> productItems = productItemRepository.findByUserId(userid);
 
-            // Liste de commandes avec leurs productItems associés
-            List<OrdersResponse> ordersResponses = new ArrayList<>();
-
-            for (ProductItem productItem : productItems) {
-                OrdersResponse ordersResponse = new OrdersResponse();
-
-                // Informations sur la commande (order lié au productItem)
-                ordersResponse.setId(productItem.getOrder().getId());
-                ordersResponse.setCreatedAt(productItem.getOrder().getCreatedAt());
-                ordersResponse.setDelivered(productItem.getOrder().getDelivered());
-                ordersResponse.setDiscount(productItem.getOrder().getDiscount());
-                ordersResponse.setSubtotal(productItem.getOrder().getSubtotal());
-                ordersResponse.setFreeShipping(productItem.getOrder().isFreeShipping());
-                ordersResponse.setTotal(productItem.getOrder().getTotal());
-                ordersResponse.setUserid(productItem.getUserId());
-
-                // Mapper le productItem (incluant product complet, quantité, etc.)
-                ordersResponse.setProductItem(productItemMapper.toDTO(productItem));
-
-                // Ajouter dans la liste finale
-                ordersResponses.add(ordersResponse);
+            if (productItems.isEmpty()) {
+                return ResponseEntity.notFound().build();
             }
 
-            return ResponseEntity.ok(ordersResponses);
+            // On suppose que tous les productItems appartiennent à la même commande
+            OrdersResponse ordersResponse = new OrdersResponse();
+
+            // On prend la commande du premier productItem
+            Order order = productItems.get(0).getOrder();
+
+            ordersResponse.setId(order.getId());
+            ordersResponse.setCreatedAt(order.getCreatedAt());
+            ordersResponse.setDelivered(order.getDelivered());
+            ordersResponse.setDiscount(order.getDiscount());
+            ordersResponse.setSubtotal(order.getSubtotal());
+            ordersResponse.setFreeShipping(order.isFreeShipping());
+            ordersResponse.setTotal(order.getTotal());
+            ordersResponse.setUserid(productItems.get(0).getUserId());
+
+            // Mapper la liste des productItems
+            List<ProductItemDTO> productItemDTOs = productItems.stream()
+                    .map(productItemMapper::toDTO)
+                    .toList();
+
+            ordersResponse.setProductItems(productItemDTOs);
+
+            return ResponseEntity.ok(ordersResponse);
 
         } catch (RuntimeException e) {
             throw new RuntimeException("Erreur lors de la récupération des commandes:: " + e.getMessage(), e);

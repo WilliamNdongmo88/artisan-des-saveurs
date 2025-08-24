@@ -4,6 +4,7 @@ import lombok.Data;
 import will.dev.artisan_des_saveurs.dto.UserDto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class OrdersResponse {
@@ -15,5 +16,5 @@ public class OrdersResponse {
     private String delivered;
     private LocalDateTime createdAt;
     private Long userid;
-    private ProductItemDTO productItem;
+    private List<ProductItemDTO> productItems;
 }
