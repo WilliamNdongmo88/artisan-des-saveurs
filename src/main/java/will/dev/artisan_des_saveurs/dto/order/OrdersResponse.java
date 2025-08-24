@@ -13,8 +13,8 @@ public class OrdersResponse {
     private double total;
     private boolean freeShipping;
     private String delivered;
-    //private LocalDateTime createAt;
-    private String createAt;
+    private LocalDateTime createdAt;
+    //private String createdAt;
     private Long userid;
     private ProductItemDTO productItem;
 }
