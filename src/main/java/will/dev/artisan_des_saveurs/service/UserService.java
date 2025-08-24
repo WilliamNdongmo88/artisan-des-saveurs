@@ -18,6 +18,7 @@ import will.dev.artisan_des_saveurs.entity.ContactRequest;
 import will.dev.artisan_des_saveurs.entity.User;
 import will.dev.artisan_des_saveurs.repository.ContactRequestRepository;
 import will.dev.artisan_des_saveurs.repository.UserRepository;
+import will.dev.artisan_des_saveurs.security.UserDetailsImpl;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -173,16 +174,18 @@ public class UserService {
 
     public FileDTO saveAvatar(MultipartFile file) throws IOException {
         System.out.println("✅ Appel du service !");
-        User userConnected = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println("✅ userConnected :: "+ userConnected);
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println("userDetails isEnabled::: " + userDetails.isEnabled());
+        System.out.println(" principal::: " + principal);
         String imageUrl = cloudinaryService.uploadFile(file);
         FileDTO fileDto = new FileDTO();
         fileDto.setFileName(extractFileName(imageUrl));
         fileDto.setFilePath(imageUrl);
-        userConnected.setAvatar(fileDto.getFilePath());
+       // userConnected.setAvatar(fileDto.getFilePath());
         System.out.println("✅ fileDto :: "+ fileDto);
-        System.out.println("✅ userConnected :: "+ userConnected);
-        userRepository.save(userConnected);
+        //System.out.println("✅ userConnected :: "+ userConnected);
+        //userRepository.save(userConnected);
         return fileDto;
     }
 }
