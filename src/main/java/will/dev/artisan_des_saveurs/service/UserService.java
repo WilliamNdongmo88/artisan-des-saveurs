@@ -174,18 +174,21 @@ public class UserService {
 
     public FileDTO saveAvatar(MultipartFile file) throws IOException {
         System.out.println("✅ Appel du service !");
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println("userDetails isEnabled::: " + userDetails.isEnabled());
-        System.out.println(" principal::: " + principal);
+        Optional<User> userConnected = userRepository.findById(userDetails.getId());
+        System.out.println(" userConnected::: " + userConnected);
+
         String imageUrl = cloudinaryService.uploadFile(file);
         FileDTO fileDto = new FileDTO();
-        fileDto.setFileName(extractFileName(imageUrl));
-        fileDto.setFilePath(imageUrl);
-       // userConnected.setAvatar(fileDto.getFilePath());
-        System.out.println("✅ fileDto :: "+ fileDto);
-        //System.out.println("✅ userConnected :: "+ userConnected);
-        //userRepository.save(userConnected);
+        if (userConnected.isPresent()){
+            fileDto.setFileName(extractFileName(imageUrl));
+            fileDto.setFilePath(imageUrl);
+            userConnected.get().setAvatar(fileDto.getFilePath());
+            System.out.println("✅ fileDto :: "+ fileDto);
+            System.out.println("✅ userConnected :: "+ userConnected);
+            userRepository.save(userConnected.get());
+        }
+
         return fileDto;
     }
 }
