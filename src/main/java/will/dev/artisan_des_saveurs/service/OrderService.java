@@ -309,7 +309,7 @@ public class OrderService {
                 ordersResponse.setTotal(productItem.getOrder().getTotal());
                 ordersResponse.setUserid(productItem.getUserId());
                 ordersResponse.setDelivered(productItem.getOrder().getDelivered());
-                ordersResponse.setCreateAt(productItem.getOrder().getCreatedAt().toString());
+                ordersResponse.setCreateAt(productItem.getOrder().getCreatedAt());
                 ordersResponse.setProductItem(productItemMapper.toDTO(productItem));
                 ordersResponses.add(ordersResponse);
             }
