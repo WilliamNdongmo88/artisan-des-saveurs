@@ -42,88 +42,88 @@ public class OrderService {
     @Transactional
     public ResponseEntity<MessageRetourDto> sendOrder(OrderDTO orderDTO) {
         System.out.println("orderDTO ::: " + orderDTO.getItems());
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println("userDetails isEnabled::: " + userDetails.isEnabled());
-        System.out.println(" principal::: " + principal);
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        System.out.println("userDetails isEnabled::: " + userDetails.isEnabled());
+//        System.out.println(" principal::: " + principal);
         MessageRetourDto messageRetourDto = new MessageRetourDto();
         String email;
 
-//        if (userRepository.existsByEmail(orderDTO.getUser().getEmail())) { //
-//            email = orderDTO.getUser().getEmail();
-//            System.out.println("email ::: " + email);
-//
-//            User userConnected = this.userRepository.findByEmailFromConnectedUser(email);
-//            String message = generateOrderMessage(orderDTO);
-//
-//            // Enregistrement de la requête de l'utilisateur
-//            ContactRequest contactRequest = new ContactRequest();
-//            contactRequest.setUser(userConnected);
-//            contactRequest.setSubject("Nouvelle commande client");
-//            contactRequest.setMessage(message);
-//            contactRequest.setEmailSent(false);
-//            contactRequest.setWhatsappSent(false);
-//            ContactRequest savedContactReq = contactRequestRepository.save(contactRequest);
-//
-//            //userConnected.setContactRequests(List.of(savedContactReq));
-//            userConnected.getContactRequests().add(savedContactReq);
-//
-//            // Création et enregistrement de la commande
-//            saveOrderWithItems(orderDTO, userConnected);
-//
-//            Boolean isFromCart = true;
-//            String customerMessage = customerOrderMessage(orderDTO);
-//            notificationService.sentToCopany(savedContactReq, isFromCart);
-//            notificationService.sentResponseToCustomerFromCartPage(userConnected, customerMessage);
-//            savedContactReq.markEmailSent();
-//
-//            whatsappNotification.sendWhatsappMessage(userConnected, company_number, savedContactReq, isFromCart);
-//            vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, userConnected, savedContactReq);
-//            savedContactReq.markWhatsappSent();
-//
-//            messageRetourDto.setSuccess(true);
-//            messageRetourDto.setMessage(MESSAGE);
-//        }
-//        else {
-//            //User sans compte ou Nonconnecté
-//            User user = new User();
-//            user.setFirstName(orderDTO.getUser().getFirstName());
-//            user.setLastName(orderDTO.getUser().getLastName());
-//            user.setEmail(orderDTO.getUser().getEmail());
-//            user.setPhone(orderDTO.getUser().getPhone());
-//            user.setConsent(true);
-//            user.setEnabled(false);
-//            user.setUsername("anonymousUser");
-//            user.setPassword("anonymousUser123");
-//            User savedUser = userRepository.save(user);
-//            System.out.println("savedUser ::: " + savedUser);
-//
-//            String message = generateOrderMessage(orderDTO);
-//
-//            ContactRequest contactRequest = new ContactRequest();
-//            contactRequest.setUser(savedUser);
-//            contactRequest.setSubject("Nouvelle commande client");
-//            contactRequest.setMessage(message);
-//            contactRequest.setEmailSent(false);
-//            contactRequest.setWhatsappSent(false);
-//            ContactRequest savedContactReq = contactRequestRepository.save(contactRequest);
-//
-//            savedUser.setContactRequests(List.of(contactRequest));
-//
-//            Boolean isFromCart = true;
-//            notificationService.sentToCopany(contactRequest, isFromCart);
-//            String customerMessage = customerOrderMessage(orderDTO);
-//            notificationService.sentResponseToCustomerFromCartPage(savedUser, customerMessage);
-//            contactRequest.setEmailSent(true);
-//            contactRequest.setEmailSentAt(LocalDateTime.now());
-//            whatsappNotification.sendWhatsappMessage(savedUser, company_number, savedContactReq, isFromCart);
-//            vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, savedUser, savedContactReq);
-//            contactRequest.setWhatsappSent(true);
-//            contactRequest.setWhatsappSentAt(LocalDateTime.now());
-//
-//            messageRetourDto.setSuccess(true);
-//            messageRetourDto.setMessage(MESSAGE);
-//        }
+        if (userRepository.existsByEmail(orderDTO.getUser().getEmail())) { //
+            email = orderDTO.getUser().getEmail();
+            System.out.println("email ::: " + email);
+
+            User userConnected = this.userRepository.findByEmailFromConnectedUser(email);
+            String message = generateOrderMessage(orderDTO);
+
+            // Enregistrement de la requête de l'utilisateur
+            ContactRequest contactRequest = new ContactRequest();
+            contactRequest.setUser(userConnected);
+            contactRequest.setSubject("Nouvelle commande client");
+            contactRequest.setMessage(message);
+            contactRequest.setEmailSent(false);
+            contactRequest.setWhatsappSent(false);
+            ContactRequest savedContactReq = contactRequestRepository.save(contactRequest);
+
+            //userConnected.setContactRequests(List.of(savedContactReq));
+            userConnected.getContactRequests().add(savedContactReq);
+
+            // Création et enregistrement de la commande
+            saveOrderWithItems(orderDTO, userConnected);
+
+            Boolean isFromCart = true;
+            String customerMessage = customerOrderMessage(orderDTO);
+            notificationService.sentToCopany(savedContactReq, isFromCart);
+            notificationService.sentResponseToCustomerFromCartPage(userConnected, customerMessage);
+            savedContactReq.markEmailSent();
+
+            whatsappNotification.sendWhatsappMessage(userConnected, company_number, savedContactReq, isFromCart);
+            vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, userConnected, savedContactReq);
+            savedContactReq.markWhatsappSent();
+
+            messageRetourDto.setSuccess(true);
+            messageRetourDto.setMessage(MESSAGE);
+        }
+        else {
+            //User sans compte ou Nonconnecté
+            User user = new User();
+            user.setFirstName(orderDTO.getUser().getFirstName());
+            user.setLastName(orderDTO.getUser().getLastName());
+            user.setEmail(orderDTO.getUser().getEmail());
+            user.setPhone(orderDTO.getUser().getPhone());
+            user.setConsent(true);
+            user.setEnabled(false);
+            user.setUsername("anonymousUser");
+            user.setPassword("anonymousUser123");
+            User savedUser = userRepository.save(user);
+            System.out.println("savedUser ::: " + savedUser);
+
+            String message = generateOrderMessage(orderDTO);
+
+            ContactRequest contactRequest = new ContactRequest();
+            contactRequest.setUser(savedUser);
+            contactRequest.setSubject("Nouvelle commande client");
+            contactRequest.setMessage(message);
+            contactRequest.setEmailSent(false);
+            contactRequest.setWhatsappSent(false);
+            ContactRequest savedContactReq = contactRequestRepository.save(contactRequest);
+
+            savedUser.setContactRequests(List.of(contactRequest));
+
+            Boolean isFromCart = true;
+            notificationService.sentToCopany(contactRequest, isFromCart);
+            String customerMessage = customerOrderMessage(orderDTO);
+            notificationService.sentResponseToCustomerFromCartPage(savedUser, customerMessage);
+            contactRequest.setEmailSent(true);
+            contactRequest.setEmailSentAt(LocalDateTime.now());
+            whatsappNotification.sendWhatsappMessage(savedUser, company_number, savedContactReq, isFromCart);
+            vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, savedUser, savedContactReq);
+            contactRequest.setWhatsappSent(true);
+            contactRequest.setWhatsappSentAt(LocalDateTime.now());
+
+            messageRetourDto.setSuccess(true);
+            messageRetourDto.setMessage(MESSAGE);
+        }
         return ResponseEntity.ok(messageRetourDto);
     }
 
