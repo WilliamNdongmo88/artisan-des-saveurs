@@ -311,16 +311,21 @@ public class OrderService {
             OrdersResponse ordersResponse = new OrdersResponse();
 
             // On prend la commande du premier productItem
-            Order order = productItems.get(0).getOrder();
+            List<Order> newOrderList = orderRepository.findAllByUserId(userid);
+            for(Order order : newOrderList){
+                if (order.getId() == productItems.get(0).getId()){
+                    //Order order = productItems.get(0).getOrder();
 
-            ordersResponse.setId(order.getId());
-            ordersResponse.setCreatedAt(order.getCreatedAt());
-            ordersResponse.setDelivered(order.getDelivered());
-            ordersResponse.setDiscount(order.getDiscount());
-            ordersResponse.setSubtotal(order.getSubtotal());
-            ordersResponse.setFreeShipping(order.isFreeShipping());
-            ordersResponse.setTotal(order.getTotal());
-            ordersResponse.setUserid(productItems.get(0).getUserId());
+                    ordersResponse.setId(order.getId());
+                    ordersResponse.setCreatedAt(order.getCreatedAt());
+                    ordersResponse.setDelivered(order.getDelivered());
+                    ordersResponse.setDiscount(order.getDiscount());
+                    ordersResponse.setSubtotal(order.getSubtotal());
+                    ordersResponse.setFreeShipping(order.isFreeShipping());
+                    ordersResponse.setTotal(order.getTotal());
+                    ordersResponse.setUserid(productItems.get(0).getUserId());
+                }
+            }
 
             // Mapper la liste des productItems
             List<ProductItemDTO> productItemDTOs = productItems.stream()
