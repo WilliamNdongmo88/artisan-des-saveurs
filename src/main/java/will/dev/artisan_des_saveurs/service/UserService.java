@@ -199,11 +199,8 @@ public class UserService {
 
         // Construction du DTO
         FileDTO fileDto = new FileDTO();
-        fileDto.setFileName(extractFileName(imageUrl)); // ⚠️ Vérifie ton extractFileName
+        fileDto.setFileName(extractFileName(imageUrl)); // Vérifie ton extractFileName
         fileDto.setFilePath(imageUrl);
-
-        System.out.println("✅ Image uploadée : " + imageUrl);
-        System.out.println("✅ FileDTO créé : " + fileDto);
 
         // Mise à jour de l'utilisateur avec l'avatar
         userConnected.setAvatar(fileDto.getFilePath());

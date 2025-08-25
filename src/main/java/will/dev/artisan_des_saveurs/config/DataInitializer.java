@@ -199,7 +199,7 @@ public class DataInitializer {
 
             will.dev.artisan_des_saveurs.entity.Files img = new Files();
             img.setFilePath("""
-                    https://artisan-des-saveurs-production.up.railway.app/api/uploads/cb6e36c4-df21-4e61-99b9-d1c3d950e240-chipo_aux_herbes.png""");
+                    https://res.cloudinary.com/dcjjwjheh/image/upload/v1755976309/mdfh9nvbsw9t94fdsdmo.png""");
             img.setFileName("chipo_aux_herbes.png");
 
             product.setProductImage(img);

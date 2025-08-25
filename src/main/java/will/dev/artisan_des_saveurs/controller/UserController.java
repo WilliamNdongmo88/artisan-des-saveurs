@@ -44,6 +44,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_CREATE', 'USER_CREATE')")
     @PutMapping("personal-info")
     public ResponseEntity<MessageRetourDto> updateUser(@RequestBody @Valid UserDto userDto){
         System.out.println("📦 Requête reçue pour modifier un utilisateur : " + userDto.getEmail());
