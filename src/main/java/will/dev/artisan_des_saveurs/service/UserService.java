@@ -147,7 +147,7 @@ public class UserService {
     @Scheduled(cron = "0 */10 * * * *")
     public void removeUselessJwt(){
         log.info("Suppresion des users non abonnée a {} %s".formatted(Instant.now()));
-        List<User> users = this.userRepository.findByEnabledFalse(false) ;
+        List<User> users = this.userRepository.findByEnabledFalse(false);
         if (!users.isEmpty()) {
             userRepository.deleteAll(users);
             log.info("{} Users non abonnée supprimés.", users.size());
