@@ -139,6 +139,7 @@ public class AuthService {
             throw new RuntimeException(":: User not found:: ");
         }
         User user = userOpt.get();
+        System.out.println("Avatar :: " + user.getAvatar());
         return user.getAvatar();
     }
 }
