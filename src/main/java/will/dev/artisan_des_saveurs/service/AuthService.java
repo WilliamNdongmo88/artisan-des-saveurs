@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import will.dev.artisan_des_saveurs.dto.req_resp.dto.FileDTO;
 import will.dev.artisan_des_saveurs.entity.Role;
 import will.dev.artisan_des_saveurs.entity.User;
 import will.dev.artisan_des_saveurs.enums.TypeDeRole;
@@ -133,14 +134,16 @@ public class AuthService {
         return "Mot de passe réinitialisé avec succès!";
     }
 
-    public String getAvatar(Long id) {
+    public FileDTO getAvatar(Long id) {
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()){
             throw new RuntimeException(":: User not found:: ");
         }
         User user = userOpt.get();
-        System.out.println("Avatar :: " + user.getAvatar());
-        return user.getAvatar();
+        FileDTO fileDTO = new FileDTO();
+        fileDTO.setFilePath(user.getAvatar());
+        System.out.println("fileDTO :: " + fileDTO);
+        return fileDTO;
     }
 }
 
