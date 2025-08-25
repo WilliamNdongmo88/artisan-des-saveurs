@@ -85,7 +85,7 @@ public class OrderService {
             messageRetourDto.setMessage(MESSAGE);
         }
         else {
-            //User sans compte ou Nonconnecté
+            System.out.println("::: User sans compte ou Nonconnecté ::: ");
             User user = new User();
             user.setFirstName(orderDTO.getUser().getFirstName());
             user.setLastName(orderDTO.getUser().getLastName());
