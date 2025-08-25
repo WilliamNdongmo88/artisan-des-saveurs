@@ -3,6 +3,7 @@ package will.dev.artisan_des_saveurs.service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import will.dev.artisan_des_saveurs.entity.Role;
@@ -130,6 +131,15 @@ public class AuthService {
         userRepository.save(user);
 
         return "Mot de passe réinitialisé avec succès!";
+    }
+
+    public ResponseEntity<?> getAvatar(Long id) {
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty()){
+            throw new RuntimeException(":: User not found:: ");
+        }
+        User user = userOpt.get();
+        return ResponseEntity.ok(user.getAvatar());
     }
 }
 

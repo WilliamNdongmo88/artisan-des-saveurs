@@ -115,5 +115,10 @@ public class AuthController {
                     .body(new MessageResponse(e.getMessage()));
         }
     }
+
+    @GetMapping("/avatar/{id}")
+    public ResponseEntity<?> getAvatar(@PathVariable Long id){
+        return authService.getAvatar(id);
+    }
 }
 
