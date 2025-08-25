@@ -54,7 +54,7 @@ public class AuthController {
                     roles));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
-                    .body(new MessageResponse("Erreur: Nom d'utilisateur ou mot de passe incorrect!"));
+                    .body(new MessageResponse("Erreur:: Nom d'utilisateur ou mot de passe incorrect!"));
         }
     }
 
