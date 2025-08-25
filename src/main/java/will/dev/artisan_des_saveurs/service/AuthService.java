@@ -44,6 +44,7 @@ public class AuthService {
                            signUpRequest.getLastName());
 
         user.setPhone(signUpRequest.getPhone());
+        user.setAvatar("");
         user.setRole(userRole);
         
         // Générer un token d'activation

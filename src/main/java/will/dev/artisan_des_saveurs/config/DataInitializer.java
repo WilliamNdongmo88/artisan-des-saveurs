@@ -47,6 +47,7 @@ public class DataInitializer {
             admin.setLastName("Ndongmo");
             admin.setPhone("+23059221613");
             admin.setEnabled(true);
+            admin.setAvatar("https://res.cloudinary.com/dcjjwjheh/image/upload/v1756025207/ko5cyz724dqdgujlckn9.jpg");
             //admin.setRoles(Set.of(Role.ROLE_ADMIN, Role.ROLE_USER));
             admin.setRole(userRole);
             userRepository.save(admin);
