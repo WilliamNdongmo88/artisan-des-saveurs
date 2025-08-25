@@ -133,13 +133,13 @@ public class AuthService {
         return "Mot de passe réinitialisé avec succès!";
     }
 
-    public ResponseEntity<?> getAvatar(Long id) {
+    public String getAvatar(Long id) {
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()){
             throw new RuntimeException(":: User not found:: ");
         }
         User user = userOpt.get();
-        return ResponseEntity.ok(user.getAvatar());
+        return user.getAvatar();
     }
 }
 
