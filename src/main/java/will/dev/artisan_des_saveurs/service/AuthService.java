@@ -55,6 +55,7 @@ public class AuthService {
 
         // Envoyer l'email d'activation
         notificationService.sendActivationEmail(user.getEmail(), activationToken);
+        System.out.println(":: Notification éffectué :: ");
 
         return "Utilisateur enregistré avec succès! Veuillez vérifier votre email pour activer votre compte.";
     }
