@@ -27,18 +27,40 @@ public class JwtUtils {
 
     public String generateJwtToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+        return generateTokenFromUsername(userPrincipal);
+    }
 
+    public String generateTokenFromUsername(UserDetailsImpl userDetails) {
         Map<String, Object> claims = Map.of(
-                "id",userPrincipal.getId(),
-                "firstname", userPrincipal.getFirstName(),
-                "lastname", userPrincipal.getLastName(),
-                "phone", userPrincipal.getPhone(),
-                "email",userPrincipal.getEmail(),
-                "avatar",userPrincipal.getAvatar()
+                "id", userDetails.getId(),
+                "firstname", userDetails.getFirstName(),
+                "lastname", userDetails.getLastName(),
+                "phone", userDetails.getPhone(),
+                "email", userDetails.getEmail(),
+                "avatar", userDetails.getAvatar()
         );
 
         return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
+                .setSubject(userDetails.getUsername())
+                .addClaims(claims)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(key(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String generateTokenFromUser(User user) {
+        Map<String, Object> claims = Map.of(
+                "id", user.getId(),
+                "firstname", user.getFirstName(),
+                "lastname", user.getLastName(),
+                "phone", user.getPhone() != null ? user.getPhone() : "",
+                "email", user.getEmail(),
+                "avatar", user.getAvatar() != null ? user.getAvatar() : ""
+        );
+
+        return Jwts.builder()
+                .setSubject(user.getUsername())
                 .addClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
@@ -72,5 +94,3 @@ public class JwtUtils {
         return false;
     }
 }
-
-
