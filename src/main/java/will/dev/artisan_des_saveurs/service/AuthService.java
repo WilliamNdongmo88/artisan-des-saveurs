@@ -117,6 +117,7 @@ public class AuthService {
 
     public String updatePassword(String email, String newPassword){
         Optional<User> userOpt = userRepository.findByEmail(email);
+        System.out.println("### UserOpt :: " + userOpt);
         if (userOpt.isEmpty()) {
             throw new RuntimeException("Utilisateur non trouvé!");
         }
