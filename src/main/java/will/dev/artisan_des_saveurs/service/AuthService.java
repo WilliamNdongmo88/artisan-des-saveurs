@@ -115,6 +115,22 @@ public class AuthService {
         return "Email de réinitialisation envoyé avec succès!";
     }
 
+    public String updatePassword(String email, String newPassword){
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            throw new RuntimeException("Utilisateur non trouvé!");
+        }
+
+        User user = userOpt.get();
+        String resetToken = UUID.randomUUID().toString();
+        user.setResetPasswordToken(resetToken);
+        user.setResetPasswordExpiry(LocalDateTime.now().plusHours(1)); // Token valide 1 heure
+        userRepository.save(user);
+
+        resetPassword(user.getResetPasswordToken(), newPassword);
+        return "Mot de passe mis a jour avec succès!";
+    }
+
     public String resetPassword(String token, String newPassword) {
         Optional<User> userOpt = userRepository.findByResetPasswordToken(token);
         if (userOpt.isEmpty()) {

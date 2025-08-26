@@ -105,6 +105,16 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/update-password")
+    public ResponseEntity<?> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest){
+        try {
+            String message = authService.updatePassword(updatePasswordRequest.getEmail(), updatePasswordRequest.getNewPassword());
+            return ResponseEntity.ok(new MessageResponse(message));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
         try {
