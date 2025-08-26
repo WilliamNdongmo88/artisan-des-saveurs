@@ -116,7 +116,7 @@ public class AuthService {
     }
 
     public String updatePassword(String email, String newPassword){
-        System.out.println("### email :: " + email + "### newPassword :: " +  newPassword);
+        System.out.println("### email :: " + email + " ### newPassword :: " +  newPassword);
         Optional<User> userOpt = userRepository.findByEmail(email);
         System.out.println("### UserOpt :: " + userOpt);
         if (userOpt.isEmpty()) {
