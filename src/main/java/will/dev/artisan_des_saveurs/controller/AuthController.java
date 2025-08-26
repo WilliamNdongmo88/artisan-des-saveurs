@@ -3,6 +3,7 @@ package will.dev.artisan_des_saveurs.controller;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -105,6 +106,7 @@ public class AuthController {
         }
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_CREATE','USER_CREATE')")
     @PostMapping("/update-password")
     public ResponseEntity<?> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest){
         try {

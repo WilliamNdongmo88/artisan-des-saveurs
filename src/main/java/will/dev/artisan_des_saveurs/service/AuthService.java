@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +14,7 @@ import will.dev.artisan_des_saveurs.entity.Role;
 import will.dev.artisan_des_saveurs.entity.User;
 import will.dev.artisan_des_saveurs.enums.TypeDeRole;
 import will.dev.artisan_des_saveurs.repository.UserRepository;
+import will.dev.artisan_des_saveurs.security.UserDetailsImpl;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -23,9 +26,8 @@ import java.util.UUID;
 public class AuthService {
 
     private final UserRepository userRepository;
-
     private final PasswordEncoder encoder;
-
+    private final PasswordEncoder passwordEncoder;
     private final NotificationService notificationService;
 
     public String registerUser(will.dev.artisan_des_saveurs.dto.req_resp.dto.@Valid SignupRequest signUpRequest) {
@@ -116,22 +118,32 @@ public class AuthService {
         return "Email de réinitialisation envoyé avec succès!";
     }
 
-    public String updatePassword(String email, String newPassword){
-        System.out.println("### email :: " + email + " ### newPassword :: " +  newPassword);
-        Optional<User> userOpt = userRepository.findByEmail(email);
-        System.out.println("### UserOpt :: " + userOpt);
-        if (userOpt.isEmpty()) {
-            throw new RuntimeException("Utilisateur non trouvé!");
+    public String updatePassword(String currentPassword, String newPassword) {
+        // Récupération de l'utilisateur connecté
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        Optional<User> userConnectedOpt = userRepository.findById(userDetails.getId());
+
+        if (userConnectedOpt.isEmpty()) {
+            throw new UsernameNotFoundException("Utilisateur non trouvé!");
+        }
+        User userConnected = userConnectedOpt.get();
+
+        // Vérifie que l'ancien mot de passe correspond
+        if (!passwordEncoder.matches(currentPassword, userConnected.getPassword())) {
+            throw new RuntimeException("Mot de passe actuel incorrect!");
         }
 
-        User user = userOpt.get();
-        String resetToken = UUID.randomUUID().toString();
-        user.setResetPasswordToken(resetToken);
-        user.setResetPasswordExpiry(LocalDateTime.now().plusHours(1)); // Token valide 1 heure
-        userRepository.save(user);
+        // Change le mot de passe
+        userConnected.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(userConnected);
 
-        return resetPassword(user.getResetPasswordToken(), newPassword);
+        return "Mot de passe mis à jour avec succès.";
     }
+
 
     public String resetPassword(String token, String newPassword) {
         System.out.println("### token :: " + token + " ### newPassword :: " +  newPassword);
