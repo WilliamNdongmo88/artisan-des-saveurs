@@ -116,7 +116,6 @@ public class AuthService {
         return "Email de réinitialisation envoyé avec succès!";
     }
 
-    @Transactional
     public String updatePassword(String email, String newPassword){
         System.out.println("### email :: " + email + " ### newPassword :: " +  newPassword);
         Optional<User> userOpt = userRepository.findByEmail(email);
@@ -131,11 +130,11 @@ public class AuthService {
         user.setResetPasswordExpiry(LocalDateTime.now().plusHours(1)); // Token valide 1 heure
         userRepository.save(user);
 
-        resetPassword(user.getResetPasswordToken(), newPassword);
-        return "Mot de passe mis a jour avec succès!";
+        return resetPassword(user.getResetPasswordToken(), newPassword);
     }
 
     public String resetPassword(String token, String newPassword) {
+        System.out.println("### token :: " + token + " ### newPassword :: " +  newPassword);
         Optional<User> userOpt = userRepository.findByResetPasswordToken(token);
         if (userOpt.isEmpty()) {
             throw new RuntimeException("Token de réinitialisation invalide!");
