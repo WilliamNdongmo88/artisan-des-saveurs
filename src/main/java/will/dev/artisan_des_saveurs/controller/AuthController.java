@@ -106,7 +106,7 @@ public class AuthController {
         }
     }
 
-    @PreAuthorize("hasAuthority('ADMIN_CREATE','USER_CREATE')")
+    @PreAuthorize("hasAuthority('ADMIN_CREATE') or hasAuthority('USER_CREATE')")
     @PostMapping("/update-password")
     public ResponseEntity<?> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest){
         try {
