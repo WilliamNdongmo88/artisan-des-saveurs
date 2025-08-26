@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import will.dev.artisan_des_saveurs.dto.req_resp.dto.FileDTO;
 import will.dev.artisan_des_saveurs.entity.Role;
 import will.dev.artisan_des_saveurs.entity.User;
@@ -115,6 +116,7 @@ public class AuthService {
         return "Email de réinitialisation envoyé avec succès!";
     }
 
+    @Transactional
     public String updatePassword(String email, String newPassword){
         System.out.println("### email :: " + email + " ### newPassword :: " +  newPassword);
         Optional<User> userOpt = userRepository.findByEmail(email);
