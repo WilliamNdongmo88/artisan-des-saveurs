@@ -70,7 +70,7 @@ public class OrderService {
             userConnected.getContactRequests().add(savedContactReq);
 
             // Création et enregistrement de la commande
-            //saveOrderWithItems(orderDTO, userConnected);
+            saveOrderWithItems(orderDTO, userConnected);
 
             Boolean isFromCart = true;
             String customerMessage = customerOrderMessage(orderDTO);
