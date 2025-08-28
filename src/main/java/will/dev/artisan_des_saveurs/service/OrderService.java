@@ -213,11 +213,11 @@ public class OrderService {
 
         // Vérification du panier
         if (items == null || items.isEmpty()) {
-            return "Le panier est vide.";
+            return "<p>Le panier est vide.</p>";
         }
 
         // Description des items
-        StringBuilder itemsDescription = new StringBuilder();
+        StringBuilder itemsDescription = new StringBuilder("<ul>");
         for (int i = 0; i < items.size(); i++) {
             ProductItemDTO item = items.get(i);
             String name = item.getProduct() != null && item.getProduct().getName() != null
@@ -225,48 +225,45 @@ public class OrderService {
                     : "Produit inconnu";
             double quantity = item.getDisplayQuantity();
             String unite = item.getSelectedUnit();
+
             itemsDescription.append(
-                    String.format("%d. %s - Quantité : %.2f %s%n", i + 1, name, quantity, unite)
+                    String.format("<li>%s - Quantité : %.2f %s</li>", name, quantity, unite)
             );
         }
+        itemsDescription.append("</ul>");
 
         // Récupération du nombre de commande
-        List<Order> orderList = orderRepository.findAll();
-        int sizeOrder = orderList.size();
+        int sizeOrder = orderRepository.findAll().size();
 
         // Message livraison
         String shippingMessage = freeShipping
                 ? "🚚 Livraison gratuite.✅"
-                : "🚚 Livraison : À votre charge\n";
+                : "🚚 Livraison : À votre charge";
 
-        // Construction du message final
-        String message = String.format("""
-            Bonjour %s,
-            Nous vous remercions pour votre commande n°%s passée le %s.
-            
-            🧾 Récapitulatif de votre commande :
-            %s
-            
-            💰 Total à payer : %.2f Rs
-            %s
-            📦 Statut : En cours de préparation
-            
-            Vous recevrez un e-mail dès que votre commande sera prête à être livrée.
-
-            Merci pour votre confiance !
-            Bien cordialement,
-            Service Client – L'Artisan-des-saveurs.
-            """,
-                orderDto.getUser().getFirstName()+" "+orderDto.getUser().getLastName(),
-                "CMD-00"+ sizeOrder + 1,
+        // Construction du message final en HTML
+        String message = String.format(
+                "Bonjour %s,<br/><br/>" +
+                        "Nous vous remercions pour votre commande n°%s passée le %s.<br/><br/>" +
+                        "🧾 <b>Récapitulatif de votre commande :</b><br/>" +
+                        "%s<br/>" +
+                        "💰 <b>Total à payer :</b> %.2f Rs<br/>" +
+                        "%s<br/><br/>" +
+                        "📦 <b>Statut :</b> En cours de préparation<br/><br/>" +
+                        "Vous recevrez un e-mail dès que votre commande sera prête à être livrée.<br/><br/>" +
+                        "Merci pour votre confiance !<br/><br/>" +
+                        "Bien cordialement,<br/>" +
+                        "Service Client – <i>L'Artisan-des-saveurs</i>",
+                orderDto.getUser().getFirstName() + " " + orderDto.getUser().getLastName(),
+                "CMD-00" + (sizeOrder + 1),
                 LocalDate.now(),
                 itemsDescription.toString(),
                 total,
                 shippingMessage
         );
 
-        return message.trim();
+        return message;
     }
+
 
     @Transactional
     public void saveOrderWithItems(OrderDTO orderDto, User userConnected) {
