@@ -70,6 +70,8 @@ public class NotificationService {
     }
 
     public void sentToCopany(ContactRequest contactRequest, Boolean isFromCart) {
+        System.out.println(":: Sent mail to company :: ");
+        System.out.println(":: Message :: " + contactRequest.getMessage());
         try {
             User user = contactRequest.getUser();
             SimpleMailMessage message = new SimpleMailMessage();
