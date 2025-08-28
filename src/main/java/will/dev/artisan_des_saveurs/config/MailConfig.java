@@ -14,10 +14,10 @@ public class MailConfig {
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp-relay.brevo.com");
+        mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
-        mailSender.setUsername(System.getProperty("BREVO_USERNAME"));
-        mailSender.setPassword(System.getProperty("BREVO_SMTP_KEY"));
+        mailSender.setUsername(System.getProperty("MAIL_USERNAME"));
+        mailSender.setPassword(System.getProperty("MAIL_PASSWORD"));
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

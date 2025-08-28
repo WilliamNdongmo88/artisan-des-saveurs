@@ -72,14 +72,14 @@ public class OrderService {
             saveOrderWithItems(orderDTO, userConnected);
 
             Boolean isFromCart = true;
-//            String customerMessage = customerOrderMessage(orderDTO);
-//            notificationService.sentToCopany(savedContactReq, isFromCart);
-//            notificationService.sentResponseToCustomerFromCartPage(userConnected, customerMessage);
-//            savedContactReq.markEmailSent();
-//
-//            whatsappNotification.sendWhatsappMessage(userConnected, company_number, savedContactReq, isFromCart);
-//            vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, userConnected, savedContactReq);
-//            savedContactReq.markWhatsappSent();
+            String customerMessage = customerOrderMessage(orderDTO);
+            notificationService.sentToCopany(savedContactReq, isFromCart);
+            notificationService.sentResponseToCustomerFromCartPage(userConnected, customerMessage);
+            savedContactReq.markEmailSent();
+
+            whatsappNotification.sendWhatsappMessage(userConnected, company_number, savedContactReq, isFromCart);
+            vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, userConnected, savedContactReq);
+            savedContactReq.markWhatsappSent();
 
             messageRetourDto.setSuccess(true);
             messageRetourDto.setMessage(MESSAGE);

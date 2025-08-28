@@ -73,13 +73,16 @@ public class NotificationService {
         System.out.println(":: Sent mail to company :: ");
         System.out.println(":: Message :: " + contactRequest.getMessage());
         try {
+            System.out.println(":: Début 1 :: ");
             User user = contactRequest.getUser();
             SimpleMailMessage message = new SimpleMailMessage();
             message.setSubject(contactRequest.getSubject());
 
             String messageBody = "";
             if (isFromCart){
+                System.out.println(":: Début 2 :: ");
                 messageBody = contactRequest.getMessage();
+                System.out.println(":: Fin 2 :: ");
             }else {
                 messageBody = "Client : "+user.getFullName()+"\n\n"
                         + "Email : "+user.getEmail()+".\n\n"
@@ -92,7 +95,7 @@ public class NotificationService {
             message.setTo(companyEmail);
 
             message.setText(messageBody);
-
+            System.out.println(":: Fin 2 :: ");
             javaMailSender.send(message);
         } catch (RuntimeException e) {
             throw new RuntimeException("NOTIFICATION_EMAIL_EXCEPTION: " + e);
