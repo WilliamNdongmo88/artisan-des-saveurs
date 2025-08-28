@@ -88,7 +88,7 @@ public class NotificationService {
             }
 
 
-            message.setFrom("no-reply@will.dev");
+            message.setFrom(companyEmail);
             message.setTo(companyEmail);
 
             message.setText(messageBody);
