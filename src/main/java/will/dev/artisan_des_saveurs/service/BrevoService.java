@@ -20,7 +20,7 @@ public class BrevoService {
 
     public void sendMail(User user, String subject, String msg) throws Exception {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        ApiKeyAuth apiKey = (ApiKeyAuth) defaultClient.getAuthentication("apikey");
+        ApiKeyAuth apiKey = (ApiKeyAuth) defaultClient.getAuthentication("api-key");
         apiKey.setApiKey(System.getenv("BREVO_API_KEY"));
 
         TransactionalEmailsApi apiInstance = new TransactionalEmailsApi();
