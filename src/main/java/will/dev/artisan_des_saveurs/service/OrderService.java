@@ -146,8 +146,11 @@ public class OrderService {
             String name = item.getProduct().getId() != null && item.getProduct().getName() != null
                     ? item.getProduct().getName()
                     : "Produit inconnu";
-            int quantity = item.getQuantity();
-            itemsDescription.append(String.format("%d. %s - Quantité : %dKg\n", i + 1, name, quantity));
+            double quantity = item.getDisplayQuantity();
+            String unite = item.getSelectedUnit();
+            itemsDescription.append(
+                    String.format("%d. %s - Quantité : %.2f %s%n", i + 1, name, quantity, unite)
+            );
         }
 
         // Message livraison
@@ -210,9 +213,16 @@ public class OrderService {
             String name = item.getProduct() != null && item.getProduct().getName() != null
                     ? item.getProduct().getName()
                     : "Produit inconnu";
-            int quantity = item.getQuantity();
-            itemsDescription.append(String.format("%d. %s - Quantité : %dKg\n", i + 1, name, quantity));
+            double quantity = item.getDisplayQuantity();
+            String unite = item.getSelectedUnit();
+            itemsDescription.append(
+                    String.format("%d. %s - Quantité : %.2f %s%n", i + 1, name, quantity, unite)
+            );
         }
+
+        // Récupération du nombre de commande
+        List<Order> orderList = orderRepository.findAll();
+        int sizeOrder = orderList.size();
 
         // Message livraison
         String shippingMessage = freeShipping
@@ -238,7 +248,7 @@ public class OrderService {
             Service Client – L'Artisan-des-saveurs.
             """,
                 orderDto.getUser().getFirstName()+" "+orderDto.getUser().getLastName(),
-                "CMD000001",
+                "CMD-00"+ sizeOrder + 1,
                 LocalDate.now(),
                 itemsDescription.toString(),
                 total,
