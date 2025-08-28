@@ -4,10 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sendinblue.ApiClient;
 import sendinblue.Configuration;
-import sendinblue.auth.ApiKeyAuth;
 import sibApi.TransactionalEmailsApi;
 import sibModel.*;
-import will.dev.artisan_des_saveurs.entity.ContactRequest;
 import will.dev.artisan_des_saveurs.entity.User;
 
 import java.util.*;
@@ -18,14 +16,24 @@ public class BrevoService {
     @Value("${app.company.email}")
     private String companyEmail;
 
-    public void sendMail(User user, String subject, String msg) throws Exception {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        ApiKeyAuth apiKey = (ApiKeyAuth) defaultClient.getAuthentication("api-key");
-        apiKey.setApiKey(System.getenv("BREVO_API_KEY"));
+    @Value("${BREVO_API_KEY}") // ⚡ récupère directement dans application.properties / Railway env
+    private String brevoApiKey;
 
-        TransactionalEmailsApi apiInstance = new TransactionalEmailsApi();
-        SendSmtpEmailSender sender = new SendSmtpEmailSender().email(companyEmail).name("Artisan des saveurs");
-        SendSmtpEmailTo recipient = new SendSmtpEmailTo().email(user.getEmail());
+    public void sendMail(User user, String subject, String msg) throws Exception {
+        // Initialisation du client
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+        // ⚡ Initialise bien l’authentification
+        defaultClient.setApiKey(brevoApiKey);
+
+        TransactionalEmailsApi apiInstance = new TransactionalEmailsApi(defaultClient);
+
+        SendSmtpEmailSender sender = new SendSmtpEmailSender()
+                .email(companyEmail)
+                .name("Artisan des saveurs");
+
+        SendSmtpEmailTo recipient = new SendSmtpEmailTo()
+                .email(user.getEmail());
 
         SendSmtpEmail email = new SendSmtpEmail()
                 .sender(sender)
@@ -34,7 +42,8 @@ public class BrevoService {
                 .htmlContent(msg);
 
         CreateSmtpEmail response = apiInstance.sendTransacEmail(email);
-        System.out.println(response);
+        System.out.println("Mail envoyé : " + response);
     }
 }
+
 
