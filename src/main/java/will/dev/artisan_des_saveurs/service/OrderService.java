@@ -137,53 +137,61 @@ public class OrderService {
 
         // Vérification du panier
         if (items == null || items.isEmpty()) {
-            return "Le panier est vide.";
+            return "<p>Le panier est vide.</p>";
         }
 
         // Description des items
-        StringBuilder itemsDescription = new StringBuilder();
+        StringBuilder itemsDescription = new StringBuilder("<ul>");
         for (int i = 0; i < items.size(); i++) {
             ProductItemDTO item = items.get(i);
-            String name = item.getProduct().getId() != null && item.getProduct().getName() != null
+            String name = (item.getProduct().getId() != null && item.getProduct().getName() != null)
                     ? item.getProduct().getName()
                     : "Produit inconnu";
             double quantity = item.getDisplayQuantity();
             String unite = item.getSelectedUnit();
+
             itemsDescription.append(
-                    String.format("%d. %s - Quantité : %.2f %s%n", i + 1, name, quantity, unite)
+                    String.format("<li>%d. %s - Quantité : %.2f %s</li>", i + 1, name, quantity, unite)
             );
         }
+        itemsDescription.append("</ul>");
 
         // Message livraison
         String shippingMessage = freeShipping
                 ? "🚚 Livraison gratuite incluse.✅"
-                : "🚚 Livraison : À la charge du client\n";
+                : "🚚 Livraison : À la charge du client";
 
-        // Construction du message final
+        // Construction du message HTML
         String message = String.format("""
-            Bonjour,
+        <html>
+        <body>
+            <p>Bonjour,</p>
+            <p>Nouvelle commande client reçue :</p>
 
-            Nouvelle commande client reçue :
+            <h3>👤 Informations du client :</h3>
+            <ul>
+                <li><b>Nom :</b> %s</li>
+                <li><b>Email :</b> %s</li>
+                <li><b>Téléphone :</b> %s</li>
+            </ul>
 
-            👤 Informations du client :
-            - Nom : %s
-            - Email : %s
-            - Téléphone : %s
-
-            🛒 Détail de la commande :
+            <h3>🛒 Détail de la commande :</h3>
             %s
-            💰 Résumé :
-            - Sous-total : %.2f Rs
-            - Remise : %.2f Rs
-            - Total à payer : %.2f Rs
-            - %s
 
-            Merci de traiter cette commande rapidement.
+            <h3>💰 Résumé :</h3>
+            <ul>
+                <li><b>Sous-total :</b> %.2f Rs</li>
+                <li><b>Remise :</b> %.2f Rs</li>
+                <li><b>Total à payer :</b> %.2f Rs</li>
+                <li><b>%s</b></li>
+            </ul>
 
-            Cordialement,
-            Votre plateforme L'Artisan-des-saveurs.
-            """,
-                orderDto.getUser().getFirstName()+" "+orderDto.getUser().getLastName(),
+            <p>Merci de traiter cette commande rapidement.</p>
+            <p>Cordialement,<br/>Votre plateforme <b>L'Artisan-des-saveurs</b>.</p>
+        </body>
+        </html>
+        """,
+                orderDto.getUser().getFirstName() + " " + orderDto.getUser().getLastName(),
                 orderDto.getUser().getEmail(),
                 orderDto.getUser().getPhone(),
                 itemsDescription.toString(),
@@ -195,6 +203,7 @@ public class OrderService {
 
         return message.trim();
     }
+
 
 
     public String customerOrderMessage(OrderDTO orderDto) {
