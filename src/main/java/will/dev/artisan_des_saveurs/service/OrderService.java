@@ -74,8 +74,8 @@ public class OrderService {
 
             Boolean isFromCart = true;
             String customerMessage = customerOrderMessage(orderDTO);
-            brevoService.sentToCopany(savedContactReq, isFromCart);
-            brevoService.sentResponseToCustomerFromCartPage(userConnected, customerMessage);
+            notificationService.sentToCopany(savedContactReq, isFromCart);
+            notificationService.sentResponseToCustomerFromCartPage(userConnected, customerMessage);
             savedContactReq.markEmailSent();
 
             whatsappNotification.sendWhatsappMessage(userConnected, company_number, savedContactReq, isFromCart);
@@ -112,9 +112,9 @@ public class OrderService {
             savedUser.setContactRequests(List.of(contactRequest));
 
             Boolean isFromCart = true;
-            brevoService.sentToCopany(contactRequest, isFromCart);
+            notificationService.sentToCopany(contactRequest, isFromCart);
             String customerMessage = customerOrderMessage(orderDTO);
-            brevoService.sentResponseToCustomerFromCartPage(savedUser, customerMessage);
+            notificationService.sentResponseToCustomerFromCartPage(savedUser, customerMessage);
             contactRequest.setEmailSent(true);
             contactRequest.setEmailSentAt(LocalDateTime.now());
             whatsappNotification.sendWhatsappMessage(savedUser, company_number, savedContactReq, isFromCart);
@@ -137,11 +137,11 @@ public class OrderService {
 
         // Vérification du panier
         if (items == null || items.isEmpty()) {
-            return "<p><b>Le panier est vide.</b></p>";
+            return "Le panier est vide.";
         }
 
         // Description des items
-        StringBuilder itemsDescription = new StringBuilder("<ul>");
+        StringBuilder itemsDescription = new StringBuilder();
         for (int i = 0; i < items.size(); i++) {
             ProductItemDTO item = items.get(i);
             String name = item.getProduct().getId() != null && item.getProduct().getName() != null
@@ -149,51 +149,41 @@ public class OrderService {
                     : "Produit inconnu";
             double quantity = item.getDisplayQuantity();
             String unite = item.getSelectedUnit();
-
             itemsDescription.append(
-                    String.format("<li>%d. %s - Quantité : %.2f %s</li>", i + 1, name, quantity, unite)
+                    String.format("%d. %s - Quantité : %.2f %s%n", i + 1, name, quantity, unite)
             );
         }
-        itemsDescription.append("</ul>");
 
         // Message livraison
         String shippingMessage = freeShipping
-                ? "<p>🚚 <b>Livraison gratuite incluse ✅</b></p>"
-                : "<p>🚚 Livraison : <i>À la charge du client</i></p>";
+                ? "🚚 Livraison gratuite incluse.✅"
+                : "🚚 Livraison : À la charge du client\n";
 
-        // Construction du message final (HTML)
+        // Construction du message final
         String message = String.format("""
-        <html>
-        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-            <h2>Nouvelle commande client reçue</h2>
+            Bonjour,
 
-            <h3>👤 Informations du client :</h3>
-            <p>
-                <b>Nom :</b> %s <br>
-                <b>Email :</b> %s <br>
-                <b>Téléphone :</b> %s
-            </p>
+            Nouvelle commande client reçue :
 
-            <h3>🛒 Détail de la commande :</h3>
+            👤 Informations du client :
+            - Nom : %s
+            - Email : %s
+            - Téléphone : %s
+
+            🛒 Détail de la commande :
             %s
+            💰 Résumé :
+            - Sous-total : %.2f Rs
+            - Remise : %.2f Rs
+            - Total à payer : %.2f Rs
+            - %s
 
-            <h3>💰 Résumé :</h3>
-            <p>
-                <b>Sous-total :</b> %.2f Rs <br>
-                <b>Remise :</b> %.2f Rs <br>
-                <b>Total à payer :</b> %.2f Rs <br>
-                %s
-            </p>
+            Merci de traiter cette commande rapidement.
 
-            <p style="margin-top:20px;">
-                Merci de traiter cette commande rapidement.<br><br>
-                <b>Cordialement,</b><br>
-                Votre plateforme <i>L'Artisan des Saveurs</i>.
-            </p>
-        </body>
-        </html>
-        """,
-                orderDto.getUser().getFirstName() + " " + orderDto.getUser().getLastName(),
+            Cordialement,
+            Votre plateforme L'Artisan-des-saveurs.
+            """,
+                orderDto.getUser().getFirstName()+" "+orderDto.getUser().getLastName(),
                 orderDto.getUser().getEmail(),
                 orderDto.getUser().getPhone(),
                 itemsDescription.toString(),
@@ -212,62 +202,62 @@ public class OrderService {
         double total = orderDto.getTotal();
         boolean freeShipping = orderDto.isFreeShipping();
 
+        // Vérification du panier
         if (items == null || items.isEmpty()) {
             return "Le panier est vide.";
         }
 
-        // Construire description des produits
+        // Description des items
         StringBuilder itemsDescription = new StringBuilder();
         for (int i = 0; i < items.size(); i++) {
             ProductItemDTO item = items.get(i);
-            String name = (item.getProduct() != null && item.getProduct().getName() != null)
+            String name = item.getProduct() != null && item.getProduct().getName() != null
                     ? item.getProduct().getName()
                     : "Produit inconnu";
             double quantity = item.getDisplayQuantity();
             String unite = item.getSelectedUnit();
-
             itemsDescription.append(
-                    String.format("   • %s — %.2f %s%n", name, quantity, unite)
+                    String.format("%d. %s - Quantité : %.2f %s%n", i + 1, name, quantity, unite)
             );
         }
 
-        // Nombre de commandes existantes
-        int sizeOrder = orderRepository.findAll().size();
+        // Récupération du nombre de commande
+        List<Order> orderList = orderRepository.findAll();
+        int sizeOrder = orderList.size();
 
         // Message livraison
         String shippingMessage = freeShipping
-                ? "🚚 Livraison gratuite ✅"
-                : "🚚 Livraison : à votre charge";
+                ? "🚚 Livraison gratuite.✅"
+                : "🚚 Livraison : À votre charge\n";
 
-        // Construire le message final
-        return String.format("""
+        // Construction du message final
+        String message = String.format("""
             Bonjour %s,
-
             Nous vous remercions pour votre commande n°%s passée le %s.
-
+            
             🧾 Récapitulatif de votre commande :
             %s
-
+            
             💰 Total à payer : %.2f Rs
             %s
-
             📦 Statut : En cours de préparation
-
+            
             Vous recevrez un e-mail dès que votre commande sera prête à être livrée.
 
             Merci pour votre confiance !
             Bien cordialement,
-            Service Client – L'Artisan des Saveurs.
+            Service Client – L'Artisan-des-saveurs.
             """,
-                orderDto.getUser().getFirstName() + " " + orderDto.getUser().getLastName(),
-                "CMD-00" + (sizeOrder + 1),
+                orderDto.getUser().getFirstName()+" "+orderDto.getUser().getLastName(),
+                "CMD-00"+ sizeOrder + 1,
                 LocalDate.now(),
                 itemsDescription.toString(),
                 total,
                 shippingMessage
-        ).trim();
-    }
+        );
 
+        return message.trim();
+    }
 
     @Transactional
     public void saveOrderWithItems(OrderDTO orderDto, User userConnected) {
