@@ -14,6 +14,8 @@ public class ProductItem {
     private Long id;
 
     private int quantity;
+    private String selectedUnit;
+    private double displayQuantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")

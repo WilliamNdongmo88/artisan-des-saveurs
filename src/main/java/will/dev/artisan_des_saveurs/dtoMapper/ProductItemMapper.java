@@ -16,6 +16,8 @@ public class ProductItemMapper {
         ProductItemDTO dto = new ProductItemDTO();
         dto.setId(item.getId());
         dto.setQuantity(item.getQuantity());
+        dto.setDisplayQuantity(item.getDisplayQuantity());
+        dto.setSelectedUnit(item.getSelectedUnit());
         dto.setProduct(productMapper.toDTO(item.getProduct()));
         return dto;
     }
@@ -26,6 +28,8 @@ public class ProductItemMapper {
         ProductItem item = new ProductItem();
         item.setId(dto.getId());
         item.setQuantity(dto.getQuantity());
+        item.setDisplayQuantity(dto.getDisplayQuantity());
+        item.setSelectedUnit(dto.getSelectedUnit());
         item.setProduct(productMapper.toEntity(dto.getProduct()));
         return item;
     }

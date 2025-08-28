@@ -297,6 +297,8 @@ public class OrderService {
                 ProductItem productItem = new ProductItem();
                 productItem.setProduct(product);
                 productItem.setQuantity(pro.getQuantity());
+                productItem.setSelectedUnit(pro.getSelectedUnit());
+                productItem.setDisplayQuantity(pro.getDisplayQuantity());
                 productItem.setOrder(savedOrder);
                 productItem.setUserId(savedOrder.getUser().getId());
                 productItems.add(productItem);
