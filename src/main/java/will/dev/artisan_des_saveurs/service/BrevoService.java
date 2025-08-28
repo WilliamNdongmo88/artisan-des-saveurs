@@ -1,6 +1,7 @@
 package will.dev.artisan_des_saveurs.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import sendinblue.ApiClient;
 import sendinblue.Configuration;
 import sendinblue.auth.ApiKeyAuth;
@@ -11,6 +12,7 @@ import will.dev.artisan_des_saveurs.entity.User;
 
 import java.util.*;
 
+@Service
 public class BrevoService {
 
     @Value("${app.company.email}")
