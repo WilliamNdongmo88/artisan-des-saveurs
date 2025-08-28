@@ -70,12 +70,12 @@ public class OrderService {
             userConnected.getContactRequests().add(savedContactReq);
 
             // Création et enregistrement de la commande
-            saveOrderWithItems(orderDTO, userConnected);
+            //saveOrderWithItems(orderDTO, userConnected);
 
             Boolean isFromCart = true;
             String customerMessage = customerOrderMessage(orderDTO);
-            notificationService.sentToCopany(savedContactReq, isFromCart);
-            notificationService.sentResponseToCustomerFromCartPage(userConnected, customerMessage);
+            brevoService.sentToCopany(savedContactReq, isFromCart);
+            brevoService.sentResponseToCustomerFromCartPage(userConnected, customerMessage);
             savedContactReq.markEmailSent();
 
             whatsappNotification.sendWhatsappMessage(userConnected, company_number, savedContactReq, isFromCart);
@@ -112,9 +112,9 @@ public class OrderService {
             savedUser.setContactRequests(List.of(contactRequest));
 
             Boolean isFromCart = true;
-            notificationService.sentToCopany(contactRequest, isFromCart);
+            brevoService.sentToCopany(contactRequest, isFromCart);
             String customerMessage = customerOrderMessage(orderDTO);
-            notificationService.sentResponseToCustomerFromCartPage(savedUser, customerMessage);
+            brevoService.sentResponseToCustomerFromCartPage(savedUser, customerMessage);
             contactRequest.setEmailSent(true);
             contactRequest.setEmailSentAt(LocalDateTime.now());
             whatsappNotification.sendWhatsappMessage(savedUser, company_number, savedContactReq, isFromCart);

@@ -69,9 +69,9 @@ public class UserService {
                 userConnected.getContactRequests().add(contactRequest); // Modifie la liste
 
                 Boolean isFromCart = false;
-                notificationService.sentToCopany(contactRequest, isFromCart);
+                brevoService.sentToCopany(contactRequest, isFromCart);
 
-                notificationService.sentResponseToCustomerFromContactPage(userConnected);
+                brevoService.sentResponseToCustomerFromContactPage(userConnected);
                 savedContactReq.markEmailSent();
 
                 whatsappNotification.sendWhatsappMessage(userConnected, company_number, contactRequest, isFromCart);
@@ -110,9 +110,9 @@ public class UserService {
                 savedUser.setContactRequests(List.of(contactRequest));
 
                 Boolean isFromCart = false;
-                notificationService.sentToCopany(contactRequest, isFromCart);
+                brevoService.sentToCopany(contactRequest, isFromCart);
 
-                notificationService.sentResponseToCustomerFromContactPage(savedUser);
+                brevoService.sentResponseToCustomerFromContactPage(savedUser);
                 savedContactReq.markEmailSent();
 
                 whatsappNotification.sendWhatsappMessage(savedUser, company_number, contactRequest, isFromCart);

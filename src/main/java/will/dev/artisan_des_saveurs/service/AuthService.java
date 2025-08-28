@@ -61,7 +61,7 @@ public class AuthService {
         userRepository.save(user);
 
         // Envoyer l'email d'activation
-        notificationService.sendActivationEmail(user.getEmail(), activationToken);
+        brevoService.sendActivationEmail(user.getEmail(), activationToken);
         System.out.println(":: Notification éffectué :: ");
 
         return "Utilisateur enregistré avec succès! Veuillez vérifier votre email pour activer votre compte.";
@@ -96,7 +96,7 @@ public class AuthService {
         userRepository.save(user);
 
         // Envoyer l'email d'activation
-        notificationService.sendActivationEmail(user.getEmail(), activationToken);
+        brevoService.sendActivationEmail(user.getEmail(), activationToken);
 
         return "Email d'activation renvoyé avec succès!";
     }
@@ -114,7 +114,7 @@ public class AuthService {
         userRepository.save(user);
 
         // Envoyer l'email de réinitialisation
-        notificationService.sendPasswordResetEmail(user.getEmail(), resetToken);
+        brevoService.sendPasswordResetEmail(user.getEmail(), resetToken);
 
         return "Email de réinitialisation envoyé avec succès!";
     }
