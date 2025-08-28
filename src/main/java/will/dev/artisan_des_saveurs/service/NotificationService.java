@@ -21,6 +21,7 @@ public class NotificationService {
     private String companyEmail;
 
     private final JavaMailSender javaMailSender;
+    private final BrevoService brevoService;
 
     public void sendActivationEmail(String to, String token) {
         try {
@@ -28,15 +29,19 @@ public class NotificationService {
             message.setFrom(companyEmail);
             message.setTo(to);
             message.setSubject("Activation de votre compte - Artisan des Saveurs");
-            message.setText("Bonjour,\n\n" +
+            String msg = "Bonjour,\n\n" +
                     "Merci de vous être inscrit sur Artisan des Saveurs!\n\n" +
                     "Pour activer votre compte, veuillez cliquer sur le lien suivant:\n" +
                     "https://artisan-des-saveurs.vercel.app/activate?token=" + token + "\n\n" +
                     "Ce lien est valide pendant 24 heures.\n\n" +
                     "Cordialement,\n" +
-                    "L'équipe Artisan des Saveurs");
+                    "L'équipe Artisan des Saveurs";
+            message.setText(msg);
 
-            javaMailSender.send(message);
+            //javaMailSender.send(message);
+            User user = new User();
+            user.setEmail(to);
+            brevoService.sendMail(user, "Activation de votre compte - Artisan des Saveurs", msg);
             logger.info("Email d'activation envoyé à: {}", to);
         } catch (Exception e) {
             logger.error("Erreur lors de l'envoi de l'email d'activation à {}: {}", to, e.getMessage());
@@ -51,16 +56,20 @@ public class NotificationService {
             message.setFrom(companyEmail);
             message.setTo(to);
             message.setSubject("Réinitialisation de votre mot de passe - Artisan des Saveurs");
-            message.setText("Bonjour,\n\n" +
+            String msg = "Bonjour,\n\n" +
                     "Vous avez demandé la réinitialisation de votre mot de passe.\n\n" +
                     "Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien suivant:\n" +
                     "https://artisan-des-saveurs.vercel.app/reset-password?token=" + token + "\n\n" + // http://localhost:4200/reset-password?token=
                     "Ce lien est valide pendant 1 heure.\n\n" +
                     "Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.\n\n" +
                     "Cordialement,\n" +
-                    "L'équipe Artisan des Saveurs");
+                    "L'équipe Artisan des Saveurs";
+            message.setText(msg);
 
-            javaMailSender.send(message);
+            //javaMailSender.send(message);
+            User user = new User();
+            user.setEmail(to);
+            brevoService.sendMail(user, "Activation de votre compte - Artisan des Saveurs", msg);
             logger.info("Email de réinitialisation envoyé à: {}", to);
         } catch (Exception e) {
             logger.error("Erreur lors de l'envoi de l'email de réinitialisation à {}: {}", to, e.getMessage());
@@ -96,8 +105,11 @@ public class NotificationService {
 
             message.setText(messageBody);
             System.out.println(":: Fin 2 :: ");
-            javaMailSender.send(message);
-        } catch (RuntimeException e) {
+            //javaMailSender.send(message);
+            User newUser = new User();
+            newUser.setEmail(companyEmail);
+            brevoService.sendMail(newUser, contactRequest.getSubject(), messageBody);
+        } catch (Exception e) {
             throw new RuntimeException("NOTIFICATION_EMAIL_EXCEPTION: " + e);
         }
     }
@@ -112,8 +124,9 @@ public class NotificationService {
             mail.setTo(savedUser.getEmail());
             mail.setSubject(subject);
             mail.setText(message);
-            javaMailSender.send(mail);
-        } catch (RuntimeException e) {
+            //javaMailSender.send(mail);
+            brevoService.sendMail(savedUser, subject, message);
+        } catch (Exception e) {
             throw new RuntimeException("NOTIFICATION_EMAIL_FOR_CUSTOMER__EXCEPTION: " + e);
         }
     }
@@ -128,14 +141,16 @@ public class NotificationService {
             mail.setTo(savedUser.getEmail());
             mail.setSubject(subject);
             mail.setText(message);
-            javaMailSender.send(mail);
-        } catch (RuntimeException e) {
+            //javaMailSender.send(mail);
+            User newUser = new User();
+            newUser.setEmail(companyEmail);
+            brevoService.sendMail(newUser, subject, message);
+        } catch (Exception e) {
             throw new RuntimeException("NOTIFICATION_EMAIL_FOR_CUSTOMER__EXCEPTION: " + e);
         }
     }
 
     public String customMessage(String clientName) {
-
 
         String message = String.format("""
                 Bonjour %s,
