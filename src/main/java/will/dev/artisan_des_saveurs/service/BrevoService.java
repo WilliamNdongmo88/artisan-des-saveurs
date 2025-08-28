@@ -15,8 +15,8 @@ import java.util.*;
 @Service
 public class BrevoService {
 
-    //@Value("${app.company.email}")
-    public static String companyEmail = "btbimportationservice333@gmail.com";
+    @Value("${app.company.email}")
+    private String companyEmail;
 
     @Value("${BREVO_API_KEY}")
     private String brevoApiKey;
@@ -32,8 +32,8 @@ public class BrevoService {
             TransactionalEmailsApi apiInstance = new TransactionalEmailsApi(defaultClient);
 
             SendSmtpEmailSender sender = new SendSmtpEmailSender()
-                    .email(companyEmail);
-                    //.name("Artisan des saveurs");
+                    .email(companyEmail)
+                    .name("Artisan des saveurs");
 
             SendSmtpEmailTo recipient = new SendSmtpEmailTo()
                     .email(to);
@@ -70,8 +70,8 @@ public class BrevoService {
             TransactionalEmailsApi apiInstance = new TransactionalEmailsApi(defaultClient);
 
             SendSmtpEmailSender sender = new SendSmtpEmailSender()
-                    .email(companyEmail);
-                    //.name("Artisan des saveurs");
+                    .email(companyEmail)
+                    .name("Artisan des saveurs");
 
             SendSmtpEmailTo recipient = new SendSmtpEmailTo()
                     .email(to);
@@ -123,11 +123,11 @@ public class BrevoService {
             TransactionalEmailsApi apiInstance = new TransactionalEmailsApi(defaultClient);
 
             SendSmtpEmailSender sender = new SendSmtpEmailSender()
-                    .email(companyEmail);
-                    //.name("Artisan des saveurs");
+                    .email(companyEmail)
+                    .name("Artisan des saveurs");
 
             SendSmtpEmailTo recipient = new SendSmtpEmailTo()
-                    .email(user.getEmail());
+                    .email(companyEmail);
 
             SendSmtpEmail email = new SendSmtpEmail()
                     .sender(sender)
@@ -156,8 +156,8 @@ public class BrevoService {
             TransactionalEmailsApi apiInstance = new TransactionalEmailsApi(defaultClient);
 
             SendSmtpEmailSender sender = new SendSmtpEmailSender()
-                    .email(companyEmail);
-                    //.name("Artisan des saveurs");
+                    .email(companyEmail)
+                    .name("Artisan des saveurs");
 
             SendSmtpEmailTo recipient = new SendSmtpEmailTo()
                     .email(savedUser.getEmail());
