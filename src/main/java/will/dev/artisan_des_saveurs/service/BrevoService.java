@@ -280,9 +280,51 @@ public class BrevoService {
         } catch (Exception e) {
             throw new RuntimeException("NOTIFICATION_TO_ADMIN_EXCEPTION: " + e);
         }
-
     }
 
+    public void notifyAdminUserDeleted(User user) {
+        try{
+            // Initialisation du client
+            ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+            // ⚡ Initialise bien l’authentification
+            defaultClient.setApiKey(brevoApiKey);
+
+            TransactionalEmailsApi apiInstance = new TransactionalEmailsApi(defaultClient);
+
+            // Date formatée
+            String creationDate = LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+
+            String body = "Bonjour,<br><br>" +
+                    "Un utilisateur a supprimé son compte de la plateforme Artisan des Saveurs.<br><br>" +
+                    "Voici les informations du compte supprimé :<br>" +
+                    "- Nom : " + user.getFullName() + "<br>" +
+                    "- Email : " + user.getEmail() + "<br>" +
+                    "- Date de création : " + creationDate + "<br><br>" +
+                    "Ceci est une notification automatique à titre informatif.<br><br>" +
+                    "Cordialement,<br>" +
+                    "L’équipe Artisan des Saveurs";
+
+            SendSmtpEmailSender sender = new SendSmtpEmailSender()
+                    .email(companyEmail)
+                    .name("Artisan des saveurs");
+
+            SendSmtpEmailTo recipient = new SendSmtpEmailTo()
+                    .email(companyEmail);
+
+            SendSmtpEmail email = new SendSmtpEmail()
+                    .sender(sender)
+                    .to(Collections.singletonList(recipient))
+                    .subject("🗑️ Compte supprimé sur Artisan des Saveurs")
+                    .htmlContent(body);
+
+            CreateSmtpEmail response = apiInstance.sendTransacEmail(email);
+            System.out.println("Mail envoyé : " + response);
+        } catch (Exception e) {
+            throw new RuntimeException("NOTIFICATION_TO_ADMIN_EXCEPTION: " + e);
+        }
+    }
 
     public void sendMail(User user, String subject, String msg) throws Exception {
         // Initialisation du client

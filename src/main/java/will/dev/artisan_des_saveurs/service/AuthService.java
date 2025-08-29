@@ -3,12 +3,14 @@ package will.dev.artisan_des_saveurs.service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import will.dev.artisan_des_saveurs.dto.MessageRetourDto;
 import will.dev.artisan_des_saveurs.dto.req_resp.dto.FileDTO;
 import will.dev.artisan_des_saveurs.entity.Role;
 import will.dev.artisan_des_saveurs.entity.User;
@@ -178,5 +180,21 @@ public class AuthService {
         System.out.println("fileDTO :: " + fileDTO);
         return fileDTO;
     }
+
+    public ResponseEntity<?> deleteAccount(Long id) {
+        Optional<User> userOpt = userRepository.findById(id);
+
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Utilisateur introuvable.");
+        }
+
+        userRepository.delete(userOpt.get());
+        brevoService.notifyAdminUserDeleted(userOpt.get());
+        MessageRetourDto messageRetourDto = new MessageRetourDto();
+        messageRetourDto.setMessage("Utilisateur supprimé avec succès");
+        return ResponseEntity.ok(messageRetourDto);
+    }
+
 }
 

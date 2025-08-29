@@ -2,6 +2,7 @@ package will.dev.artisan_des_saveurs.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +18,7 @@ import will.dev.artisan_des_saveurs.service.AuthService;
 import will.dev.artisan_des_saveurs.service.RefreshTokenService;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -169,4 +171,21 @@ public class AuthController {
         refreshTokenService.deleteByUserId(userId);
         return ResponseEntity.ok(new MessageResponse("Déconnexion réussie!"));
     }
+
+    @PreAuthorize("hasAuthority('USER_DELETE')")
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deleteAccount(@PathVariable Long id) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        Long userId = userDetails.getId();
+
+        if (!Objects.equals(id, userId)) {
+            // ⚠️ l’utilisateur essaie de supprimer un autre compte
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Vous ne pouvez supprimer que votre propre compte.");
+        }
+
+        return authService.deleteAccount(id);
+    }
+
 }
