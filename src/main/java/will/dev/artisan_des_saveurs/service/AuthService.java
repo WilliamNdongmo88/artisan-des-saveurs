@@ -62,6 +62,7 @@ public class AuthService {
 
         // Envoyer l'email d'activation
         brevoService.sendActivationEmail(user.getEmail(), activationToken);
+        brevoService.notifyAdminNewUser(user);
         System.out.println(":: Notification éffectué :: ");
 
         return "Utilisateur enregistré avec succès! Veuillez vérifier votre email pour activer votre compte.";

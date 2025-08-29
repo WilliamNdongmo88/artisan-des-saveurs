@@ -10,6 +10,8 @@ import sibModel.*;
 import will.dev.artisan_des_saveurs.entity.ContactRequest;
 import will.dev.artisan_des_saveurs.entity.User;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -235,6 +237,52 @@ public class BrevoService {
 
         return message;
     }
+
+    public void notifyAdminNewUser(User user) {
+        try{
+            // Initialisation du client
+            ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+            // ⚡ Initialise bien l’authentification
+            defaultClient.setApiKey(brevoApiKey);
+
+            TransactionalEmailsApi apiInstance = new TransactionalEmailsApi(defaultClient);
+
+            // Date formatée
+            String creationDate = LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+
+            String body = "Bonjour,<br><br>" +
+                    "Un nouvel utilisateur vient de s’inscrire sur la plateforme Artisan des Saveurs.<br><br>" +
+                    "Voici les informations du compte :<br>" +
+                    "- Nom : " + user.getFullName() + "<br>" +
+                    "- Email : " + user.getEmail() + "<br>" +
+                    "- Date de création : " + creationDate + "<br><br>" +
+                    "Vous pouvez consulter son profil dans l’espace d’administration.<br><br>" +
+                    "Cordialement,<br>" +
+                    "L’équipe Artisan des Saveurs";
+
+            SendSmtpEmailSender sender = new SendSmtpEmailSender()
+                    .email(companyEmail)
+                    .name("Artisan des saveurs");
+
+            SendSmtpEmailTo recipient = new SendSmtpEmailTo()
+                    .email(user.getEmail());
+
+            SendSmtpEmail email = new SendSmtpEmail()
+                    .sender(sender)
+                    .to(Collections.singletonList(recipient))
+                    .subject("🆕 Nouveau compte créé sur Artisan des Saveurs")
+                    .htmlContent(body);
+
+            CreateSmtpEmail response = apiInstance.sendTransacEmail(email);
+            System.out.println("Mail envoyé : " + response);
+        } catch (Exception e) {
+            throw new RuntimeException("NOTIFICATION_TO_ADMIN_EXCEPTION: " + e);
+        }
+
+    }
+
 
     public void sendMail(User user, String subject, String msg) throws Exception {
         // Initialisation du client
