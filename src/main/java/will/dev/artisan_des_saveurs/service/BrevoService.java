@@ -267,7 +267,7 @@ public class BrevoService {
                     .name("Artisan des saveurs");
 
             SendSmtpEmailTo recipient = new SendSmtpEmailTo()
-                    .email(user.getEmail());
+                    .email(companyEmail);
 
             SendSmtpEmail email = new SendSmtpEmail()
                     .sender(sender)
