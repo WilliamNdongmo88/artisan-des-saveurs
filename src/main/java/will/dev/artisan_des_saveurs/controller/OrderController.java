@@ -31,6 +31,7 @@ public class OrderController {
         return this.orderService.getUserOrders(id);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_READ')")
     @GetMapping("/all-orders")
     public ResponseEntity<?> getAllUserOrders(){
         return this.orderService.getAllUserOrders();
