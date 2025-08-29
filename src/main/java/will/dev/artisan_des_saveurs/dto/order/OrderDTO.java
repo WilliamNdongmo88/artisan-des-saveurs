@@ -11,6 +11,7 @@ public class OrderDTO {
     private double subtotal;
     private double discount;
     private double total;
+    private String status;
     private boolean freeShipping;
     private UserDto user;
     private List<ProductItemDTO> items;

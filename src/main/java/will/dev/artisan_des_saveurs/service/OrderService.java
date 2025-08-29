@@ -11,6 +11,7 @@ import will.dev.artisan_des_saveurs.dto.order.OrderDTO;
 import will.dev.artisan_des_saveurs.dto.order.OrdersResponse;
 import will.dev.artisan_des_saveurs.dto.order.ProductDTO;
 import will.dev.artisan_des_saveurs.dto.order.ProductItemDTO;
+import will.dev.artisan_des_saveurs.dtoMapper.OrderMapper;
 import will.dev.artisan_des_saveurs.dtoMapper.ProductItemMapper;
 import will.dev.artisan_des_saveurs.dtoMapper.ProductMapper;
 import will.dev.artisan_des_saveurs.entity.*;
@@ -29,6 +30,7 @@ public class OrderService {
     public static final String MESSAGE = "Votre commande a été envoyé avec succès !";
     @Value("${app.company.whatsapp.number:+23059221613}")
     private String company_number;
+    private final OrderMapper orderMapper;
     private final ProductItemMapper productItemMapper;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
@@ -361,5 +363,25 @@ public class OrderService {
         }
     }
 
+    @Transactional
+    public ResponseEntity<?> getAllUserOrders() {
+        try {
+            // Récupérer toutes les commandes des utilisateurs
+            List<Order> orders = orderRepository.findAll();
 
+            if (orders.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            List<OrderDTO> orderDtoList = new ArrayList<>();
+            for(Order order : orders) {
+                OrderDTO orderDto = orderMapper.toDTO(order);
+                orderDtoList.add(orderDto);
+            }
+            return ResponseEntity.ok(orderDtoList);
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Erreur lors de la récupération des commandes:: " + e.getMessage(), e);
+        }
+    }
 }

@@ -30,4 +30,9 @@ public class OrderController {
     public ResponseEntity<?> getUserOrders(@PathVariable Long id){
         return this.orderService.getUserOrders(id);
     }
+
+    @GetMapping("/all-orders")
+    public ResponseEntity<?> getAllUserOrders(){
+        return this.orderService.getAllUserOrders();
+    }
 }
