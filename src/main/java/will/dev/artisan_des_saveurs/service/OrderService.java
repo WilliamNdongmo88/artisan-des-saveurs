@@ -368,7 +368,7 @@ public class OrderService {
         try {
             // Récupérer toutes les commandes des utilisateurs
             List<Order> orders = orderRepository.findAll();
-
+            System.out.println("::: orders ::: " + orders);
             if (orders.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
@@ -378,7 +378,7 @@ public class OrderService {
                 OrderDTO orderDto = orderMapper.toDTO(order);
                 orderDtoList.add(orderDto);
             }
-            System.out.println(":: orderDtoList :: " + orderDtoList);
+            System.out.println("::: orderDtoList ::: " + orderDtoList);
             return ResponseEntity.ok(orderDtoList);
 
         } catch (RuntimeException e) {
