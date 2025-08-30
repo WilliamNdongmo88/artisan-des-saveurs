@@ -19,4 +19,3 @@ public class OrderDTO {
     private UserDto user;
     private List<ProductItemDTO> items;
 }
-

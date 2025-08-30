@@ -378,6 +378,7 @@ public class OrderService {
                 OrderDTO orderDto = orderMapper.toDTO(order);
                 orderDtoList.add(orderDto);
             }
+            System.out.println(":: orderDtoList :: " + orderDtoList);
             return ResponseEntity.ok(orderDtoList);
 
         } catch (RuntimeException e) {
