@@ -385,12 +385,16 @@ public class OrderService {
         }
     }
 
+    @Transactional
     public ResponseEntity<?> updateStatusOrder(Map<String, String> body) {
         Long orderId = Long.valueOf(body.get("orderId"));
         var ref = new Object() {
             String status = "";
         };
         switch (body.get("status")) {
+            case "pending":
+                ref.status = "En attente";
+                break;
             case "processing":
                 ref.status = "En cours";
                 break;
@@ -407,6 +411,7 @@ public class OrderService {
         return orderRepository.findById(orderId)
                 .map(order -> {
                     order.setDelivered(ref.status);
+                    order.setUpdatedAt(LocalDateTime.now());
                     orderRepository.save(order);
                     return ResponseEntity.ok(map.put("order",orderMapper.toDTO(order)));
                 })

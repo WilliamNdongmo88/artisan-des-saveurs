@@ -24,6 +24,7 @@ public class OrderMapper {
         dto.setTotal(order.getTotal());
         dto.setStatus(order.getDelivered());
         dto.setCreatedAt(order.getCreatedAt());
+        dto.setUpdatedAt(order.getUpdatedAt());
         dto.setFreeShipping(order.isFreeShipping());
         dto.setUser(UserDtoMapper.toDto(order.getUser()));
 

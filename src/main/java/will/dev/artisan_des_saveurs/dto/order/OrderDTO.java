@@ -16,6 +16,7 @@ public class OrderDTO {
     private String status;
     private boolean freeShipping;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private UserDto user;
     private List<ProductItemDTO> items;
 }
