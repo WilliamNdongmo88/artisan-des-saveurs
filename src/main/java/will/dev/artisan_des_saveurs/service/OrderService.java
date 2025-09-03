@@ -20,9 +20,7 @@ import will.dev.artisan_des_saveurs.security.UserDetailsImpl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -277,8 +275,9 @@ public class OrderService {
         order.setTotal(orderDto.getTotal());
         order.setFreeShipping(orderDto.isFreeShipping());
         order.setUser(userConnected);
+        System.out.println("Local date :: " + LocalDateTime.now());
         order.setCreatedAt(LocalDateTime.now());
-        order.setDelivered("processing");
+        order.setDelivered("En attente");
         Order savedOrder = orderRepository.save(order);
         System.out.println("savedOrder ::: " + savedOrder);
 
@@ -384,5 +383,33 @@ public class OrderService {
         } catch (RuntimeException e) {
             throw new RuntimeException("Erreur lors de la récupération des commandes:: " + e.getMessage(), e);
         }
+    }
+
+    public ResponseEntity<?> updateStatusOrder(Map<String, String> body) {
+        Long orderId = Long.valueOf(body.get("orderId"));
+        var ref = new Object() {
+            String status = "";
+        };
+        switch (body.get("status")) {
+            case "processing":
+                ref.status = "En cours";
+                break;
+            case "shipped":
+                ref.status = "Expédier";
+                break;
+            case "delivered":
+                ref.status = "Livrée";
+                break;
+            default:
+                ref.status = "Annulée";
+        }
+        Map<String, OrderDTO> map = new HashMap<>();
+        return orderRepository.findById(orderId)
+                .map(order -> {
+                    order.setDelivered(ref.status);
+                    orderRepository.save(order);
+                    return ResponseEntity.ok(map.put("order",orderMapper.toDTO(order)));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 }

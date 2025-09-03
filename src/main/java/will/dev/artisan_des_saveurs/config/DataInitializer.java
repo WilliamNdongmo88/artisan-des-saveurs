@@ -35,7 +35,7 @@ public class DataInitializer {
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
         // Créer un utilisateur admin par défaut
-        if (!userRepository.existsByUsername("admin")) {
+        if (!userRepository.existsByEmail("btbimportationservice333@gmail.com")) {
             Role userRole = new Role();
             userRole.setLibelle(TypeDeRole.ADMIN);
 

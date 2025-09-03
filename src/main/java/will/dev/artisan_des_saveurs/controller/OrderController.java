@@ -8,6 +8,8 @@ import will.dev.artisan_des_saveurs.dto.MessageRetourDto;
 import will.dev.artisan_des_saveurs.dto.order.OrderDTO;
 import will.dev.artisan_des_saveurs.service.OrderService;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("orders")
 @RequiredArgsConstructor
@@ -29,6 +31,12 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserOrders(@PathVariable Long id){
         return this.orderService.getUserOrders(id);
+    }
+
+    @PutMapping("/status")
+    public ResponseEntity<?> updateStatusOrder(@RequestBody Map<String, String> body){
+        System.out.println("body ::: " + body);
+        return this.orderService.updateStatusOrder(body);
     }
 
     @PreAuthorize("hasAuthority('ADMIN_READ')")

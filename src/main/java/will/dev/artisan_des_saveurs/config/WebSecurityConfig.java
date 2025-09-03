@@ -94,7 +94,10 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://artisan-des-saveurs.vercel.app")); // 👈 ton front
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:4200",
+                "https://artisan-des-saveurs.vercel.app"
+        ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
@@ -104,6 +107,7 @@ public class WebSecurityConfig {
 
         return source;
     }
+
 
 //    @Bean
 //    public WebMvcConfigurer corsConfigurer() {
