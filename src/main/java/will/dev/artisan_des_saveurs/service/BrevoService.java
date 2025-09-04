@@ -23,7 +23,7 @@ public class BrevoService {
     @Value("app.env.apiUrl")
     private String apiUrl;
 
-    @Value("${BREVO_API_KEY}")
+    @Value("${app.env.apiKey}")
     private String brevoApiKey;
 
     public void sendActivationEmail(String to, String token) {
