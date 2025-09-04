@@ -55,8 +55,9 @@ public class WebSecurityConfig {
                         .requestMatchers("/products/**").permitAll()
                         //PERMETTRE EXPLICITEMENT LES REQUÊTES OPTIONS SANS AUTHENTIFICATION
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/actuator").permitAll()
+                        .requestMatchers("/").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/actuator/**").hasRole("ADMIN")
                         .requestMatchers("/api/uploads/**").permitAll()
                          .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
                 );
