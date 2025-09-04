@@ -40,7 +40,7 @@ public class UserService {
     private final CloudinaryService cloudinaryService;
     private final UserRepository userRepository;
     private final ContactRequestRepository contactRequestRepository;
-    private final NotificationService notificationService;
+    //private final NotificationService notificationService;
     private final BrevoService brevoService;
     private final WhatsappNotification whatsappNotification;
     private final VonageWhatsappNotificationService vonageWhatsappNotificationService;

@@ -31,7 +31,7 @@ public class OrderService {
     private final OrderMapper orderMapper;
     private final ProductItemMapper productItemMapper;
     private final UserRepository userRepository;
-    private final NotificationService notificationService;
+    //private final NotificationService notificationService;
     private final BrevoService brevoService;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;

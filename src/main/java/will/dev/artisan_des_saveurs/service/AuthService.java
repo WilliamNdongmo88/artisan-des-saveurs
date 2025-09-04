@@ -30,7 +30,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final PasswordEncoder passwordEncoder;
-    private final NotificationService notificationService;
+    //private final NotificationService notificationService;
     private final BrevoService brevoService;
 
     public String registerUser(will.dev.artisan_des_saveurs.dto.req_resp.dto.@Valid SignupRequest signUpRequest) {
