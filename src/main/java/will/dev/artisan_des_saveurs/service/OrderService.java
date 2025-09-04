@@ -4,19 +4,15 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import will.dev.artisan_des_saveurs.dto.MessageRetourDto;
 import will.dev.artisan_des_saveurs.dto.order.OrderDTO;
 import will.dev.artisan_des_saveurs.dto.order.OrdersResponse;
-import will.dev.artisan_des_saveurs.dto.order.ProductDTO;
 import will.dev.artisan_des_saveurs.dto.order.ProductItemDTO;
 import will.dev.artisan_des_saveurs.dtoMapper.OrderMapper;
 import will.dev.artisan_des_saveurs.dtoMapper.ProductItemMapper;
-import will.dev.artisan_des_saveurs.dtoMapper.ProductMapper;
 import will.dev.artisan_des_saveurs.entity.*;
 import will.dev.artisan_des_saveurs.repository.*;
-import will.dev.artisan_des_saveurs.security.UserDetailsImpl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -74,11 +70,11 @@ public class OrderService {
 
             Boolean isFromCart = true;
             String customerMessage = customerOrderMessage(orderDTO);
-            brevoService.sentToCopany(savedContactReq, isFromCart);
+            brevoService.sentToCompany(savedContactReq, isFromCart);
             brevoService.sentResponseToCustomerFromCartPage(userConnected, customerMessage);
             savedContactReq.markEmailSent();
 
-            whatsappNotification.sendWhatsappMessage(userConnected, company_number, savedContactReq, isFromCart);
+            //whatsappNotification.sendWhatsappMessage(userConnected, company_number, savedContactReq, isFromCart);
             vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, userConnected, savedContactReq);
             savedContactReq.markWhatsappSent();
 
@@ -112,12 +108,12 @@ public class OrderService {
             savedUser.setContactRequests(List.of(contactRequest));
 
             Boolean isFromCart = true;
-            brevoService.sentToCopany(contactRequest, isFromCart);
+            brevoService.sentToCompany(contactRequest, isFromCart);
             String customerMessage = customerOrderMessage(orderDTO);
             brevoService.sentResponseToCustomerFromCartPage(savedUser, customerMessage);
             contactRequest.setEmailSent(true);
             contactRequest.setEmailSentAt(LocalDateTime.now());
-            whatsappNotification.sendWhatsappMessage(savedUser, company_number, savedContactReq, isFromCart);
+            //whatsappNotification.sendWhatsappMessage(savedUser, company_number, savedContactReq, isFromCart);
             vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, savedUser, savedContactReq);
             contactRequest.setWhatsappSent(true);
             contactRequest.setWhatsappSentAt(LocalDateTime.now());

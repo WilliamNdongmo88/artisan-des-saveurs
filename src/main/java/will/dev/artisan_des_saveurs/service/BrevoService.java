@@ -1,9 +1,9 @@
 package will.dev.artisan_des_saveurs.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import sendinblue.ApiClient;
+import sendinblue.ApiException;
 import sendinblue.Configuration;
 import sibApi.TransactionalEmailsApi;
 import sibModel.*;
@@ -19,6 +19,9 @@ public class BrevoService {
 
     @Value("${app.company.email}")
     private String companyEmail;
+
+    @Value("${app.company.whatsapp.number}")
+    private String companyNumber;
 
     @Value("${app.env.apiUrl}")
     private String apiUrl;
@@ -53,7 +56,7 @@ public class BrevoService {
                             "<a href=\""+apiUrl+"/activate?token=" + token + "\">Activer mon compte</a><br/><br/>" +
                             "Ce lien est valide pendant 24 heures.<br/><br/>" +
                             "Cordialement,<br/>" +
-                            "L'équipe Artisan des Saveurs");//https://artisan-des-saveurs.vercel.app
+                            "L'équipe Artisan des Saveurs");
 
 
             CreateSmtpEmail response = apiInstance.sendTransacEmail(email);
@@ -92,7 +95,7 @@ public class BrevoService {
                             "Ce lien est valide pendant 1 heure.<br><br>" +
                             "Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.<br><br>" +
                             "Cordialement,<br>" +
-                            "L'équipe Artisan des Saveurs");//https://artisan-des-saveurs.vercel.app
+                            "L'équipe Artisan des Saveurs");
 
 
             CreateSmtpEmail response = apiInstance.sendTransacEmail(email);
@@ -102,7 +105,7 @@ public class BrevoService {
         }
     }
 
-    public void sentToCopany(ContactRequest contactRequest, Boolean isFromCart) {
+    public void sentToCompany(ContactRequest contactRequest, Boolean isFromCart) {
         System.out.println(":: Sent mail to company :: ");
         System.out.println(":: Message :: " + contactRequest.getMessage());
         try {
@@ -110,13 +113,25 @@ public class BrevoService {
             User user = contactRequest.getUser();
 
             String messageBody = "";
+            String textContent = "";
             if (isFromCart){
                 messageBody = contactRequest.getMessage();
+                textContent ="Bonjour " + user.getFullName() + ",\n\n" +
+                        "Merci pour votre commande. Notre équipe vous contactera bientôt.\n\n" +
+                        "Service Client – L'Artisan des saveurs";
             }else {
-                messageBody = "Client : "+user.getFullName()+"\n\n"
-                        + "Email : "+user.getEmail()+".\n\n"
-                        + "Téléphone: "+user.getPhone()+".\n\n"
-                        + contactRequest.getMessage() + "\n\n";
+                messageBody =
+                        "<html><body>" +
+                            "<p><strong>Client :</strong> " + user.getFullName() + "</p>" +
+                            "<p><strong>Email :</strong> " + user.getEmail() + "</p>" +
+                            "<p><strong>Téléphone :</strong> " + (user.getPhone() != null ? user.getPhone() : "N/A") + "</p>" +
+                            "<p>" + contactRequest.getMessage() + "</p>" +
+                        "</body></html>";
+                textContent =
+                        "Client: " + user.getFullName() +
+                        "\nEmail: " + user.getEmail() +
+                        "\nTéléphone: " + (user.getPhone() != null ? user.getPhone() : "N/A") +
+                        "\nMessage: " + contactRequest.getMessage();
             }
 
             // Initialisation du client
@@ -137,12 +152,14 @@ public class BrevoService {
             SendSmtpEmail email = new SendSmtpEmail()
                     .sender(sender)
                     .to(Collections.singletonList(recipient))
-                    .subject(contactRequest.getSubject())
-                    .htmlContent(messageBody);
+                    .subject("[Demande client] : " + contactRequest.getSubject())
+                    .htmlContent(messageBody) // version HTML
+                    .textContent(textContent);
 
             CreateSmtpEmail response = apiInstance.sendTransacEmail(email);
             System.out.println("Mail envoyé : " + response);
-        } catch (Exception e) {
+        } catch (ApiException e) {
+            System.err.println("BREVO_API_EXCEPTION : " + e.getResponseBody());
             throw new RuntimeException("COMPANY_EMAIL_EXCEPTION: " + e);
         }
     }
@@ -204,7 +221,11 @@ public class BrevoService {
                     .sender(sender)
                     .to(Collections.singletonList(recipient))
                     .subject(subject)
-                    .htmlContent(message);
+                    .htmlContent(message)
+                    .textContent("Bonjour " + savedUser.getFullName() + ",\n\n" +
+                    "Merci pour votre message. Notre équipe vous contactera bientôt.\n\n" +
+                    "Service Client – L'Artisan des saveurs");
+
 
             CreateSmtpEmail response = apiInstance.sendTransacEmail(email);
             System.out.println("Mail envoyé : " + response);
@@ -214,31 +235,28 @@ public class BrevoService {
     }
 
     public String customMessage(String clientName) {
-
-
-        String message = String.format("""
-                Bonjour %s,
-
-                Merci pour votre message et pour l’intérêt que vous portez à nos produits.
-
-                Nous serions ravis de vous fournir toutes les informations dont vous avez besoin. N’hésitez pas à me préciser les articles ou catégories qui vous intéressent (ex : produits en promotion, nouveautés, produits personnalisés…).
-
-                En attendant, voici quelques éléments clés à propos de notre offre :
-                ✅ Produits de qualité rigoureusement sélectionnés
-                🚚 Livraison rapide et fiable
-                🤝 Service client à votre écoute avant et après la commande
-
-                Vous pouvez également consulter notre catalogue en ligne ici : https://artisan-des-saveurs.vercel.app/catalogue
-
-                Je reste à votre disposition pour toute question complémentaire, un devis ou un accompagnement personnalisé.
-
-                Cordialement,
-                Service Client L'Artisan des saveurs
-                +237 6 55 00 23 18
-                https://artisan-des-saveurs.vercel.app/
-                """, clientName);
-
-        return message;
+        return String.format("""
+        <html>
+          <body style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
+            <p>Bonjour <strong>%s</strong>,</p>
+            <p>Merci pour votre message et pour l’intérêt que vous portez à nos produits.</p>
+            <p>
+              Notre équipe service client prendra contact avec vous rapidement 
+              afin de répondre à vos questions.
+            </p>
+            <p>
+              En attendant, vous pouvez consulter notre site officiel pour plus d’informations :<br/>
+              <a href="%s">artisan-des-saveurs.vercel.app</a>
+            </p>
+            <br/>
+            <p>Cordialement,</p>
+            <p>
+              <strong>Service Client – L'Artisan des saveurs</strong><br/>
+              📞 %s
+            </p>
+          </body>
+        </html>
+        """, clientName, apiUrl, companyNumber);
     }
 
     public void notifyAdminNewUser(User user) {

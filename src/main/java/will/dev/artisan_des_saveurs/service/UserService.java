@@ -69,12 +69,14 @@ public class UserService {
                 userConnected.getContactRequests().add(contactRequest); // Modifie la liste
 
                 Boolean isFromCart = false;
-                brevoService.sentToCopany(contactRequest, isFromCart);
+                //System.out.println("savedContactReq :: " + savedContactReq);
+                brevoService.sentToCompany(savedContactReq, isFromCart);
+                System.out.println(":: Debut ::");
 
                 brevoService.sentResponseToCustomerFromContactPage(userConnected);
                 savedContactReq.markEmailSent();
-
-                whatsappNotification.sendWhatsappMessage(userConnected, company_number, contactRequest, isFromCart);
+                System.out.println(":: Fin ::");
+                //whatsappNotification.sendWhatsappMessage(userConnected, company_number, contactRequest, isFromCart);
                 vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, userConnected, savedContactReq);
                 savedContactReq.markWhatsappSent();
 
@@ -110,12 +112,12 @@ public class UserService {
                 savedUser.setContactRequests(List.of(contactRequest));
 
                 Boolean isFromCart = false;
-                brevoService.sentToCopany(contactRequest, isFromCart);
+                brevoService.sentToCompany(contactRequest, isFromCart);
 
                 brevoService.sentResponseToCustomerFromContactPage(savedUser);
                 savedContactReq.markEmailSent();
 
-                whatsappNotification.sendWhatsappMessage(savedUser, company_number, contactRequest, isFromCart);
+                //whatsappNotification.sendWhatsappMessage(savedUser, company_number, contactRequest, isFromCart);
                 vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, savedUser, savedContactReq);
                 savedContactReq.markWhatsappSent();
 

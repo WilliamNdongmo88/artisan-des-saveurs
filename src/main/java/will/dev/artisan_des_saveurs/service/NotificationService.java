@@ -20,6 +20,9 @@
 //    @Value("${app.company.email}")
 //    private String companyEmail;
 //
+//    @Value("${app.company.whatsapp.number}")
+//    private String companyNumber;
+//
 //    @Value("app.env.apiUrl")
 //    private String apiUrl;
 //
@@ -138,30 +141,27 @@
 //    }
 //
 //    public String customMessage(String clientName) {
-//
-//
-//        String message = String.format("""
-//                Bonjour %s,
-//
-//                Merci pour votre message et pour l’intérêt que vous portez à nos produits.
-//
-//                Nous serions ravis de vous fournir toutes les informations dont vous avez besoin. N’hésitez pas à me préciser les articles ou catégories qui vous intéressent (ex : produits en promotion, nouveautés, produits personnalisés…).
-//
-//                En attendant, voici quelques éléments clés à propos de notre offre :
-//                ✅ Produits de qualité rigoureusement sélectionnés
-//                🚚 Livraison rapide et fiable
-//                🤝 Service client à votre écoute avant et après la commande
-//
-//                Vous pouvez également consulter notre catalogue en ligne ici : https://artisan-des-saveurs.vercel.app/catalogue
-//
-//                Je reste à votre disposition pour toute question complémentaire, un devis ou un accompagnement personnalisé.
-//
-//                Cordialement,
-//                Service Client L'Artisan des saveurs
-//                +237 6 55 00 23 18
-//                https://artisan-des-saveurs.vercel.app/
-//                """, clientName);
-//
-//        return message;
+//        return String.format("""
+//        <html>
+//          <body style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
+//            <p>Bonjour <strong>%s</strong>,</p>
+//            <p>Merci pour votre message et pour l’intérêt que vous portez à nos produits.</p>
+//            <p>
+//              Notre équipe service client prendra contact avec vous rapidement
+//              afin de répondre à vos questions.
+//            </p>
+//            <p>
+//              En attendant, vous pouvez consulter notre site officiel pour plus d’informations :<br/>
+//              <a href="https://artisan-des-saveurs.vercel.app/">artisan-des-saveurs.vercel.app</a>
+//            </p>
+//            <br/>
+//            <p>Cordialement,</p>
+//            <p>
+//              <strong>Service Client – L'Artisan des saveurs</strong><br/>
+//              📞 %s
+//            </p>
+//          </body>
+//        </html>
+//        """, clientName, companyNumber);
 //    }
 //}
