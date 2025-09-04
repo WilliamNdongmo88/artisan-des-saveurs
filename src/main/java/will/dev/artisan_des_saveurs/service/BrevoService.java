@@ -50,7 +50,7 @@ public class BrevoService {
                     .htmlContent("Bonjour,<br/><br/>" +
                             "Merci de vous être inscrit sur Artisan des Saveurs!<br/><br/>" +
                             "Pour activer votre compte, veuillez cliquer sur le lien suivant:<br/>" +
-                            "<a href=\"http://localhost:4200/activate?token=" + token + "\">Activer mon compte</a><br/><br/>" +
+                            "<a href=\""+apiUrl+"/activate?token=" + token + "\">Activer mon compte</a><br/><br/>" +
                             "Ce lien est valide pendant 24 heures.<br/><br/>" +
                             "Cordialement,<br/>" +
                             "L'équipe Artisan des Saveurs");//https://artisan-des-saveurs.vercel.app
@@ -88,7 +88,7 @@ public class BrevoService {
                     .htmlContent("Bonjour,<br><br>" +
                             "Vous avez demandé la réinitialisation de votre mot de passe.<br><br>" +
                             "Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien suivant:<br>" +
-                            "<a href=\"http://localhost:4200/reset-password?token=" + token + "\">Réinitialiser mon mot de passe</a><br><br>" +
+                            "<a href=\""+apiUrl+"/reset-password?token=" + token + "\">Réinitialiser mon mot de passe</a><br><br>" +
                             "Ce lien est valide pendant 1 heure.<br><br>" +
                             "Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.<br><br>" +
                             "Cordialement,<br>" +
