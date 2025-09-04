@@ -20,7 +20,7 @@ public class BrevoService {
     @Value("${app.company.email}")
     private String companyEmail;
 
-    @Value("app.env.apiUrl")
+    @Value("${app.env.apiUrl}")
     private String apiUrl;
 
     @Value("${app.env.apiKey}")
