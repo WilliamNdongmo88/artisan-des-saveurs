@@ -86,6 +86,11 @@ public class User implements UserDetails {
     private String password;
 
     private String avatar;
+    private Boolean receive_promotional_offers;
+    private Boolean receive_order_updates;
+    private Boolean be_notified_of_new_products;
+    private String language;
+    private String currency;
 
     private String activationToken;
 

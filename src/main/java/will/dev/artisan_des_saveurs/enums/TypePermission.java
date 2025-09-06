@@ -17,6 +17,7 @@ public enum TypePermission {
 
     USER_CREATE,
     USER_READ,
-    USER_DELETE;
+    USER_DELETE,
+    USER_UPDATE
 
 }

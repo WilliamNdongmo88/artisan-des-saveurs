@@ -21,6 +21,11 @@ public class UserDtoMapper {
         dto.setLastName(user.getLastName());
         dto.setFullName(user.getFullName());
         dto.setEmail(user.getEmail());
+        dto.setCurrency(user.getCurrency());
+        dto.setLanguage(user.getLanguage());
+        dto.setEmailPromotions(user.getReceive_promotional_offers());
+        dto.setEmailNewProducts(user.getBe_notified_of_new_products());
+        dto.setEmailOrderUpdates(user.getReceive_order_updates());
         dto.setPhone(user.getFormattedPhone());
         dto.setConsent(user.getConsent());
         dto.setEnabled(user.getEnabled());
@@ -45,6 +50,11 @@ public class UserDtoMapper {
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
         user.setPhone(dto.getPhone());
+        user.setCurrency(user.getCurrency());
+        user.setLanguage(user.getLanguage());
+        user.setReceive_promotional_offers(dto.getEmailPromotions());
+        user.setBe_notified_of_new_products(dto.getEmailNewProducts());
+        user.setReceive_order_updates(dto.getEmailOrderUpdates());
         user.setConsent(dto.getConsent() != null ? dto.getConsent() : false);
         user.setEnabled(dto.getEnabled() != null ? dto.getEnabled() : true);
 

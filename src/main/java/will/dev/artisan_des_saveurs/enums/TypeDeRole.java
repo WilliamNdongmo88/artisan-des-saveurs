@@ -35,7 +35,8 @@ public enum TypeDeRole {
     USER(Set.of(
             USER_CREATE,
             USER_READ,
-            USER_DELETE
+            USER_DELETE,
+            USER_UPDATE
     ));
 
     @Getter

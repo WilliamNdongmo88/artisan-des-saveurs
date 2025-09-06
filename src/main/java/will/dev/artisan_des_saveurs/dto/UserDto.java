@@ -15,6 +15,11 @@ public class UserDto {
     private String phone;
     private Boolean consent;
     private Boolean enabled;
+    private String currency;
+    private Boolean emailNewProducts;
+    private Boolean emailOrderUpdates;
+    private Boolean emailPromotions;
+    private String language;
 
     private List<ContactRequestDto> contactRequests;
 }

@@ -214,6 +214,36 @@ public class UserService {
         return fileDto;
     }
 
+    public ResponseEntity<MessageRetourDto> updatePreferenceUser(UserDto userDto) {
+        System.out.println("✅ Appel du service préférences !");
+
+        // Récupération de l'utilisateur connecté
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        Optional<User> userConnectedOpt = userRepository.findById(userDetails.getId());
+
+        if (userConnectedOpt.isEmpty()) {
+            throw new UsernameNotFoundException("Utilisateur non trouvé avec l'ID : " + userDetails.getId());
+        }
+
+        User userConnected = userConnectedOpt.get();
+        System.out.println("👤 Utilisateur connecté : " + userConnected.getUsername());
+
+        userConnected.setReceive_order_updates(userDto.getEmailOrderUpdates());
+        userConnected.setReceive_promotional_offers(userDto.getEmailPromotions());
+        userConnected.setBe_notified_of_new_products(userDto.getEmailNewProducts());
+        userConnected.setCurrency(userDto.getCurrency());
+        userConnected.setLanguage(userDto.getLanguage());
+
+        userRepository.save(userConnected);
+        MessageRetourDto messageRetourDto = new MessageRetourDto();
+        messageRetourDto.setMessage("Préférences mises à jour avec succès");
+
+        return ResponseEntity.ok(messageRetourDto);
+    }
 }
 
 

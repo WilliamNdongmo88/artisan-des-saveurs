@@ -44,11 +44,18 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN_CREATE', 'USER_CREATE')")
+    @PreAuthorize("hasAnyAuthority('ADMIN_CREATE', 'USER_CREATE')")
     @PutMapping("personal-info")
-    public ResponseEntity<MessageRetourDto> updateUser(@RequestBody @Valid UserDto userDto){
+    public ResponseEntity<MessageRetourDto> updateInfoUser(@RequestBody @Valid UserDto userDto){
         System.out.println("📦 Requête reçue pour modifier un utilisateur : " + userDto.getEmail());
         return this.userService.updateUser(userDto);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN_UPDATE', 'USER_UPDATE')")
+    @PutMapping("preferences")
+    public ResponseEntity<MessageRetourDto> updatePreferenceUser(@RequestBody UserDto userDto){
+        System.out.println("📦 Requête reçue pour modifier les préférences de 'utilisateur : ");
+        return this.userService.updatePreferenceUser(userDto);
     }
 
     // GET /users
