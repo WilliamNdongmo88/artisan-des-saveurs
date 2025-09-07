@@ -1,5 +1,6 @@
 package will.dev.artisan_des_saveurs.controller;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -72,6 +73,7 @@ public class UserController {
 
     // GET /users/{id}
     @GetMapping("/{id}")
+    @Transactional
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         return userRepository.findById(id)
                 .map(user -> ResponseEntity.ok(UserDtoMapper.toDto(user)))
