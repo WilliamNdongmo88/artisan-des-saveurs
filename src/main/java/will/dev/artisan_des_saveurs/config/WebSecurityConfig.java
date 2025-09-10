@@ -100,9 +100,9 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
-                lienDuSite,
+                lienDuSite
                 //"http://localhost:4200",
-                "https://4200-i7hbc3sl6b2onaqzwiqit-4b2240f8.manus.computer/"
+                //"https://4200-i7hbc3sl6b2onaqzwiqit-4b2240f8.manus.computer/"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
