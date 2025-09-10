@@ -232,7 +232,7 @@ public class DataInitializer {
                         new BigDecimal(1100.0),
                         "decoupes-porc-classiques",
                         "France",
-                        false,
+                        true,
                         "Déguster froid en fines tranches, ou tiédir légèrement; parfait en sandwich."
                 ),
                 new Product(
@@ -250,7 +250,7 @@ public class DataInitializer {
                         new BigDecimal(630.0),
                         "Saucisses et variantes",
                         "France",
-                        false,
+                        true,
                         "Griller 10–12 min à feu moyen sans percer, jusqu’à belle coloration uniforme."
                 ),
                 new Product(
@@ -286,7 +286,7 @@ public class DataInitializer {
                         new BigDecimal(1500.0),
                         "produits-transformes",
                         "Non spécifié",
-                        false,
+                        true,
                         "Réchauffer 15–20 min à 160°C; servir avec moutarde et pommes de terre."
                 ),
                 new Product(
@@ -367,7 +367,7 @@ public class DataInitializer {
                         new BigDecimal(465.0),
                         "Saucisses et variantes",
                         "France",
-                        false,
+                        true,
                         "Griller 10–12 min à feu moyen sans percer, jusqu’à belle coloration uniforme."
                 ),
                 new Product(
@@ -376,7 +376,7 @@ public class DataInitializer {
                         new BigDecimal(600.0),
                         "decoupes-porc-classiques",
                         "France",
-                        false,
+                        true,
                         "Assaisonner puis cuire rôti, poêlé ou mijoté selon le morceau, jusqu’à tendreté."
                 ),
                 new Product(
@@ -403,7 +403,7 @@ public class DataInitializer {
                         new BigDecimal(680.0),
                         "Saucisses et variantes",
                         "Maghreb",
-                        false,
+                        true,
                         "Griller 8–10 min; servir avec semoule et sauce yaourt-citron."
                 ),
                 new Product(
@@ -457,7 +457,7 @@ public class DataInitializer {
                         new BigDecimal(800.0),
                         "decoupes-porc-classiques",
                         "France",
-                        false,
+                        true,
                         "Rôtir 25–30 min/500 g ou griller en tranches marinées (ail, herbes)."
                 ),
                 new Product(
