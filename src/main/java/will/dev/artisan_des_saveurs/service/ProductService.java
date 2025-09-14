@@ -58,10 +58,14 @@ public class ProductService {
         this.cloudinaryService = cloudinaryService;
     }
 
-    public List<ProductResponse> getAllProducts() {
-        return productRepository.findAll().stream()
-                .map(ProductResponse::new)
-                .collect(Collectors.toList());
+    public List<ProductDTO> getAllProducts() {
+        List<Product> products = (List<Product>) this.productRepository.findAll();
+        System.out.println("products ::"+ products);
+        List<ProductDTO> productDTOList = new ArrayList<>(List.of());
+        for (Product product: products){
+            productDTOList.add(productMapper.toDTO(product));
+        }
+        return productDTOList;
     }
 
     public List<ProductDTO> getAvailableProducts() {
