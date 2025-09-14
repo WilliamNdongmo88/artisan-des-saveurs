@@ -58,6 +58,7 @@ public class ProductService {
         this.cloudinaryService = cloudinaryService;
     }
 
+    @Transactional
     public List<ProductDTO> getAllProducts() {
         List<Product> products = (List<Product>) this.productRepository.findAll();
         System.out.println("products ::"+ products);
