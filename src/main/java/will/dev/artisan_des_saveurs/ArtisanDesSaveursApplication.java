@@ -55,7 +55,7 @@ public class ArtisanDesSaveursApplication {
 		}
 	}
 
-	@PostConstruct
+    @PostConstruct
 	public void testDBEnvVars() {
 		System.out.println("===================================");
 		System.out.println("DB URL: " + System.getProperty("DATABASE_URL"));
@@ -64,6 +64,7 @@ public class ArtisanDesSaveursApplication {
 		System.out.println("accountSid = " + System.getProperty("TWILIO_ACCOUNT_SID"));
 		System.out.println("authToken = " + System.getProperty("TWILIO_AUTH_TOKEN"));
 		System.out.println("fromPhoneNumber = " + System.getProperty("TWILIO_WHATSAPP_FROM"));
+        System.out.println("👉 lienDuSite: " + System.getProperty("API_URL"));
 		System.out.println("===================================");
 	}
 

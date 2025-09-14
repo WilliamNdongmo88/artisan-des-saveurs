@@ -188,12 +188,12 @@ public class ProductService {
         }).orElse(false);
     }
 
-    public Optional<ProductResponse> toggleProductAvailability(Long id) {
+    public Optional<ProductDTO> toggleProductAvailability(Long id) {
         return productRepository.findById(id)
                 .map(product -> {
                     product.setAvailable(!product.isAvailable());
                     Product updatedProduct = productRepository.save(product);
-                    return new ProductResponse(updatedProduct);
+                    return productMapper.toDTO(updatedProduct);
                 });
     }
 }

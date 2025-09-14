@@ -103,8 +103,18 @@ public class ProductController {
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id,
                                                     @RequestPart("product") ProductDTO productDto,
                                                     @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+        System.out.println(":: updateProduct ::");
         ProductDTO updatedProduct = productService.updateProduct(id, productDto, file);
         return ResponseEntity.ok(updatedProduct);
+    }
+
+    @PatchMapping("/{id}/toggle-availability")
+    @PreAuthorize("hasAuthority('ADMIN_PATCH')")
+    public ResponseEntity<ProductDTO> toggleProductAvailability(@PathVariable Long id) {
+        System.out.println(":: toggleProductAvailability ::");
+        Optional<ProductDTO> updatedProduct = productService.toggleProductAvailability(id);
+        return updatedProduct.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
@@ -116,14 +126,6 @@ public class ProductController {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }
-
-    @PatchMapping("/{id}/toggle-availability")
-    @PreAuthorize("hasAuthority('ADMIN_PATCH')")
-    public ResponseEntity<ProductResponse> toggleProductAvailability(@PathVariable Long id) {
-        Optional<ProductResponse> updatedProduct = productService.toggleProductAvailability(id);
-        return updatedProduct.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
     }
 }
 

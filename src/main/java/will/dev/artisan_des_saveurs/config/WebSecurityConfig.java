@@ -59,7 +59,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/products/**").permitAll()
                         //PERMETTRE EXPLICITEMENT LES REQUÊTES OPTIONS SANS AUTHENTIFICATION
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/actuator/**").hasRole("ADMIN")
                         .requestMatchers("/api/uploads/**").permitAll()
@@ -104,7 +104,7 @@ public class WebSecurityConfig {
                 //"http://localhost:4200",
                 //"https://4200-i7hbc3sl6b2onaqzwiqit-4b2240f8.manus.computer/"
         ));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
 
@@ -113,46 +113,6 @@ public class WebSecurityConfig {
 
         return source;
     }
-
-
-//    @Bean
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurer() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/users/**")
-//                        .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs.vercel.app")
-//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-//                        .allowedHeaders("*")
-//                        .allowCredentials(true);
-//
-//                registry.addMapping("/orders/**")
-//                        .allowedOrigins("http://localhost:4200", "https://artisan-des-saveurs.vercel.app")
-//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-//                        .allowedHeaders("*")
-//                        .allowCredentials(true);
-//            }
-//        };
-//    }
-
-//    @Bean
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurer() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/auth/**")
-//                        .allowedOrigins("https://artisan-des-saveurs.vercel.app") // domaine de ton front
-//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-//                        .allowedHeaders("*")
-//                        .allowCredentials(true);
-//                registry.addMapping("/orders/**")
-//                        .allowedOrigins("https://artisan-des-saveurs.vercel.app") // domaine de ton front
-//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-//                        .allowedHeaders("*")
-//                        .allowCredentials(true);
-//            }
-//        };
-//    }
 }
 
 
