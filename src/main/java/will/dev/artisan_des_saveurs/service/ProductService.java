@@ -189,6 +189,7 @@ public class ProductService {
         }).orElse(false);
     }
 
+    @Transactional
     public Optional<ProductDTO> toggleProductAvailability(Long id) {
         return productRepository.findById(id)
                 .map(product -> {
