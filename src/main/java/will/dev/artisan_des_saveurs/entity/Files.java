@@ -13,7 +13,6 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @Table(name = "files")
 public class Files {
     @Id
@@ -31,4 +30,10 @@ public class Files {
     @JoinColumn(name = "product_id") // clé étrangère vers Product
     @JsonBackReference
     private Product product;
+
+    public Files(){}
+
+    public Files(String filePath){
+        this.filePath = filePath;
+    }
 }

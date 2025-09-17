@@ -77,6 +77,7 @@ public class ProductMapper {
         dto.setCategory(product.getCategory());
 
         if (product.getProductImage() != null) {
+            dto.setFileId(product.getProductImage().getId());
             dto.setMainImage(fileDTOMapper.map(product.getProductImage()));
             dto.setImageUrl(product.getProductImage().getFilePath());
         }

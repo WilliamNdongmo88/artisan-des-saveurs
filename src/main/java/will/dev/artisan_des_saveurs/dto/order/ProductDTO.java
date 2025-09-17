@@ -20,6 +20,7 @@ public class ProductDTO {
     private String unit;
     private Integer stockQuantity;
     private boolean featured;
+    private Long fileId;
 
     // Getters et setters
 }

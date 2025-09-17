@@ -523,8 +523,7 @@ public class DataInitializer {
             product.setUnit("kg");
 
             will.dev.artisan_des_saveurs.entity.Files img = new Files();
-            img.setFilePath("""
-                    https://res.cloudinary.com/dcjjwjheh/image/upload/v1755976309/mdfh9nvbsw9t94fdsdmo.png""");
+            img.setFilePath("");
             img.setFileName("chipo_aux_herbes.png");
 
             product.setProductImage(img);

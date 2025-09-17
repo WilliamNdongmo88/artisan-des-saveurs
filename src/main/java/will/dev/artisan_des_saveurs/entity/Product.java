@@ -40,7 +40,6 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "files_id")
-    //@JsonManagedReference
     private Files productImage;
 
     @Column(name = "is_available")
@@ -69,7 +68,12 @@ public class Product {
 
     public Product() {}
 
-    public Product(String name, String description, BigDecimal price, String category, String origin, boolean featured, String preparation) {
+    public Product(String name, String description,
+                   BigDecimal price, String category,
+                   String origin, boolean featured,
+                   String preparation
+                   //Files productImage
+    ) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -79,6 +83,7 @@ public class Product {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
         this.featured = featured;
+//        this.productImage = productImage;
     }
 
     @PrePersist
