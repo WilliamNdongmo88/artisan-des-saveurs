@@ -129,6 +129,7 @@ public class ProductService {
         existing.setPrice(dto.getPrice());
         existing.setDescription(dto.getDescription());
         existing.setPreparation(dto.getPreparation());
+        existing.setRecette(dto.getRecette());
         existing.setCategory(dto.getCategory());
         existing.setAvailable(dto.isAvailable());
         existing.setOrigin(dto.getOrigin());
@@ -174,11 +175,11 @@ public class ProductService {
             // ✅ Supprimer image principale
             Files mainImage = product.getProductImage();
             if (mainImage != null) {
-                try {
-                    fileStorageService.deleteFromDisk(mainImage); // chemin du fichier
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+//                try {
+//                    fileStorageService.deleteFromDisk(mainImage); // chemin du fichier
+//                } catch (IOException e) {
+//                    throw new RuntimeException(e);
+//                }
                 filesRepository.delete(mainImage);
             }
 

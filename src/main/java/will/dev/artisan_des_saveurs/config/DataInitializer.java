@@ -1,9 +1,7 @@
 package will.dev.artisan_des_saveurs.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +15,7 @@ import will.dev.artisan_des_saveurs.repository.ProductRepository;
 import will.dev.artisan_des_saveurs.repository.UserRepository;
 
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -63,474 +61,427 @@ public class DataInitializer {
     }
 
     private void createSampleProducts() {
-        Product[] products = {
+        Object[][] files = {
+                {1L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757466961/upi9t1cv54aiblu6vrlt.jpg"},
+                {2L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467535/vrzqn4elyqi4xciru85e.png"},
+                {3L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467430/dqwf9z8wnwhtioo7pkna.png"},
+                {4L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467324/tszbfdudk1sruivdihz1.jpg"},
+                {5L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467492/ail2npf0c309jodigyjj.jpg"},
+                {6L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467458/r4wgt8tz2igu2ekfdock.jpg"},
+                {7L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467610/zsiahiyyi3wyw77aj402.webp"},
+                {8L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467283/d14qmcevjf6xqywhyvyx.jpg"},
+                {9L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467380/nul3stym63xgyzhgw4l1.jpg"},
+                {10L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467670/flr5fupik6kyba1kdlsc.jpg"},
+                {11L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467565/emt3oajyb4xjg2vzyqtv.jpg"},
+                {12L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467849/a8runljjzlvhhdmtgdnf.jpg"},
+                {13L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467764/ipu7moehgccapnrmjts4.jpg"},
+                {14L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757731129/aq02dmgnlxdo4lo8pyso.jpg"},
+                {15L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467814/n4ycjpx4tlgjmgmeicqp.jpg"},
+                {16L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467732/tkvggngcbglwba9dj5lf.jpg"},
+                {17L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467120/epf0iwu5ivcjfu7onh2g.webp"},
+                {18L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757731266/jagdfelzidyeb2gvz6z7.webp"},
+                {19L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757732162/jgpnid1m8qh75lx0ukwb.jpg"},
+                {20L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467053/rxsibdabvvdkp35fblpj.jpg"},
+                {21L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757731712/g7iebxpjg7r7kldcgbrh.jpg"},
+                {22L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1758055204/qmmavtfpxmkofxadmchz.jpg"},
+                {23L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1755976309/mdfh9nvbsw9t94fdsdmo.png"},
+                {24L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757984444/tatgkdcofolfv4442chv.jpg"},
+                {25L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757468051/q5rvswca7igjzjqaspef.webp"},
+                {26L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757732926/qzisfheikvln4lgocquj.jpg"},
+                {27L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757984725/ooheouoxzp93fblwanmt.jpg"},
+                {28L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1758055933/mnw4gtudtugvd5gfxn90.jpg"},
+                {29L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1758056120/xjbhllt4viftuzt3v2eu.jpg"},
+                {30L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757732571/furlulbjkp2d6d9mhkrm.jpg"},
+                {31L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757732356/ymdhqguksddlwgidqalp.jpg"},
+                {32L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757468008/ef3clohcbwsee5c7qqbq.jpg"},
+                {33L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1755976309/mdfh9nvbsw9t94fdsdmo.png"},
+                {34L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757732804/spqz3vb21r9sh73kvwmh.jpg"},
+                {35L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757732693/ep24ykngkm4i0rzovf5e.jpg"},
+                {36L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757984244/mtgtgqjpawbsuxeofoib.jpg"},
+        };
+
+        List<Product> products = List.of(
                 new Product(
                         "Côtes de Porc",
                         "Côtes de porc fraîches, parfaites pour vos grillades et barbecues. Viande tendre et savoureuse, idéale pour les repas en famille ou entre amis.",
                         new BigDecimal("583"),
-                        "cotes-travers",
+                        "viande-a-la-coupe",
                         "Île Maurice",
                         true,
-                        "Idéales grillées au barbecue ou à la plancha. Cuisson recommandée : 6-8 minutes de chaque côté à feu moyen."
-                ),
-                new Product(
-                        "Escalope de porc",
-                        "Escalope de porc préparé avec soin, idéal pour vos repas.",
-                        new BigDecimal(464.0),
-                        "decoupes-porc-classiques",
-                        "France",
-                        false,
-                        "Assaisonner puis cuire rôti, poêlé ou mijoté selon le morceau, jusqu’à tendreté."
-                ),
-                new Product(
-                        "Boerewors",
-                        "Saucisse sud-africaine en spirale, riche en épices douces.",
-                        new BigDecimal(680.0),
-                        "Saucisses et variantes",
-                        "Afrique du Sud",
-                        false,
-                        "Former une spirale, huiler légèrement et griller 18–20 min à feu moyen, en retournant souvent."
-                ),
-                new Product(
-                        "Saucisses Toulouse",
-                        "Saucisse traditionnelle de Toulouse, gourmande et généreuse.",
-                        new BigDecimal(805.0),
-                        "Saucisses et variantes",
-                        "France",
-                        false,
-                        "Cuire à la poêle ou au barbecue 15–18 min à feu moyen, en piquant légèrement et en retournant régulièrement."
+                        "Idéales grillées au barbecue ou à la plancha. Cuisson recommandée : 6-8 minutes de chaque côté à feu moyen.",
+                        1L
                 ),
                 new Product(
                         "Pâté En Croûte",
                         "Pâté En Croûte préparé avec soin, idéal pour vos repas.",
-                        new BigDecimal(1470.0),
-                        "charcuteries-terrines",
+                        new BigDecimal("1470"),
+                        "charcuteries-et-terrines",
                         "France",
-                        false,
-                        "Servir frais, en tranches, avec cornichons et salade verte."
-                ),
-                new Product(
-                        "Rillettes de porc",
-                        "Préparation fondante de porc effiloché, idéale à tartiner.",
-                        new BigDecimal(1100.0),
-                        "charcuteries-terrines",
-                        "France",
-                        false,
-                        "Servir froid sur pain grillé; ajouter cornichons et oignons grelots."
-                ),
-                new Product(
-                        "Sciss porc Chinois",
-                        "Préparation parfumée aux notes asiatiques, sucrées-salées.",
-                        new BigDecimal(680.0),
-                        "produits-cuisines",
-                        "Asie",
-                        false,
-                        "Mariner 2 h (soja, miel, 5-épices), puis rôtir 30–40 min à 200°C ou sauter au wok 8–10 min."
-                ),
-                new Product(
-                        "Boudin Creole",
-                        "Boudin savoureux à poêler, idéal en entrée ou plat.",
-                        new BigDecimal(190.0),
-                        "boudins",
-                        "Non spécifié",
-                        false,
-                        "Poêler à feu doux 8–10 min; servir avec purée ou salade."
-                ),
-                new Product(
-                        "Saucisses Italiennes",
-                        "Saucisse d’inspiration italienne, relevée au fenouil.",
-                        new BigDecimal(770.0),
-                        "Saucisses et variantes",
-                        "Italie",
-                        false,
-                        "Griller ou poêler 12–15 min; déglacer au vin blanc et fenouil pour renforcer les arômes."
-                ),
-                new Product(
-                        "Scs porc Feta Epnrd",
-                        "Scs porc Feta Epnrd préparé avec soin, idéal pour vos repas.",
-                        new BigDecimal(750.0),
-                        "decoupes-porc-classiques",
-                        "Méditerranée",
-                        false,
-                        "Poêler 12–14 min à feu moyen; servir avec salade grecque."
-                ),
-                new Product(
-                        "Boulette porc",
-                        "Boulettes de porc assaisonnées, prêtes à cuisiner.",
-                        new BigDecimal(550.0),
-                        "produits-transformes",
-                        "Non spécifié",
-                        false,
-                        "Saisir 5–6 min à la poêle puis mijoter 15 min dans une sauce tomate-basilic."
-                ),
-                new Product(
-                        "Jarret de porc",
-                        "Morceau gélatineux idéal pour une cuisson longue.",
-                        new BigDecimal(320.0),
-                        "decoupes-porc-classiques",
-                        "France",
-                        false,
-                        "Braiser en cocotte 2h30 avec bouquet garni, carottes et oignons."
-                ),
-                new Product(
-                        "Saucisses Campagne",
-                        "Saucisses Campagne préparé avec soin, idéal pour vos repas.",
-                        new BigDecimal(635.0),
-                        "Saucisses et variantes",
-                        "France",
-                        false,
-                        "Griller ou poêler 12–15 min à feu moyen en retournant régulièrement."
-                ),
-                new Product(
-                        "Ti Carry porc",
-                        "Curry mauricien au porc, parfumé et généreux.",
-                        new BigDecimal(265.0),
-                        "produits-cuisines",
-                        "Île Maurice",
-                        false,
-                        "Saisir les morceaux, ajouter pâte de cari, tomates et oignons; mijoter 35–45 min jusqu’à tendreté."
-                ),
-                new Product(
-                        "Saucisse Dc au Rhum",
-                        "Saucisse Dc au Rhum préparé avec soin, idéal pour vos repas.",
-                        new BigDecimal(680.0),
-                        "Saucisses et variantes",
-                        "Non spécifié",
-                        false,
-                        "Griller ou poêler 12–15 min à feu moyen en retournant régulièrement."
-                ),
-                new Product(
-                        "Sciss porc Rougaille",
-                        "Saucisse de porc cuisinée à la sauce rougaille, spécialité mauricienne.",
-                        new BigDecimal(635.0),
-                        "produits-cuisines",
-                        "Île Maurice",
-                        false,
-                        "Saisir la saucisse puis mijoter 20–25 min dans une rougaille de tomates, oignons, thym et piment."
-                ),
-                new Product(
-                        "Rouelle de porc",
-                        "Tranche épaisse idéale pour un rôti familial.",
-                        new BigDecimal(462.0),
-                        "decoupes-porc-classiques",
-                        "France",
-                        false,
-                        "Mariner ail-thym-moutarde puis rôtir 1h30 à 180°C, en arrosant régulièrement."
-                ),
-                new Product(
-                        "Poitrine de porc",
-                        "Poitrine charnue et savoureuse, parfaite rôtie ou braisée.",
-                        new BigDecimal(460.0),
-                        "decoupes-porc-classiques",
-                        "France",
-                        false,
-                        "Rôtir 2 h à 170°C, peau vers le haut, puis 15 min à 220°C pour une peau croustillante."
+                        true,
+                        "Servir frais, en tranches, avec cornichons et salade verte.",
+                        2L
                 ),
                 new Product(
                         "Jambon Cuit Torchon",
                         "Jambon Cuit Torchon préparé avec soin, idéal pour vos repas.",
-                        new BigDecimal(1100.0),
-                        "decoupes-porc-classiques",
+                        new BigDecimal("1100"),
+                        "viande-a-la-coupe",
                         "France",
                         true,
-                        "Déguster froid en fines tranches, ou tiédir légèrement; parfait en sandwich."
+                        "Déguster froid en fines tranches, ou tiédir légèrement; parfait en sandwich.",
+                        3L
                 ),
                 new Product(
-                        "Brochette porc Marinée",
-                        "Brochettes de porc marinées, prêtes à griller.",
-                        new BigDecimal(605.0),
-                        "produits-cuisines",
+                        "Boulette porc",
+                        "Boulettes de porc assaisonnées, prêtes à cuisiner.",
+                        new BigDecimal("550"),
+                        "produits-transformes",
                         "Non spécifié",
-                        false,
-                        "Griller 8–10 min en retournant souvent; badigeonner de marinade pendant la cuisson."
+                        true,
+                        "Saisir 5–6 min à la poêle puis mijoter 15 min dans une sauce tomate-basilic.",
+                        4L
+                ),
+                new Product(
+                        "Saucisses Toulouse",
+                        "Saucisse traditionnelle de Toulouse, gourmande et généreuse.",
+                        new BigDecimal("805"),
+                        "saucisses-et-variantes",
+                        "France",
+                        true,
+                        "Cuire à la poêle ou au barbecue 15–18 min à feu moyen, en piquant légèrement et en retournant régulièrement.",
+                        5L
+                ),
+                new Product(
+                        "Jarret de porc",
+                        "Morceau gélatineux idéal pour une cuisson longue.",
+                        new BigDecimal("320"),
+                        "viande-a-la-coupe",
+                        "France",
+                        true,
+                        "Braiser en cocotte 2h30 avec bouquet garni, carottes et oignons.",
+                        6L
+                ),
+                new Product(
+                        "Rouelle de porc",
+                        "Tranche épaisse idéale pour un rôti familial.",
+                        new BigDecimal("462"),
+                        "viande-a-la-coupe",
+                        "France",
+                        true,
+                        "Mariner ail-thym-moutarde puis rôtir 1h30 à 180°C, en arrosant régulièrement.",
+                        7L
+                ),
+                new Product(
+                        "Escalope de porc",
+                        "Escalope de porc préparé avec soin, idéal pour vos repas.",
+                        new BigDecimal("464"),
+                        "viande-a-la-coupe",
+                        "France",
+                        true,
+                        "Assaisonner puis cuire rôti, poêlé ou mijoté selon le morceau, jusqu’à tendreté.",
+                        8L
                 ),
                 new Product(
                         "Chipolatas",
                         "Fine saucisse de porc idéale pour le barbecue.",
-                        new BigDecimal(630.0),
-                        "Saucisses et variantes",
+                        new BigDecimal("630"),
+                        "saucisses-et-variantes",
                         "France",
                         true,
-                        "Griller 10–12 min à feu moyen sans percer, jusqu’à belle coloration uniforme."
+                        "Griller 10–12 min à feu moyen sans percer, jusqu’à belle coloration uniforme.",
+                        9L
+                ),
+                new Product(
+                        "Poitrine de porc",
+                        "Poitrine charnue et savoureuse, parfaite rôtie ou braisée.",
+                        new BigDecimal("460"),
+                        "viande-a-la-coupe",
+                        "France",
+                        true,
+                        "Rôtir 2 h à 170°C, peau vers le haut, puis 15 min à 220°C pour une peau croustillante.",
+                        10L
+                ),
+                new Product(
+                        "Rillettes de porc",
+                        "Préparation fondante de porc effiloché, idéale à tartiner.",
+                        new BigDecimal("1100"),
+                        "charcuteries-et-terrines",
+                        "France",
+                        true,
+                        "Servir froid sur pain grillé; ajouter cornichons et oignons grelots.",
+                        11L
+                ),
+                new Product(
+                        "Saucisse Dc au Rhum",
+                        "Saucisse Dc au Rhum préparé avec soin, idéal pour vos repas.",
+                        new BigDecimal("680"),
+                        "saucisses-et-variantes",
+                        "Non spécifié",
+                        false,
+                        "Griller ou poêler 12–15 min à feu moyen en retournant régulièrement.",
+                        12L
+                ),
+                new Product(
+                        "Saucisses Campagne",
+                        "Saucisses Campagne préparé avec soin, idéal pour vos repas.",
+                        new BigDecimal("635"),
+                        "saucisses-et-variantes",
+                        "France",
+                        true,
+                        "Griller ou poêler 12–15 min à feu moyen en retournant régulièrement.",
+                        13L
+                ),
+                new Product(
+                        "Brochette porc Marinée",
+                        "Brochettes de porc marinées, prêtes à griller.",
+                        new BigDecimal("605"),
+                        "viande-a-la-coupe",
+                        "Non spécifié",
+                        true,
+                        "Griller 8–10 min en retournant souvent; badigeonner de marinade pendant la cuisson.",
+                        14L
+                ),
+                new Product(
+                        "Ti Carry porc",
+                        "Curry mauricien au porc, parfumé et généreux.",
+                        new BigDecimal("265"),
+                        "viande-a-la-coupe",
+                        "Île Maurice",
+                        true,
+                        "Saisir les morceaux, ajouter pâte de cari, tomates et oignons; mijoter 35–45 min jusqu’à tendreté.",
+                        15L
+                ),
+                new Product(
+                        "Saucisses Italiennes",
+                        "Saucisse d’inspiration italienne, relevée au fenouil.",
+                        new BigDecimal("770"),
+                        "charcuteries-et-terrines",
+                        "Italie",
+                        true,
+                        "Griller ou poêler 12–15 min; déglacer au vin blanc et fenouil pour renforcer les arômes.",
+                        16L
+                ),
+                new Product(
+                        "Boudin Creole",
+                        "Boudin savoureux à poêler, idéal en entrée ou plat.",
+                        new BigDecimal("474.38"),
+                        "boudins",
+                        "Non spécifié",
+                        true,
+                        "Poêler à feu doux 8–10 min; servir avec purée ou salade.",
+                        17L
                 ),
                 new Product(
                         "Paupiettes de porc",
                         "Paupiettes de porc ficelées, prêtes à mijoter.",
-                        new BigDecimal(600.0),
-                        "produits-transformes",
-                        "Non spécifié",
-                        false,
-                        "Dorer sur toutes les faces puis mijoter 35–45 min en sauce tomate ou crème."
-                ),
-                new Product(
-                        "Porc Chasive",
-                        "Préparation parfumée aux notes asiatiques, sucrées-salées.",
-                        new BigDecimal(460.0),
-                        "produits-cuisines",
-                        "Asie",
-                        false,
-                        "Mariner 2 h (soja, miel, 5-épices), puis rôtir 30–40 min à 200°C ou sauter au wok 8–10 min."
-                ),
-                new Product(
-                        "Sciss Texmex porc",
-                        "Sciss Texmex porc préparé avec soin, idéal pour vos repas.",
-                        new BigDecimal(825.0),
-                        "produits-cuisines",
-                        "Mexique / États-Unis",
-                        false,
-                        "Réchauffer ou cuisiner doucement en sauce; servir avec riz ou légumes."
-                ),
-                new Product(
-                        "Tete de porc Roti",
-                        "Tete de porc Roti préparé avec soin, idéal pour vos repas.",
-                        new BigDecimal(1500.0),
+                        new BigDecimal("600"),
                         "produits-transformes",
                         "Non spécifié",
                         true,
-                        "Réchauffer 15–20 min à 160°C; servir avec moutarde et pommes de terre."
-                ),
-                new Product(
-                        "Terrine Canard Og",
-                        "Terrine rustique artisanale, à savourer sur pain de campagne.",
-                        new BigDecimal(1050.0),
-                        "charcuteries-terrines",
-                        "France",
-                        false,
-                        "Servir frais, en tranches épaisses, avec pain de campagne et moutarde."
-                ),
-                new Product(
-                        "Boudin Bl Foie Gras",
-                        "Boudin savoureux à poêler, idéal en entrée ou plat.",
-                        new BigDecimal(1200.0),
-                        "boudins",
-                        "Non spécifié",
-                        false,
-                        "Poêler 8–10 min à feu doux avec une noisette de beurre, sans percer; servir avec purée ou compote de pommes."
+                        "Dorer sur toutes les faces puis mijoter 35–45 min en sauce tomate ou crème.",
+                        18L
                 ),
                 new Product(
                         "Boudin Oignons",
                         "Boudin savoureux à poêler, idéal en entrée ou plat.",
-                        new BigDecimal(380.0),
+                        new BigDecimal("429"),
                         "boudins",
                         "Non spécifié",
-                        false,
-                        "Poêler 8–10 min; servir avec confit d’oignons et salade."
+                        true,
+                        "Poêler 8–10 min; servir avec confit d’oignons et salade.",
+                        19L
                 ),
                 new Product(
-                        "Merguez Agneau",
-                        "Saucisse épicée façon merguez, parfaite grillée.",
-                        new BigDecimal(850.0),
-                        "Saucisses et variantes",
-                        "Maghreb",
+                        "Boerewors",
+                        "Saucisse sud-africaine en spirale, riche en épices douces.",
+                        new BigDecimal("680"),
+                        "saucisses-et-variantes",
+                        "Afrique du Sud",
                         false,
-                        "Griller 8–10 min; servir avec semoule et sauce yaourt-citron."
+                        "Former une spirale, huiler légèrement et griller 18–20 min à feu moyen, en retournant souvent.",
+                        20L
                 ),
                 new Product(
-                        "Rôti Longe",
-                        "Rôti de longe tendre, à la chair maigre.",
-                        new BigDecimal(560.0),
-                        "decoupes-porc-classiques",
-                        "France",
-                        false,
-                        "Rôtir 25 min/500 g à 180°C; laisser reposer 10 min avant de trancher."
-                ),
-                new Product(
-                        "Porc Crepinettes",
-                        "Porc Crepinettes préparé avec soin, idéal pour vos repas.",
-                        new BigDecimal(715.0),
-                        "Saucisses et variantes",
+                        "Tete de porc Roti",
+                        "Tete de porc Roti préparé avec soin, idéal pour vos repas.",
+                        new BigDecimal("1500"),
+                        "produits-transformes",
                         "Non spécifié",
                         false,
-                        "Poêler 10–12 min à feu moyen, en retournant à mi-cuisson."
-                ),
-                new Product(
-                        "Pack Bbq",
-                        "Pack Bbq préparé avec soin, idéal pour vos repas.",
-                        new BigDecimal(750.0),
-                        "produits-cuisines",
-                        "Non spécifié",
-                        false,
-                        "Réchauffer ou cuisiner doucement en sauce; servir avec riz ou légumes."
-                ),
-                new Product(
-                        "Boudin Bln Cps Trfs",
-                        "Boudin savoureux à poêler, idéal en entrée ou plat.",
-                        new BigDecimal(1400.0),
-                        "boudins",
-                        "Non spécifié",
-                        false,
-                        "Poêler 8–10 min à feu doux avec une noisette de beurre, sans percer; servir avec purée ou compote de pommes."
-                ),
-                new Product(
-                        "Chipolata aux Herbes",
-                        "Fine saucisse de porc idéale pour le barbecue.",
-                        new BigDecimal(465.0),
-                        "Saucisses et variantes",
-                        "France",
-                        true,
-                        "Griller 10–12 min à feu moyen sans percer, jusqu’à belle coloration uniforme."
-                ),
-                new Product(
-                        "Saute de porc",
-                        "Saute de porc préparé avec soin, idéal pour vos repas.",
-                        new BigDecimal(600.0),
-                        "decoupes-porc-classiques",
-                        "France",
-                        true,
-                        "Assaisonner puis cuire rôti, poêlé ou mijoté selon le morceau, jusqu’à tendreté."
-                ),
-                new Product(
-                        "Rôti D'épaule",
-                        "Rôti D'épaule préparé avec soin, idéal pour vos repas.",
-                        new BigDecimal(580.0),
-                        "decoupes-porc-classiques",
-                        "France",
-                        false,
-                        "Rôtir 1h30–2h selon poids avec ail et herbes; arroser en cours de cuisson."
-                ),
-                new Product(
-                        "Pied de porc",
-                        "Pièce gélatineuse, parfaite en cuisson lente.",
-                        new BigDecimal(180.0),
-                        "decoupes-porc-classiques",
-                        "France",
-                        false,
-                        "Cuire à frémissement 2–3 h avec aromates; griller ensuite pour caraméliser."
-                ),
-                new Product(
-                        "Merguez porc",
-                        "Saucisse épicée façon merguez, parfaite grillée.",
-                        new BigDecimal(680.0),
-                        "Saucisses et variantes",
-                        "Maghreb",
-                        true,
-                        "Griller 8–10 min; servir avec semoule et sauce yaourt-citron."
+                        "Réchauffer 15–20 min à 160°C; servir avec moutarde et pommes de terre.",
+                        21L
                 ),
                 new Product(
                         "Boudin Blanc porc",
                         "Boudin blanc délicat, texture fine et gourmande.",
-                        new BigDecimal(680.0),
+                        new BigDecimal("495"),
                         "boudins",
                         "Non spécifié",
                         false,
-                        "Poêler 8–10 min à feu doux avec une noisette de beurre, sans percer; servir avec purée ou compote de pommes."
-                ),
-                new Product(
-                        "Sciss porc Cocktail",
-                        "Sciss porc Cocktail préparé avec soin, idéal pour vos repas.",
-                        new BigDecimal(1200.0),
-                        "decoupes-porc-classiques",
-                        "Non spécifié",
-                        false,
-                        "Assaisonner puis cuire rôti, poêlé ou mijoté selon le morceau, jusqu’à tendreté."
-                ),
-                new Product(
-                        "Pastrami",
-                        "Viande assaisonnée et fumée, à trancher finement.",
-                        new BigDecimal(1400.0),
-                        "produits-transformes",
-                        "Europe de l'Est / États-Unis",
-                        false,
-                        "Trancher finement; servir chaud dans un sandwich avec moutarde ou réchauffer à la vapeur 2–3 min."
-                ),
-                new Product(
-                        "Terrine Jmb porc Prs",
-                        "Terrine rustique artisanale, à savourer sur pain de campagne.",
-                        new BigDecimal(600.0),
-                        "charcuteries-terrines",
-                        "France",
-                        false,
-                        "Servir frais, en tranches épaisses, avec pain de campagne et moutarde."
-                ),
-                new Product(
-                        "Scs porc Prun Frmg",
-                        "Scs porc Prun Frmg préparé avec soin, idéal pour vos repas.",
-                        new BigDecimal(600.0),
-                        "decoupes-porc-classiques",
-                        "Non spécifié",
-                        false,
-                        "Poêler 12–14 min à feu moyen-doux; accompagner d’une compotée d’oignons."
-                ),
-                new Product(
-                        "Rôti Échine",
-                        "Morceau persillé, savoureux en rôti ou grillades.",
-                        new BigDecimal(800.0),
-                        "decoupes-porc-classiques",
-                        "France",
-                        true,
-                        "Rôtir 25–30 min/500 g ou griller en tranches marinées (ail, herbes)."
-                ),
-                new Product(
-                        "Terrine Jambon Prsl",
-                        "Terrine rustique artisanale, à savourer sur pain de campagne.",
-                        new BigDecimal(520.0),
-                        "charcuteries-terrines",
-                        "France",
-                        false,
-                        "Servir frais, en tranches épaisses, avec pain de campagne et moutarde."
+                        "Poêler 8–10 min à feu doux avec une noisette de beurre, sans percer; servir avec purée ou compote de pommes.",
+                        22L
                 ),
                 new Product(
                         "Cordon Bleu Plt",
                         "Escalope garnie de jambon et fromage, panée.",
-                        new BigDecimal(600.0),
+                        new BigDecimal("600"),
                         "produits-transformes",
                         "Non spécifié",
                         false,
-                        "Cuire au four 18–22 min à 200°C jusqu’à cœur fondant; servir avec salade."
-                ),
-                new Product(
-                        "Boudin Ananas & Gingembre",
-                        "Boudin savoureux à poêler, idéal en entrée ou plat.",
-                        new BigDecimal(630.0),
-                        "boudins",
-                        "Île Maurice",
-                        false,
-                        "Dorer à la poêle 8–10 min; déglacer avec un trait de jus d’ananas."
-                ),
-                new Product(
-                        "Terrine Rustiq",
-                        "Terrine rustique artisanale, à savourer sur pain de campagne.",
-                        new BigDecimal(1600.0),
-                        "charcuteries-terrines",
-                        "France",
-                        false,
-                        "Servir frais, en tranches épaisses, avec pain de campagne et moutarde."
-                ),
-                new Product(
-                        "Escalope Panee",
-                        "Escalope Panee préparé avec soin, idéal pour vos repas.",
-                        new BigDecimal(561.0),
-                        "produits-transformes",
-                        "France",
-                        false,
-                        "Réchauffer au four jusqu’à cœur chaud et servir avec garniture."
+                        "Cuire au four 18–22 min à 200°C jusqu’à cœur fondant; servir avec salade.",
+                        23L
                 ),
                 new Product(
                         "Terrine de Campagne",
                         "Terrine rustique artisanale, à savourer sur pain de campagne.",
-                        new BigDecimal(1140.0),
-                        "charcuteries-terrines",
+                        new BigDecimal("1140"),
+                        "charcuteries-et-terrines",
                         "France",
                         false,
-                        "Servir frais, en tranches épaisses, avec pain de campagne et moutarde."
+                        "Servir frais, en tranches épaisses, avec pain de campagne et moutarde.",
+                        24L
+                ),
+                new Product(
+                        "Escalope Panee",
+                        "Escalope Panee préparé avec soin, idéal pour vos repas.",
+                        new BigDecimal("561"),
+                        "produits-transformes",
+                        "France",
+                        false,
+                        "Réchauffer au four jusqu’à cœur chaud et servir avec garniture.",
+                        25L
+                ),
+                new Product(
+                        "Rôti Échine",
+                        "Morceau persillé, savoureux en rôti ou grillades.",
+                        new BigDecimal("800"),
+                        "viande-a-la-coupe",
+                        "France",
+                        true,
+                        "Rôtir 25–30 min/500 g ou griller en tranches marinées (ail, herbes).",
+                        26L
+                ),
+                new Product(
+                        "Jambon Persillé",
+                        "Terrine rustique artisanale, à savourer sur pain de campagne.",
+                        new BigDecimal("520"),
+                        "charcuteries-et-terrines",
+                        "France",
+                        false,
+                        "Servir frais, en tranches épaisses, avec pain de campagne et moutarde.",
+                        27L
+                ),
+                new Product(
+                        "Boudin Mauricien",
+                        "Spécialité locale à base de sang et de viande de porc, relevée avec des épices créoles et des herbes aromatiques.",
+                        new BigDecimal("165"),
+                        "boudins",
+                        "Île Maurice",
+                        true,
+                        "Faire revenir doucement à la poêle avec un peu d’huile, puis servir chaud accompagné de riz créole, lentilles ou d’une rougaille de tomates.",
+                        28L
+                ),
+                new Product(
+                        "Boudin Mauricien Piment",
+                        "Variante épicée du boudin mauricien, préparée avec du sang et de la viande de porc, relevée de piments frais et d’épices créoles.",
+                        new BigDecimal("165"),
+                        "boudins",
+                        "Île Maurice",
+                        false,
+                        "Réchauffer doucement à la poêle ou au four. Déguster chaud avec un riz basmati, des haricots rouges ou une salade créole pour adoucir le piquant.",
+                        29L
+                ),
+                new Product(
+                        "Merguez Agneau",
+                        "Saucisse épicée façon merguez, parfaite grillée.",
+                        new BigDecimal("850"),
+                        "saucisses-et-variantes",
+                        "Maghreb",
+                        false,
+                        "Griller 8–10 min; servir avec semoule et sauce yaourt-citron.",
+                        30L
+                ),
+                new Product(
+                        "Merguez porc",
+                        "Saucisse épicée façon merguez, parfaite grillée.",
+                        new BigDecimal("680"),
+                        "saucisses-et-variantes",
+                        "Maghreb",
+                        true,
+                        "Griller 8–10 min; servir avec semoule et sauce yaourt-citron.",
+                        31L
+                ),
+                new Product(
+                        "Saute de porc",
+                        "Saute de porc préparé avec soin, idéal pour vos repas.",
+                        new BigDecimal("600"),
+                        "viande-a-la-coupe",
+                        "France",
+                        true,
+                        "Assaisonner puis cuire rôti, poêlé ou mijoté selon le morceau, jusqu’à tendreté.",
+                        32L
+                ),
+                new Product(
+                        "Chipolata aux Herbes",
+                        "Fine saucisse de porc idéale pour le barbecue.",
+                        new BigDecimal("465"),
+                        "saucisses-et-variantes",
+                        "France",
+                        true,
+                        "Griller 10–12 min à feu moyen sans percer, jusqu’à belle coloration uniforme.",
+                        33L
+                ),
+                new Product(
+                        "Pastrami",
+                        "Viande assaisonnée et fumée, à trancher finement.",
+                        new BigDecimal("1400"),
+                        "charcuteries-et-terrines",
+                        "Europe de l'Est / États-Unis",
+                        false,
+                        "Trancher finement; servir chaud dans un sandwich avec moutarde ou réchauffer à la vapeur 2–3 min.",
+                        34L
+                ),
+                new Product(
+                        "Pied de porc",
+                        "Pièce gélatineuse, parfaite en cuisson lente.",
+                        new BigDecimal("180"),
+                        "viande-a-la-coupe",
+                        "France",
+                        false,
+                        "Cuire à frémissement 2–3 h avec aromates; griller ensuite pour caraméliser.",
+                        35L
+                ),
+                new Product(
+                        "Paté de tête",
+                        "Préparation traditionnelle à base de morceaux de tête de porc cuits longuement, pressés et assaisonnés pour offrir une charcuterie savoureuse et rustique.",
+                        new BigDecimal("618.75"),
+                        "charcuteries-et-terrines",
+                        "France",
+                        false,
+                        "Servir frais en tranches, accompagné de pain de campagne, cornichons et moutarde pour un apéritif ou une entrée gourmande.",
+                        36L
                 )
-        };
+        );
 
 
         for (Product product : products) {
-            product.setAvailable(true);
-            product.setStockQuantity(50);
-            product.setUnit("kg");
+            for(Object[] file : files){
+                Long id = (Long) file[0];
+                String url = (String) file[1];
+                if (product.getImgId() == id){
+                    product.setAvailable(true);
+                    product.setStockQuantity(50);
+                    product.setUnit("kg");
 
-            will.dev.artisan_des_saveurs.entity.Files img = new Files();
-            img.setFilePath("");
-            img.setFileName("chipo_aux_herbes.png");
+                    will.dev.artisan_des_saveurs.entity.Files img = new Files();
+                    img.setFilePath((String) file[1]);
+                    img.setFileName("");
 
-            product.setProductImage(img);
-            productRepository.save(product);
+                    product.setProductImage(img);
+                    productRepository.save(product);
+                }
+            }
         }
         System.out.println("Products :: "+ products);
     }
 }
-
-

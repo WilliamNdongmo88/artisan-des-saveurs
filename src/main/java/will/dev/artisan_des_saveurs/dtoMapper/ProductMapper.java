@@ -74,6 +74,7 @@ public class ProductMapper {
         dto.setPrice(product.getPrice());
         dto.setDescription(product.getDescription());
         dto.setPreparation(product.getPreparation());
+        dto.setRecette(product.getRecette());
         dto.setCategory(product.getCategory());
 
         if (product.getProductImage() != null) {
@@ -99,6 +100,7 @@ public class ProductMapper {
         product.setPrice(dto.getPrice());
         product.setDescription(dto.getDescription());
         product.setPreparation(dto.getPreparation());
+        product.setRecette(dto.getRecette());
         product.setCategory(dto.getCategory());
         product.setAvailable(dto.isAvailable());
         product.setOrigin(dto.getOrigin());

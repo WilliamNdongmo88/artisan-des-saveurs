@@ -20,6 +20,6 @@ public interface FilesRepository extends JpaRepository<Files, Long> {
     @Query("SELECT f FROM Files f WHERE f.product.id = :productId")
     List<Files> findAllByProductId(@Param("productId") Long productId);
 
-    @Query("SELECT f FROM Files f WHERE f.temp = :temp")
-    Files findByTemp(String temp);
+//    @Query("SELECT f FROM Files f WHERE f.temp = :temp")
+//    Files findByTemp(String temp);
 }

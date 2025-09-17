@@ -60,19 +60,25 @@ public class Product {
     @Size(max = 3000)
     private String preparation;
 
+    @Size(max = 3000)
+    private String recette;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    //Variable utilisé dans DataInitializer.class
+    private Long imgId;
+
     public Product() {}
 
     public Product(String name, String description,
                    BigDecimal price, String category,
                    String origin, boolean featured,
-                   String preparation
-                   //Files productImage
+                   String preparation,
+                   Long imgId
     ) {
         this.name = name;
         this.description = description;
@@ -83,7 +89,7 @@ public class Product {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
         this.featured = featured;
-//        this.productImage = productImage;
+        this.imgId = imgId;
     }
 
     @PrePersist

@@ -59,8 +59,6 @@ public class FileDTOMapper {
     public FileDTO map(will.dev.artisan_des_saveurs.entity.Files file) {
         FileDTO dto = new FileDTO();
         dto.setId(file.getId());
-        dto.setName(file.getName());
-        dto.setTemp(file.getTemp());
         dto.setFileName(file.getFileName());
         dto.setFilePath(file.getFilePath());
 
@@ -70,8 +68,6 @@ public class FileDTOMapper {
 
     public will.dev.artisan_des_saveurs.entity.Files mapFileDtoToEntity(FileDTO dto) {
         will.dev.artisan_des_saveurs.entity.Files file = new will.dev.artisan_des_saveurs.entity.Files();
-        file.setName(dto.getName());
-        file.setTemp(dto.getTemp());
         file.setFileName(dto.getFileName());
         file.setFilePath(dto.getFilePath());
         // ⚠️ ne mets pas le content en DB, garde uniquement le chemin/filename

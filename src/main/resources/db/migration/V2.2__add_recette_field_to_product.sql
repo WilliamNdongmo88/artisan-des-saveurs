@@ -1,0 +1,1 @@
+ALTER TABLE products ADD COLUMN recette VARCHAR(3000);

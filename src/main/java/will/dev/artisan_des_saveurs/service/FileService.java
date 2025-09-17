@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import will.dev.artisan_des_saveurs.dto.req_resp.dto.FileDTO;
-import will.dev.artisan_des_saveurs.repository.FileRepository;
+import will.dev.artisan_des_saveurs.repository.FilesRepository;
 
 
 import java.io.IOException;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @Service
 public class FileService {
 
-    private final FileRepository fileRepository;
+    private final FilesRepository fileRepository;
 
     // Chemin local où stocker les images (monté par Nginx dans /uploads par exemple)
     @Value("${app.upload.dir:/app/uploads}")
@@ -28,7 +28,7 @@ public class FileService {
     @Value("${app.upload.url:https://artisan-des-saveurs-production.up.railway.app/api/uploads}")
     private String uploadUrl;
 
-    public FileService(FileRepository fileRepository) {
+    public FileService(FilesRepository fileRepository) {
         this.fileRepository = fileRepository;
     }
 

@@ -12,6 +12,7 @@ public class ProductDTO {
     private String category;
     private String description;
     private String preparation;
+    private String recette;
     private boolean available;
     private FileDTO mainImage;
     private String imageUrl;
