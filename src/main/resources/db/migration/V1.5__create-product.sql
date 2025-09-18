@@ -13,6 +13,6 @@ CREATE TABLE products (
     preparation VARCHAR(3000),
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
-    img_id BIGINT,
+    user_id BIGINT,
     CONSTRAINT fk_product_files FOREIGN KEY (files_id) REFERENCES files(id)
 );

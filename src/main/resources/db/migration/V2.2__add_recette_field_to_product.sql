@@ -1,1 +1,3 @@
-ALTER TABLE products ADD COLUMN recette VARCHAR(3000);
+ALTER TABLE products
+    ADD COLUMN img_id BIGINT,
+    ADD COLUMN recette VARCHAR(3000);
