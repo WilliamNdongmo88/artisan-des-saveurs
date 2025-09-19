@@ -34,3 +34,4 @@ build/
 
 # Fichiers sensibles
 src/main/resources/.env
+src/main/resources/application-dev.properties
