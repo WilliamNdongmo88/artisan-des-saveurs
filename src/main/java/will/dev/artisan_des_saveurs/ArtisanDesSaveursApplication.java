@@ -65,6 +65,7 @@ public class ArtisanDesSaveursApplication {
 		System.out.println("authToken = " + System.getProperty("TWILIO_AUTH_TOKEN"));
 		System.out.println("fromPhoneNumber = " + System.getProperty("TWILIO_WHATSAPP_FROM"));
         System.out.println("👉 lienDuSite: " + System.getProperty("API_URL"));
+        System.out.println("👉 BaseUrl: " + System.getProperty("BASE_URL"));
 		System.out.println("===================================");
 	}
 

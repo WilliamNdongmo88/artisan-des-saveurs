@@ -37,6 +37,9 @@ public class WebSecurityConfig {
     @Value("${app.env.apiUrl}")
     private String lienDuSite;
 
+    @Value("${app.base.url}")
+    private String baseurl;
+
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
@@ -62,6 +65,11 @@ public class WebSecurityConfig {
                         .requestMatchers("/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/actuator/**").hasRole("ADMIN")
+                        // CONF QR-CODE
+
+                        .requestMatchers("/api/health").permitAll()
+                        .requestMatchers("/api/pdf/**").permitAll()
+                        .requestMatchers("/api/qrcode/**").permitAll()
                         .requestMatchers("/api/uploads/**").permitAll()
                          .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
                 );
@@ -100,7 +108,8 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
-                lienDuSite
+                lienDuSite,
+                baseurl
                 //"http://localhost:4200",
                 //"https://4200-i7hbc3sl6b2onaqzwiqit-4b2240f8.manus.computer/"
         ));
