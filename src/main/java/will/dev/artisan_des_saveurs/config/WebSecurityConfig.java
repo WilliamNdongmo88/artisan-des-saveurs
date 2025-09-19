@@ -109,7 +109,8 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
                 lienDuSite,
-                baseurl
+                baseurl,
+                "https://sol-solution-qrcode.vercel.app"
                 //"http://localhost:4200",
                 //"https://4200-i7hbc3sl6b2onaqzwiqit-4b2240f8.manus.computer/"
         ));
