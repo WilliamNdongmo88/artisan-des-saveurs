@@ -56,8 +56,8 @@ public class QrCodeService {
         String qrCodeId = UUID.randomUUID().toString();
 
         // URL qui sera encodée dans le QR code (pointe vers l'endpoint de visualisation du PDF)
-        String qrContent = baseUrl + "/api/pdf/view/" + pdfId;
-        //String qrContent = "https://artisan-des-saveurs-production.up.railway.app/" + "api/pdf/view/" + pdfId;
+        //String qrContent = baseUrl + "/api/pdf/view/" + pdfId;
+        String qrContent = "https://artisan-des-saveurs-production.up.railway.app/" + "api/pdf/view/" + pdfId;
 
         // Création du répertoire de QR codes s'il n'existe pas
         Path qrCodePath = Paths.get(qrCodeDir);
