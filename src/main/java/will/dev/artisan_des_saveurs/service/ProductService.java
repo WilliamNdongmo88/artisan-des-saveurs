@@ -1,5 +1,6 @@
 package will.dev.artisan_des_saveurs.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -198,6 +199,31 @@ public class ProductService {
                     Product updatedProduct = productRepository.save(product);
                     return productMapper.toDTO(updatedProduct);
                 });
+    }
+
+    @Transactional
+    public List<Product> updateProducts(List<ProductDTO> productDTOs) {
+        List<Product> updatedProducts = new ArrayList<>();
+
+        for (ProductDTO dto : productDTOs) {
+            // Vérifier que le produit existe
+            Product product = productRepository.findById(dto.getId())
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "Produit avec ID " + dto.getId() + " introuvable"));
+
+            // Mettre à jour les champs
+            if (dto.getName() != null) {
+                product.setName(dto.getName());
+            }
+            if (dto.getRecette() != null) {
+                product.setRecette(dto.getRecette());
+            }
+
+            updatedProducts.add(product);
+        }
+
+        // Sauvegarde en lot
+        return productRepository.saveAll(updatedProducts);
     }
 }
 

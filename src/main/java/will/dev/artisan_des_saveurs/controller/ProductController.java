@@ -1,6 +1,7 @@
 package will.dev.artisan_des_saveurs.controller;
 
 import jakarta.validation.Valid;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import will.dev.artisan_des_saveurs.dto.order.ProductDTO;
 import will.dev.artisan_des_saveurs.dto.req_resp.dto.*;
+import will.dev.artisan_des_saveurs.entity.Product;
 import will.dev.artisan_des_saveurs.service.FileService;
 import will.dev.artisan_des_saveurs.service.FileStorageService;
 import will.dev.artisan_des_saveurs.service.ProductService;
@@ -126,6 +128,11 @@ public class ProductController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping("/update-recettes")
+    public List<Product> updateProducts(List<ProductDTO> productDTOs){
+        return productService.updateProducts(productDTOs);
     }
 }
 
