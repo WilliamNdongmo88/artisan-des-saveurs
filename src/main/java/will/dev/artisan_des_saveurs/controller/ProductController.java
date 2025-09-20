@@ -130,7 +130,7 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/update-recettes")
+    @PutMapping(value = "/update-recettes", consumes = "application/json", produces = "application/json")
     public List<Product> updateProducts(@RequestBody List<ProductDTO> productDTOs){
         return productService.updateProducts(productDTOs);
     }
