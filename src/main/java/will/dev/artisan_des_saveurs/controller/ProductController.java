@@ -131,7 +131,7 @@ public class ProductController {
     }
 
     @PostMapping("/update-recettes")
-    public List<Product> updateProducts(List<ProductDTO> productDTOs){
+    public List<Product> updateProducts(@RequestBody List<ProductDTO> productDTOs){
         return productService.updateProducts(productDTOs);
     }
 }
