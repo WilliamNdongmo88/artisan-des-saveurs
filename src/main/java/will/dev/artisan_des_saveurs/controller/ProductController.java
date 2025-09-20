@@ -130,9 +130,15 @@ public class ProductController {
         }
     }
 
-    @PutMapping(value = "/update-recettes", consumes = "application/json", produces = "application/json")
-    public List<Product> updateProducts(@RequestBody List<ProductDTO> productDTOs){
-        return productService.updateProducts(productDTOs);
+    // 🔹 Update d'une liste de produits (sans fichier)
+    @PutMapping(path = "/batch-update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN_UPDATE')")
+    public ResponseEntity<List<ProductDTO>> updateProducts(
+            @RequestBody List<ProductDTO> productDtos) {
+
+        System.out.println(":: batch update products JSON ::");
+        List<ProductDTO> updatedProducts = productService.updateProducts(productDtos);
+        return ResponseEntity.ok(updatedProducts);
     }
 }
 

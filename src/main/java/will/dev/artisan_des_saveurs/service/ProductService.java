@@ -202,16 +202,14 @@ public class ProductService {
     }
 
     @Transactional
-    public List<Product> updateProducts(List<ProductDTO> productDTOs) {
-        List<Product> updatedProducts = new ArrayList<>();
+    public List<ProductDTO> updateProducts(List<ProductDTO> productDtos) {
+        List<ProductDTO> result = new ArrayList<>();
 
-        for (ProductDTO dto : productDTOs) {
-            // Vérifier que le produit existe
+        for (ProductDTO dto : productDtos) {
             Product product = productRepository.findById(dto.getId())
                     .orElseThrow(() -> new EntityNotFoundException(
                             "Produit avec ID " + dto.getId() + " introuvable"));
 
-            // Mettre à jour les champs
             if (dto.getName() != null) {
                 product.setName(dto.getName());
             }
@@ -219,11 +217,18 @@ public class ProductService {
                 product.setRecette(dto.getRecette());
             }
 
-            updatedProducts.add(product);
+            productRepository.save(product);
+
+            // Conversion en DTO (à adapter selon ton mapper)
+            ProductDTO updatedDto = new ProductDTO();
+            updatedDto.setId(product.getId());
+            updatedDto.setName(product.getName());
+            updatedDto.setRecette(product.getRecette());
+
+            result.add(updatedDto);
         }
 
-        // Sauvegarde en lot
-        return productRepository.saveAll(updatedProducts);
+        return result;
     }
 }
 
