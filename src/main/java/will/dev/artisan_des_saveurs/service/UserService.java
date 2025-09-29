@@ -9,15 +9,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
+import will.dev.artisan_des_saveurs.controller.advice.exception.InvalidCredentialsException;
+import will.dev.artisan_des_saveurs.controller.advice.exception.UserNotFoundException;
+import will.dev.artisan_des_saveurs.dto.DeleteAccountRequest;
 import will.dev.artisan_des_saveurs.dto.MessageRetourDto;
 import will.dev.artisan_des_saveurs.dto.UserDto;
 import will.dev.artisan_des_saveurs.dto.req_resp.dto.FileDTO;
 import will.dev.artisan_des_saveurs.dtoMapper.UserDtoMapper;
 import will.dev.artisan_des_saveurs.entity.ContactRequest;
+import will.dev.artisan_des_saveurs.entity.Order;
 import will.dev.artisan_des_saveurs.entity.User;
 import will.dev.artisan_des_saveurs.repository.ContactRequestRepository;
+import will.dev.artisan_des_saveurs.repository.OrderRepository;
 import will.dev.artisan_des_saveurs.repository.UserRepository;
 import will.dev.artisan_des_saveurs.security.UserDetailsImpl;
 
@@ -34,11 +41,13 @@ import static will.dev.artisan_des_saveurs.service.ProductService.extractFileNam
 public class UserService {
 
     public static final String MESSAGE = "Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.";
-    @Value("${app.company.whatsapp.number:+23059221613}")
+    @Value("${app.company.whatsapp.number}")
     private String company_number;
 
+    private  final PasswordEncoder passwordEncoder;
     private final CloudinaryService cloudinaryService;
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
     private final ContactRequestRepository contactRequestRepository;
     //private final NotificationService notificationService;
     private final BrevoService brevoService;
@@ -77,7 +86,7 @@ public class UserService {
                 savedContactReq.markEmailSent();
                 System.out.println(":: Fin ::");
                 //whatsappNotification.sendWhatsappMessage(userConnected, company_number, contactRequest, isFromCart);
-                vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, userConnected, savedContactReq);
+                //vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, userConnected, savedContactReq);
                 savedContactReq.markWhatsappSent();
 
                 contactRequestRepository.save(savedContactReq);
@@ -88,7 +97,8 @@ public class UserService {
                 //return ResponseEntity.ok(UserDtoMapper.toDto(savedUser));
                 return ResponseEntity.ok(messageRetourDto);
 
-            }else {
+            }
+            else {
                 User user = new User();
                 user.setFirstName(userDto.getFirstName());
                 user.setLastName(userDto.getLastName());
@@ -118,7 +128,7 @@ public class UserService {
                 savedContactReq.markEmailSent();
 
                 //whatsappNotification.sendWhatsappMessage(savedUser, company_number, contactRequest, isFromCart);
-                vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, savedUser, savedContactReq);
+                //vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, savedUser, savedContactReq);
                 savedContactReq.markWhatsappSent();
 
                 contactRequestRepository.save(savedContactReq);
@@ -134,7 +144,6 @@ public class UserService {
         }
     }
 
-
     public List<UserDto> getAll() {
         return userRepository.findAll().stream()
                 .map(UserDtoMapper::toDto)
@@ -147,7 +156,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
     }
 
-    @Scheduled(cron = "0 */10 * * * *")
+    @Scheduled(cron = "0 */2 * * * *")
     public void removeUselessJwt(){
         log.info("Suppresion des users non abonnée a {} %s".formatted(Instant.now()));
         List<User> users = this.userRepository.findByEnabledFalse(false);
@@ -243,6 +252,112 @@ public class UserService {
         messageRetourDto.setMessage("Préférences mises à jour avec succès");
 
         return ResponseEntity.ok(messageRetourDto);
+    }
+
+    /**
+     * Supprime définitivement le compte d'un utilisateur après vérification des credentials
+     *
+     * @param userId L'ID de l'utilisateur à supprimer
+     * @param deleteRequest Les données de confirmation (mot de passe et texte de confirmation)
+     * @throws UserNotFoundException Si l'utilisateur n'existe pas
+     * @throws InvalidCredentialsException Si le mot de passe est incorrect ou la confirmation invalide
+     */
+    @Transactional
+    public void deleteUserAccount(Long userId, DeleteAccountRequest deleteRequest) {
+        log.info("Tentative de suppression du compte utilisateur avec l'ID: {}", userId);
+
+        // Vérifier que l'utilisateur existe
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.warn("Tentative de suppression d'un utilisateur inexistant avec l'ID: {}", userId);
+                    return new UserNotFoundException("Utilisateur non trouvé avec l'ID: " + userId);
+                });
+
+        // Vérifier le texte de confirmation
+        if (deleteRequest.getConfirmationText() == null ||
+                !deleteRequest.getConfirmationText().trim().equalsIgnoreCase("SUPPRIMER")) {
+            log.warn("Texte de confirmation invalide pour l'utilisateur ID: {}", userId);
+            throw new InvalidCredentialsException("Le texte de confirmation doit être exactement 'SUPPRIMER'");
+        }
+
+        // Vérifier le mot de passe
+        if (deleteRequest.getPassword() == null ||
+                !passwordEncoder.matches(deleteRequest.getPassword(), user.getPassword())) {
+            log.warn("Mot de passe incorrect lors de la tentative de suppression pour l'utilisateur ID: {}", userId);
+            throw new InvalidCredentialsException("Mot de passe incorrect");
+        }
+
+        // Actions de nettoyage avant la suppression
+        performPreDeletionCleanup(user);
+
+        // Supprimer l'utilisateur
+        userRepository.delete(user);
+
+        log.info("Compte utilisateur supprimé avec succès - ID: {}, Email: {}",
+                userId, user.getEmail());
+    }
+
+    /**
+     * Effectue des actions de nettoyage avant la suppression du compte
+     * (par exemple, supprimer les données associées, envoyer des notifications, etc.)
+     *
+     * @param user L'utilisateur à supprimer
+     */
+    private void performPreDeletionCleanup(User user) {
+        log.info("Début du nettoyage pré-suppression pour l'utilisateur: {}", user.getEmail());
+
+        // Logique à ajouter pour la version future:
+        // - Supprimer les commandes associées
+        // - Supprimer les fichiers uploadés par l'utilisateur
+        // - Envoyer des notifications aux administrateurs
+        // - Archiver certaines données si nécessaire
+        // - Supprimer les sessions actives
+
+        // Nettoyage des données associées:
+
+        try{
+            Order order = orderRepository.findByUserId(user.getId());
+            System.out.println("order :: " + order);
+            orderRepository.deleteById(order.getId());
+            brevoService.notifyAdminUserDeleted(user);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("DELETE_ORDER_ERROR"+ e.getMessage());
+        }
+
+        log.info("Nettoyage pré-suppression terminé pour l'utilisateur: {}", user.getEmail());
+    }
+
+    /**
+     * Vérifie si un utilisateur existe par son ID
+     *
+     * @param userId L'ID de l'utilisateur
+     * @return true si l'utilisateur existe, false sinon
+     */
+    public boolean userExists(Long userId) {
+        return userRepository.existsById(userId);
+    }
+
+    /**
+     * Récupère un utilisateur par son ID
+     *
+     * @param userId L'ID de l'utilisateur
+     * @return L'utilisateur trouvé
+     * @throws UserNotFoundException Si l'utilisateur n'existe pas
+     */
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Utilisateur non trouvé avec l'ID: " + userId));
+    }
+
+    /**
+     * Vérifie si le mot de passe fourni correspond au mot de passe de l'utilisateur
+     *
+     * @param user L'utilisateur
+     * @param rawPassword Le mot de passe en clair à vérifier
+     * @return true si le mot de passe correspond, false sinon
+     */
+    public boolean checkPassword(User user, String rawPassword) {
+        return passwordEncoder.matches(rawPassword, user.getPassword());
     }
 }
 

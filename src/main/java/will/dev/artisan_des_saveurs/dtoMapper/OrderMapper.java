@@ -24,6 +24,8 @@ public class OrderMapper {
         dto.setTotal(order.getTotal());
         dto.setStatus(order.getDelivered());
         dto.setCreatedAt(order.getCreatedAt());
+        dto.setDeliveryMethod(order.getDeliveryMethod());
+        dto.setPaymentMethod(order.getPaymentMethod());
         dto.setUpdatedAt(order.getUpdatedAt());
         dto.setFreeShipping(order.isFreeShipping());
         dto.setUser(UserDtoMapper.toDto(order.getUser()));
@@ -45,6 +47,8 @@ public class OrderMapper {
         order.setSubtotal(dto.getSubtotal());
         order.setDiscount(dto.getDiscount());
         order.setTotal(dto.getTotal());
+        order.setDelivered(dto.getDeliveryMethod());
+        order.setPaymentMethod(dto.getPaymentMethod());
         order.setFreeShipping(dto.isFreeShipping());
         order.setUser(UserDtoMapper.toEntity(dto.getUser()));
 

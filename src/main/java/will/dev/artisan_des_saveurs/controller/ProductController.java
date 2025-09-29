@@ -130,7 +130,7 @@ public class ProductController {
         }
     }
 
-    // 🔹 Update d'une liste de produits (sans fichier)
+    //Mise a jour d'une liste de produits (sans fichier); Appelé depuis postman
     @PutMapping(path = "/batch-update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('ADMIN_UPDATE')")
     public ResponseEntity<List<ProductDTO>> updateProducts(

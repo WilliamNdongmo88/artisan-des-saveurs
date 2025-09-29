@@ -22,6 +22,9 @@ public class Order {
     private boolean freeShipping;
     private String delivered;
 
+    private String deliveryMethod;
+    private String paymentMethod;
+
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

@@ -78,6 +78,7 @@ public class Product {
                    BigDecimal price, String category,
                    String origin, boolean featured,
                    String preparation,
+                   String recette,
                    Long imgId
     ) {
         this.name = name;
@@ -86,6 +87,7 @@ public class Product {
         this.category = category;
         this.origin = origin;
         this.preparation = preparation;
+        this.recette = recette;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
         this.featured = featured;

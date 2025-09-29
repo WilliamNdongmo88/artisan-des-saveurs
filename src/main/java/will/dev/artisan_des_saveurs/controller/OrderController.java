@@ -24,7 +24,7 @@ public class OrderController {
 
     @PostMapping("place-order")
     //@PreAuthorize("hasAuthority('USER_CREATE')") Les utilisateurs sans compte pourrons aussi éffectuer cette opération
-    public ResponseEntity<MessageRetourDto> createUser(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<MessageRetourDto> createOrderUser(@RequestBody OrderDTO orderDTO) {
         return this.orderService.sendOrder(orderDTO);
     }
 

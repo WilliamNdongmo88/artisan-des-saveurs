@@ -1,5 +1,6 @@
 package will.dev.artisan_des_saveurs.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import will.dev.artisan_des_saveurs.repository.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -32,7 +34,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final ProductItemRepository productItemRepository;
-    private final WhatsappNotification whatsappNotification;
+    //private final WhatsappNotification whatsappNotification;
     private final ContactRequestRepository contactRequestRepository;
     private final VonageWhatsappNotificationService vonageWhatsappNotificationService;
 
@@ -75,7 +77,7 @@ public class OrderService {
             savedContactReq.markEmailSent();
 
             //whatsappNotification.sendWhatsappMessage(userConnected, company_number, savedContactReq, isFromCart);
-            vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, userConnected, savedContactReq);
+            //vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, userConnected, savedContactReq);
             savedContactReq.markWhatsappSent();
 
             messageRetourDto.setSuccess(true);
@@ -114,7 +116,7 @@ public class OrderService {
             contactRequest.setEmailSent(true);
             contactRequest.setEmailSentAt(LocalDateTime.now());
             //whatsappNotification.sendWhatsappMessage(savedUser, company_number, savedContactReq, isFromCart);
-            vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, savedUser, savedContactReq);
+            //vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, savedUser, savedContactReq);
             contactRequest.setWhatsappSent(true);
             contactRequest.setWhatsappSentAt(LocalDateTime.now());
 
@@ -153,9 +155,19 @@ public class OrderService {
         itemsDescription.append("</ul>");
 
         // Message livraison
-        String shippingMessage = freeShipping
-                ? "🚚 Livraison gratuite incluse.✅"
-                : "🚚 Livraison : À la charge du client";
+        String deliveryMethod = Objects.equals(orderDto.getDeliveryMethod(), "expedier") ?
+                "🚚 Livraison : Le client souhaite être livré." :
+                "📦 Retrait : Le client viendra récupérer sa commande.";
+
+        // Message paiement
+        String paymentMethod;
+        if (Objects.equals(orderDto.getPaymentMethod(), "bank")) { // "mips","bank","delivery"
+            paymentMethod = "💳 Paiement : Effectué par Juice (banque). Merci de vérifier votre compte.";
+        } else if (Objects.equals(orderDto.getPaymentMethod(), "delivery")) {
+            paymentMethod = "💵 Paiement : À effectuer lors de la livraison.";
+        } else {
+            paymentMethod = "💳 Paiement : Service de paiement en ligne.";
+        }
 
         // Construction du message HTML
         String message = String.format("""
@@ -163,25 +175,30 @@ public class OrderService {
         <body>
             <p>Bonjour,</p>
             <p>Nouvelle commande client reçue :</p>
-
+    
             <h3>👤 Informations du client :</h3>
             <ul>
                 <li><b>Nom :</b> %s</li>
                 <li><b>Email :</b> %s</li>
                 <li><b>Téléphone :</b> %s</li>
             </ul>
-
+    
             <h3>🛒 Détail de la commande :</h3>
             %s
-
+    
             <h3>💰 Résumé :</h3>
             <ul>
                 <li><b>Sous-total :</b> %.2f Rs</li>
                 <li><b>Remise :</b> %.2f Rs</li>
                 <li><b>Total à payer :</b> %.2f Rs</li>
-                <li><b>%s</b></li>
             </ul>
-
+    
+            <h3>📦 Livraison & Paiement :</h3>
+            <ul>
+                <li>%s</li>
+                <li>%s</li>
+            </ul>
+    
             <p>Merci de traiter cette commande rapidement.</p>
             <p>Cordialement,<br/>Votre plateforme <b>L'Artisan-des-saveurs</b>.</p>
         </body>
@@ -194,18 +211,16 @@ public class OrderService {
                 subtotal,
                 discount,
                 total,
-                shippingMessage
+                deliveryMethod,
+                paymentMethod
         );
 
         return message.trim();
     }
 
-
-
     public String customerOrderMessage(OrderDTO orderDto) {
         List<ProductItemDTO> items = orderDto.getItems();
         double total = orderDto.getTotal();
-        boolean freeShipping = orderDto.isFreeShipping();
 
         // Vérification du panier
         if (items == null || items.isEmpty()) {
@@ -214,9 +229,8 @@ public class OrderService {
 
         // Description des items
         StringBuilder itemsDescription = new StringBuilder("<ul>");
-        for (int i = 0; i < items.size(); i++) {
-            ProductItemDTO item = items.get(i);
-            String name = item.getProduct() != null && item.getProduct().getName() != null
+        for (ProductItemDTO item : items) {
+            String name = (item.getProduct() != null && item.getProduct().getName() != null)
                     ? item.getProduct().getName()
                     : "Produit inconnu";
             double quantity = item.getDisplayQuantity();
@@ -228,38 +242,106 @@ public class OrderService {
         }
         itemsDescription.append("</ul>");
 
-        // Récupération du nombre de commande
+        // Numéro de commande (⚠️ à remplacer par un vrai ID auto-généré en prod)
         int sizeOrder = orderRepository.findAll().size();
+        String orderNumber = "CMD-00" + (sizeOrder);
+
+        // Date formatée
+        String orderDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
         // Message livraison
-        String shippingMessage = freeShipping
-                ? "🚚 Livraison gratuite.✅"
-                : "🚚 Livraison : À votre charge";
+        String deliveryMethod = "expedier".equalsIgnoreCase(orderDto.getDeliveryMethod()) ?
+                "🚚 Livraison : Une notification vous sera envoyée avant que le livreur ne vienne." :
+                "🏬 Retrait : Dès que votre commande sera prête, vous recevrez une notification pour venir la récupérer.";
 
-        // Construction du message final en HTML
-        String message = String.format(
-                "Bonjour %s,<br/><br/>" +
-                        "Nous vous remercions pour votre commande n°%s passée le %s.<br/><br/>" +
-                        "🧾 <b>Récapitulatif de votre commande :</b><br/>" +
-                        "%s<br/>" +
-                        "💰 <b>Total à payer :</b> %.2f Rs<br/>" +
-                        "%s<br/><br/>" +
-                        "📦 <b>Statut :</b> En cours de préparation<br/><br/>" +
-                        "Vous recevrez un e-mail dès que votre commande sera prête à être livrée.<br/><br/>" +
-                        "Merci pour votre confiance !<br/><br/>" +
-                        "Bien cordialement,<br/>" +
-                        "Service Client – <i>L'Artisan-des-saveurs</i>",
+        // Construction du message final
+        String message = String.format("""
+                <html>
+                <body>
+                    Bonjour %s,<br/><br/>
+                    Nous vous remercions pour votre commande <b>%s</b> passée le %s.<br/><br/>
+                    
+                    🧾 <b>Récapitulatif de votre commande :</b><br/>
+                    %s<br/>
+                    
+                    💰 <b>Total à payer :</b> %.2f Rs<br/>
+                    %s<br/><br/>
+                    
+                    📦 <b>Statut :</b> En cours de préparation<br/><br/>
+                    
+                    Merci pour votre confiance !<br/><br/>
+                    
+                    Bien cordialement,<br/>
+                    Service Client – <i>L'Artisan-des-saveurs</i>
+                </body>
+                </html>
+                """,
                 orderDto.getUser().getFirstName() + " " + orderDto.getUser().getLastName(),
-                "CMD-00" + (sizeOrder + 1),
-                LocalDate.now(),
+                orderNumber,
+                orderDate,
                 itemsDescription.toString(),
                 total,
-                shippingMessage
+                deliveryMethod
         );
+        //Vous serez également notifié dès que votre commande sera prête.<br/><br/>
 
-        return message;
+        return message.trim();
     }
 
+    public String sendDeliveryCustomerMessage(Order order){
+        // ✅ Construire le contenu du mail
+        String subject = "📦 Votre commande est en cours de livraison";
+        List<ProductItem> items = order.getItems();
+        // Vérification du panier
+        if (items == null || items.isEmpty()) {
+            return "<p>Le panier est vide.</p>";
+        }
+
+        // Description des items
+        StringBuilder itemsDescription = new StringBuilder("<ul>");
+        for (int i = 0; i < items.size(); i++) {
+            ProductItem item = items.get(i);
+            String name = (item.getProduct().getId() != null && item.getProduct().getName() != null)
+                    ? item.getProduct().getName()
+                    : "Produit inconnu";
+            double quantity = item.getDisplayQuantity();
+            String unite = item.getSelectedUnit();
+
+            itemsDescription.append(
+                    String.format("<li>%d. %s - Quantité : %.2f %s</li>", i + 1, name, quantity, unite)
+            );
+        }
+        itemsDescription.append("</ul>");
+        String message = String.format("""
+                <html>
+                <body>
+                    <p>Bonjour %s %s,</p>
+                    <p>Votre commande <b>CMD-%d</b> est en cours de livraison 🚚.</p>
+                    
+                    <h3>🧾 Détails de votre commande :</h3>
+                    %s
+                    
+                    <ul>
+                        <li>Total payé : <b>%.2f Rs</b></li>
+                        <li>Date de commande : %s</li>
+                    </ul>
+
+                    <p>⏳ Le livreur vous contactera prochainement.</p>
+
+                    <p>Merci pour votre confiance,<br/>
+                    L’équipe <b>L’Artisan-des-saveurs</b>.</p>
+                </body>
+                </html>
+                """,
+                order.getUser().getFirstName(),
+                order.getUser().getLastName(),
+                order.getId(),
+                itemsDescription.toString(),
+                order.getTotal(),
+                order.getCreatedAt().toLocalDate()
+        );
+        return message;
+    }
 
     @Transactional
     public void saveOrderWithItems(OrderDTO orderDto, User userConnected) {
@@ -270,6 +352,8 @@ public class OrderService {
         order.setDiscount(orderDto.getDiscount());
         order.setTotal(orderDto.getTotal());
         order.setFreeShipping(orderDto.isFreeShipping());
+        order.setDeliveryMethod(orderDto.getDeliveryMethod());
+        order.setPaymentMethod(orderDto.getPaymentMethod());
         order.setUser(userConnected);
         System.out.println("Local date :: " + LocalDateTime.now());
         order.setCreatedAt(LocalDateTime.now());
@@ -384,9 +468,11 @@ public class OrderService {
     @Transactional
     public ResponseEntity<?> updateStatusOrder(Map<String, String> body) {
         Long orderId = Long.valueOf(body.get("orderId"));
+        Optional<User> user = Optional.ofNullable(orderRepository.findUserByOrderId(orderId).orElseThrow(() -> new EntityNotFoundException("Aucun utilisateur trouvé pour cette commande")));
         var ref = new Object() {
             String status = "";
         };
+        System.out.println("Status :: " + body.get("status"));
         switch (body.get("status")) {
             case "pending":
                 ref.status = "En attente";
@@ -395,7 +481,7 @@ public class OrderService {
                 ref.status = "En cours";
                 break;
             case "shipped":
-                ref.status = "Expédier";
+                ref.status = "Expédiée";
                 break;
             case "delivered":
                 ref.status = "Livrée";
@@ -407,6 +493,10 @@ public class OrderService {
         return orderRepository.findById(orderId)
                 .map(order -> {
                     order.setDelivered(ref.status);
+                    if(ref.status.equals("Expédiée")){
+                        String customerMessage = sendDeliveryCustomerMessage(order);
+                        brevoService.sentResponseToCustomerFromCartPage(user.get(), customerMessage);
+                    }
                     order.setUpdatedAt(LocalDateTime.now());
                     orderRepository.save(order);
                     return ResponseEntity.ok(map.put("order",orderMapper.toDTO(order)));

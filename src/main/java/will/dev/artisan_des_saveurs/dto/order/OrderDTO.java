@@ -15,6 +15,8 @@ public class OrderDTO {
     private double total;
     private String status;
     private boolean freeShipping;
+    private String deliveryMethod;
+    private String paymentMethod;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private UserDto user;

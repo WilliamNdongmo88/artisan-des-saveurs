@@ -3,6 +3,7 @@ package will.dev.artisan_des_saveurs.controller.advice;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,6 +14,8 @@ import will.dev.artisan_des_saveurs.dto.ErrorEntity;
 import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @ControllerAdvice
 public class ApplicationControllerAdvice {
@@ -30,11 +33,11 @@ public class ApplicationControllerAdvice {
     /**
      * Erreur 401 - Non autorisé (authentification échouée)
      */
-//    @ResponseStatus(UNAUTHORIZED)
-//    @ExceptionHandler(BadCredentialsException.class)
-//    public @ResponseBody ErrorEntity handleUnauthorized(BadCredentialsException exception) {
-//        return new ErrorEntity(UNAUTHORIZED.value(), "Authentification échouée : " + exception.getMessage());
-//    }
+    @ResponseStatus(UNAUTHORIZED)
+    @ExceptionHandler(BadCredentialsException.class)
+    public @ResponseBody ErrorEntity handleUnauthorized(BadCredentialsException exception) {
+        return new ErrorEntity(UNAUTHORIZED.value(), "Authentification échouée : " + exception.getMessage());
+    }
 
     /**
      * Erreur 403 - Accès refusé
