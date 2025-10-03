@@ -72,7 +72,7 @@ public class DataInitializer {
                 {8L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467283/d14qmcevjf6xqywhyvyx.jpg"},
                 {9L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467380/nul3stym63xgyzhgw4l1.jpg"},
                 {10L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467670/flr5fupik6kyba1kdlsc.jpg"},
-                {11L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1758990409/kjnh59pp9c5ra0dwkwqv.png"},
+                {11L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467565/emt3oajyb4xjg2vzyqtv.jpg"},
                 {12L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467849/a8runljjzlvhhdmtgdnf.jpg"},
                 {13L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757467764/ipu7moehgccapnrmjts4.jpg"},
                 {14L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757731129/aq02dmgnlxdo4lo8pyso.jpg"},

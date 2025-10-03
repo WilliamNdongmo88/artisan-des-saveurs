@@ -24,153 +24,151 @@ import java.util.*;
 @RequiredArgsConstructor
 public class OrderService {
     public static final String MESSAGE = "Votre commande a été envoyé avec succès !";
-    @Value("${app.company.whatsapp.number:+23059221613}")
+    @Value("${app.company.whatsapp.number}")
     private String company_number;
     private final OrderMapper orderMapper;
     private final ProductItemMapper productItemMapper;
     private final UserRepository userRepository;
-    //private final NotificationService notificationService;
     private final BrevoService brevoService;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final ProductItemRepository productItemRepository;
-    //private final WhatsappNotification whatsappNotification;
     private final ContactRequestRepository contactRequestRepository;
     private final VonageWhatsappNotificationService vonageWhatsappNotificationService;
 
     @Transactional
     public ResponseEntity<MessageRetourDto> sendOrder(OrderDTO orderDTO) {
         System.out.println("orderDTO ::: " + orderDTO.getItems());
-//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        System.out.println("userDetails isEnabled::: " + userDetails.isEnabled());
-//        System.out.println(" principal::: " + principal);
         MessageRetourDto messageRetourDto = new MessageRetourDto();
         String email;
 
-        if (userRepository.existsByEmail(orderDTO.getUser().getEmail())) { //
-            email = orderDTO.getUser().getEmail();
-            System.out.println("email ::: " + email);
+        try{
+            if (userRepository.existsByEmail(orderDTO.getUser().getEmail())) { //
+                email = orderDTO.getUser().getEmail();
+                System.out.println("email ::: " + email);
 
-            User userConnected = this.userRepository.findByEmailFromConnectedUser(email);
-            String message = generateOrderMessage(orderDTO);
+                User userConnected = this.userRepository.findByEmailFromConnectedUser(email);
+                String message = generateOrderMessage(orderDTO);
 
-            // Enregistrement de la requête de l'utilisateur
-            ContactRequest contactRequest = new ContactRequest();
-            contactRequest.setUser(userConnected);
-            contactRequest.setSubject("Nouvelle commande client");
-            contactRequest.setMessage(message);
-            contactRequest.setEmailSent(false);
-            contactRequest.setWhatsappSent(false);
-            ContactRequest savedContactReq = contactRequestRepository.save(contactRequest);
+                // Enregistrement de la requête de l'utilisateur
+                ContactRequest contactRequest = new ContactRequest();
+                contactRequest.setUser(userConnected);
+                contactRequest.setSubject("Nouvelle commande client");
+                contactRequest.setMessage(message);
+                contactRequest.setEmailSent(false);
+                contactRequest.setWhatsappSent(false);
+                ContactRequest savedContactReq = contactRequestRepository.save(contactRequest);
 
-            //userConnected.setContactRequests(List.of(savedContactReq));
-            userConnected.getContactRequests().add(savedContactReq);
+                userConnected.getContactRequests().add(savedContactReq);
 
-            // Création et enregistrement de la commande
-            saveOrderWithItems(orderDTO, userConnected);
+                // Création et enregistrement de la commande
+                saveOrderWithItems(orderDTO, userConnected);
 
-            Boolean isFromCart = true;
-            String customerMessage = customerOrderMessage(orderDTO);
-            brevoService.sentToCompany(savedContactReq, isFromCart);
-            brevoService.sentResponseToCustomerFromCartPage(userConnected, customerMessage);
-            savedContactReq.markEmailSent();
+                Boolean isFromCart = true;
+                String customerMessage = customerOrderMessage(orderDTO);
+                brevoService.sentToCompany(savedContactReq, isFromCart);
+                brevoService.sentResponseToCustomerFromCartPage(userConnected, customerMessage);
+                savedContactReq.markEmailSent();
 
-            //whatsappNotification.sendWhatsappMessage(userConnected, company_number, savedContactReq, isFromCart);
-            //vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, userConnected, savedContactReq);
-            savedContactReq.markWhatsappSent();
+                //whatsappNotification.sendWhatsappMessage(userConnected, company_number, savedContactReq, isFromCart);
+                //vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, userConnected, savedContactReq);
+                savedContactReq.markWhatsappSent();
 
-            messageRetourDto.setSuccess(true);
-            messageRetourDto.setMessage(MESSAGE);
+                messageRetourDto.setSuccess(true);
+                messageRetourDto.setMessage(MESSAGE);
+            }
+            else {
+                System.out.println("::: User sans compte ou Nonconnecté ::: ");
+                User user = new User();
+                user.setFirstName(orderDTO.getUser().getFirstName());
+                user.setLastName(orderDTO.getUser().getLastName());
+                user.setEmail(orderDTO.getUser().getEmail());
+                user.setPhone(orderDTO.getUser().getPhone());
+                user.setConsent(true);
+                user.setEnabled(false);
+                user.setUsername("anonymousUser");
+                user.setPassword("anonymousUser123");
+                User savedUser = userRepository.save(user);
+                System.out.println("savedUser ::: " + savedUser);
+
+                String message = generateOrderMessage(orderDTO);
+
+                ContactRequest contactRequest = new ContactRequest();
+                contactRequest.setUser(savedUser);
+                contactRequest.setSubject("Nouvelle commande client");
+                contactRequest.setMessage(message);
+                contactRequest.setEmailSent(false);
+                contactRequest.setWhatsappSent(false);
+                ContactRequest savedContactReq = contactRequestRepository.save(contactRequest);
+
+                savedUser.setContactRequests(List.of(contactRequest));
+
+                Boolean isFromCart = true;
+                brevoService.sentToCompany(contactRequest, isFromCart);
+                String customerMessage = customerOrderMessage(orderDTO);
+                brevoService.sentResponseToCustomerFromCartPage(savedUser, customerMessage);
+                contactRequest.setEmailSent(true);
+                contactRequest.setEmailSentAt(LocalDateTime.now());
+                //whatsappNotification.sendWhatsappMessage(savedUser, company_number, savedContactReq, isFromCart);
+                //vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, savedUser, savedContactReq);
+                contactRequest.setWhatsappSent(true);
+                contactRequest.setWhatsappSentAt(LocalDateTime.now());
+
+                messageRetourDto.setSuccess(true);
+                messageRetourDto.setMessage(MESSAGE);
+            }
+            return ResponseEntity.ok(messageRetourDto);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("SendOrder_ERROR :: " + e.getMessage());
         }
-        else {
-            System.out.println("::: User sans compte ou Nonconnecté ::: ");
-            User user = new User();
-            user.setFirstName(orderDTO.getUser().getFirstName());
-            user.setLastName(orderDTO.getUser().getLastName());
-            user.setEmail(orderDTO.getUser().getEmail());
-            user.setPhone(orderDTO.getUser().getPhone());
-            user.setConsent(true);
-            user.setEnabled(false);
-            user.setUsername("anonymousUser");
-            user.setPassword("anonymousUser123");
-            User savedUser = userRepository.save(user);
-            System.out.println("savedUser ::: " + savedUser);
-
-            String message = generateOrderMessage(orderDTO);
-
-            ContactRequest contactRequest = new ContactRequest();
-            contactRequest.setUser(savedUser);
-            contactRequest.setSubject("Nouvelle commande client");
-            contactRequest.setMessage(message);
-            contactRequest.setEmailSent(false);
-            contactRequest.setWhatsappSent(false);
-            ContactRequest savedContactReq = contactRequestRepository.save(contactRequest);
-
-            savedUser.setContactRequests(List.of(contactRequest));
-
-            Boolean isFromCart = true;
-            brevoService.sentToCompany(contactRequest, isFromCart);
-            String customerMessage = customerOrderMessage(orderDTO);
-            brevoService.sentResponseToCustomerFromCartPage(savedUser, customerMessage);
-            contactRequest.setEmailSent(true);
-            contactRequest.setEmailSentAt(LocalDateTime.now());
-            //whatsappNotification.sendWhatsappMessage(savedUser, company_number, savedContactReq, isFromCart);
-            //vonageWhatsappNotificationService.sendWhatsappMessageToCustomer(isFromCart, savedUser, savedContactReq);
-            contactRequest.setWhatsappSent(true);
-            contactRequest.setWhatsappSentAt(LocalDateTime.now());
-
-            messageRetourDto.setSuccess(true);
-            messageRetourDto.setMessage(MESSAGE);
-        }
-        return ResponseEntity.ok(messageRetourDto);
     }
 
     public String generateOrderMessage(OrderDTO orderDto) {
-        List<ProductItemDTO> items = orderDto.getItems();
-        double subtotal = orderDto.getSubtotal();
-        double discount = orderDto.getDiscount();
-        double total = orderDto.getTotal();
-        boolean freeShipping = orderDto.isFreeShipping();
+        try{
+            List<ProductItemDTO> items = orderDto.getItems();
+            double subtotal = orderDto.getSubtotal();
+            double discount = orderDto.getDiscount();
+            double total = orderDto.getTotal();
+            boolean freeShipping = orderDto.isFreeShipping();
 
-        // Vérification du panier
-        if (items == null || items.isEmpty()) {
-            return "<p>Le panier est vide.</p>";
-        }
+            // Vérification du panier
+            if (items == null || items.isEmpty()) {
+                return "<p>Le panier est vide.</p>";
+            }
 
-        // Description des items
-        StringBuilder itemsDescription = new StringBuilder("<ul>");
-        for (int i = 0; i < items.size(); i++) {
-            ProductItemDTO item = items.get(i);
-            String name = (item.getProduct().getId() != null && item.getProduct().getName() != null)
-                    ? item.getProduct().getName()
-                    : "Produit inconnu";
-            double quantity = item.getDisplayQuantity();
-            String unite = item.getSelectedUnit();
+            // Description des items
+            StringBuilder itemsDescription = new StringBuilder("<ul>");
+            for (int i = 0; i < items.size(); i++) {
+                ProductItemDTO item = items.get(i);
+                String name = (item.getProduct().getId() != null && item.getProduct().getName() != null)
+                        ? item.getProduct().getName()
+                        : "Produit inconnu";
+                double quantity = item.getDisplayQuantity();
+                String unite = item.getSelectedUnit();
 
-            itemsDescription.append(
-                    String.format("<li>%d. %s - Quantité : %.2f %s</li>", i + 1, name, quantity, unite)
-            );
-        }
-        itemsDescription.append("</ul>");
+                itemsDescription.append(
+                        String.format("<li>%d. %s - Quantité : %.2f %s</li>", i + 1, name, quantity, unite)
+                );
+            }
+            itemsDescription.append("</ul>");
 
-        // Message livraison
-        String deliveryMethod = Objects.equals(orderDto.getDeliveryMethod(), "expedier") ?
-                "🚚 Livraison : Le client souhaite être livré." :
-                "📦 Retrait : Le client viendra récupérer sa commande.";
+            // Message livraison
+            String deliveryMethod = Objects.equals(orderDto.getDeliveryMethod(), "expedier") ?
+                    "🚚 Livraison : Le client souhaite être livré." :
+                    "📦 Retrait : Le client viendra récupérer sa commande.";
 
-        // Message paiement
-        String paymentMethod;
-        if (Objects.equals(orderDto.getPaymentMethod(), "bank")) { // "mips","bank","delivery"
-            paymentMethod = "💳 Paiement : Effectué par Juice (banque). Merci de vérifier votre compte.";
-        } else if (Objects.equals(orderDto.getPaymentMethod(), "delivery")) {
-            paymentMethod = "💵 Paiement : À effectuer lors de la livraison.";
-        } else {
-            paymentMethod = "💳 Paiement : Service de paiement en ligne.";
-        }
+            // Message paiement
+            String paymentMethod;
+            if (Objects.equals(orderDto.getPaymentMethod(), "bank")) { // "mips","bank","delivery"
+                paymentMethod = "💳 Paiement : Effectué par Juice (banque). Merci de vérifier votre compte.";
+            } else if (Objects.equals(orderDto.getPaymentMethod(), "delivery")) {
+                paymentMethod = "💵 Paiement : À effectuer lors de la livraison.";
+            } else {
+                paymentMethod = "💳 Paiement : Service de paiement en ligne.";
+            }
 
-        // Construction du message HTML
-        String message = String.format("""
+            // Construction du message HTML
+            String message = String.format("""
         <html>
         <body>
             <p>Bonjour,</p>
@@ -204,58 +202,62 @@ public class OrderService {
         </body>
         </html>
         """,
-                orderDto.getUser().getFirstName() + " " + orderDto.getUser().getLastName(),
-                orderDto.getUser().getEmail(),
-                orderDto.getUser().getPhone(),
-                itemsDescription.toString(),
-                subtotal,
-                discount,
-                total,
-                deliveryMethod,
-                paymentMethod
-        );
+                    orderDto.getUser().getFirstName() + " " + orderDto.getUser().getLastName(),
+                    orderDto.getUser().getEmail(),
+                    orderDto.getUser().getPhone(),
+                    itemsDescription.toString(),
+                    subtotal,
+                    discount,
+                    total,
+                    deliveryMethod,
+                    paymentMethod
+            );
 
-        return message.trim();
+            return message.trim();
+        } catch (RuntimeException e) {
+            throw new RuntimeException("GenerateOrderMessage_ERROR :: " + e.getMessage());
+        }
     }
 
     public String customerOrderMessage(OrderDTO orderDto) {
-        List<ProductItemDTO> items = orderDto.getItems();
-        double total = orderDto.getTotal();
+        try{
+            List<ProductItemDTO> items = orderDto.getItems();
+            double total = orderDto.getTotal();
 
-        // Vérification du panier
-        if (items == null || items.isEmpty()) {
-            return "<p>Le panier est vide.</p>";
-        }
+            // Vérification du panier
+            if (items == null || items.isEmpty()) {
+                return "<p>Le panier est vide.</p>";
+            }
 
-        // Description des items
-        StringBuilder itemsDescription = new StringBuilder("<ul>");
-        for (ProductItemDTO item : items) {
-            String name = (item.getProduct() != null && item.getProduct().getName() != null)
-                    ? item.getProduct().getName()
-                    : "Produit inconnu";
-            double quantity = item.getDisplayQuantity();
-            String unite = item.getSelectedUnit();
+            // Description des items
+            StringBuilder itemsDescription = new StringBuilder("<ul>");
+            for (ProductItemDTO item : items) {
+                String name = (item.getProduct() != null && item.getProduct().getName() != null)
+                        ? item.getProduct().getName()
+                        : "Produit inconnu";
+                double quantity = item.getDisplayQuantity();
+                String unite = item.getSelectedUnit();
 
-            itemsDescription.append(
-                    String.format("<li>%s - Quantité : %.2f %s</li>", name, quantity, unite)
-            );
-        }
-        itemsDescription.append("</ul>");
+                itemsDescription.append(
+                        String.format("<li>%s - Quantité : %.2f %s</li>", name, quantity, unite)
+                );
+            }
+            itemsDescription.append("</ul>");
 
-        // Numéro de commande (⚠️ à remplacer par un vrai ID auto-généré en prod)
-        int sizeOrder = orderRepository.findAll().size();
-        String orderNumber = "CMD-00" + (sizeOrder);
+            // Numéro de commande (⚠️ à remplacer par un vrai ID auto-généré en prod)
+            int sizeOrder = orderRepository.findAll().size();
+            String orderNumber = "CMD-00" + (sizeOrder);
 
-        // Date formatée
-        String orderDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            // Date formatée
+            String orderDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-        // Message livraison
-        String deliveryMethod = "expedier".equalsIgnoreCase(orderDto.getDeliveryMethod()) ?
-                "🚚 Livraison : Une notification vous sera envoyée avant que le livreur ne vienne." :
-                "🏬 Retrait : Dès que votre commande sera prête, vous recevrez une notification pour venir la récupérer.";
+            // Message livraison
+            String deliveryMethod = "expedier".equalsIgnoreCase(orderDto.getDeliveryMethod()) ?
+                    "🚚 Livraison : Une notification vous sera envoyée avant que le livreur ne vienne." :
+                    "🏬 Retrait : Dès que votre commande sera prête, vous recevrez une notification pour venir la récupérer.";
 
-        // Construction du message final
-        String message = String.format("""
+            // Construction du message final
+            String message = String.format("""
                 <html>
                 <body>
                     Bonjour %s,<br/><br/>
@@ -276,43 +278,47 @@ public class OrderService {
                 </body>
                 </html>
                 """,
-                orderDto.getUser().getFirstName() + " " + orderDto.getUser().getLastName(),
-                orderNumber,
-                orderDate,
-                itemsDescription.toString(),
-                total,
-                deliveryMethod
-        );
-        //Vous serez également notifié dès que votre commande sera prête.<br/><br/>
+                    orderDto.getUser().getFirstName() + " " + orderDto.getUser().getLastName(),
+                    orderNumber,
+                    orderDate,
+                    itemsDescription.toString(),
+                    total,
+                    deliveryMethod
+            );
+            //Vous serez également notifié dès que votre commande sera prête.<br/><br/>
 
-        return message.trim();
+            return message.trim();
+        } catch (RuntimeException e) {
+            throw new RuntimeException("CustomerOrderMessage_ERROR :: " + e.getMessage());
+        }
     }
 
     public String sendDeliveryCustomerMessage(Order order){
-        // ✅ Construire le contenu du mail
-        String subject = "📦 Votre commande est en cours de livraison";
-        List<ProductItem> items = order.getItems();
-        // Vérification du panier
-        if (items == null || items.isEmpty()) {
-            return "<p>Le panier est vide.</p>";
-        }
+        try{
+            // ✅ Construire le contenu du mail
+            String subject = "📦 Votre commande est en cours de livraison";
+            List<ProductItem> items = order.getItems();
+            // Vérification du panier
+            if (items == null || items.isEmpty()) {
+                return "<p>Le panier est vide.</p>";
+            }
 
-        // Description des items
-        StringBuilder itemsDescription = new StringBuilder("<ul>");
-        for (int i = 0; i < items.size(); i++) {
-            ProductItem item = items.get(i);
-            String name = (item.getProduct().getId() != null && item.getProduct().getName() != null)
-                    ? item.getProduct().getName()
-                    : "Produit inconnu";
-            double quantity = item.getDisplayQuantity();
-            String unite = item.getSelectedUnit();
+            // Description des items
+            StringBuilder itemsDescription = new StringBuilder("<ul>");
+            for (int i = 0; i < items.size(); i++) {
+                ProductItem item = items.get(i);
+                String name = (item.getProduct().getId() != null && item.getProduct().getName() != null)
+                        ? item.getProduct().getName()
+                        : "Produit inconnu";
+                double quantity = item.getDisplayQuantity();
+                String unite = item.getSelectedUnit();
 
-            itemsDescription.append(
-                    String.format("<li>%d. %s - Quantité : %.2f %s</li>", i + 1, name, quantity, unite)
-            );
-        }
-        itemsDescription.append("</ul>");
-        String message = String.format("""
+                itemsDescription.append(
+                        String.format("<li>%d. %s - Quantité : %.2f %s</li>", i + 1, name, quantity, unite)
+                );
+            }
+            itemsDescription.append("</ul>");
+            String message = String.format("""
                 <html>
                 <body>
                     <p>Bonjour %s %s,</p>
@@ -333,14 +339,81 @@ public class OrderService {
                 </body>
                 </html>
                 """,
-                order.getUser().getFirstName(),
-                order.getUser().getLastName(),
-                order.getId(),
-                itemsDescription.toString(),
-                order.getTotal(),
-                order.getCreatedAt().toLocalDate()
-        );
-        return message;
+                    order.getUser().getFirstName(),
+                    order.getUser().getLastName(),
+                    order.getId(),
+                    itemsDescription.toString(),
+                    order.getTotal(),
+                    order.getCreatedAt().toLocalDate()
+            );
+            return message;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("SendDeliveryCustomerMessage_ERROR :: " +e.getMessage());
+        }
+    }
+
+    public String sendRecoveryCustomerMessage(Order order){
+        try{
+            String subject = "📢 Votre commande est prête à être récupérée";
+            List<ProductItem> items = order.getItems();
+            // Vérification du panier
+            if (items == null || items.isEmpty()) {
+                return "<p>Le panier est vide.</p>";
+            }
+
+            // Description des items
+            StringBuilder itemsDescription = new StringBuilder("<ul>");
+            for (int i = 0; i < items.size(); i++) {
+                ProductItem item = items.get(i);
+                String name = (item.getProduct().getId() != null && item.getProduct().getName() != null)
+                        ? item.getProduct().getName()
+                        : "Produit inconnu";
+                double quantity = item.getDisplayQuantity();
+                String unite = item.getSelectedUnit();
+
+                itemsDescription.append(
+                        String.format("<li>%d. %s - Quantité : %.2f %s</li>", i + 1, name, quantity, unite)
+                );
+            }
+            itemsDescription.append("</ul>");
+
+            String message = String.format("""
+                <html>
+                <body>
+                    <p>Bonjour %s %s,</p>
+                    <p>Votre commande <b>CMD-%d</b> est désormais prête ✅.</p>
+                    
+                    <h3>🧾 Détails de votre commande :</h3>
+                    %s
+                    
+                    <ul>
+                        <li>Total à régler / payé : <b>%.2f Rs</b></li>
+                        <li>Date de commande : %s</li>
+                    </ul>
+
+                    <p>📍 Merci de bien vouloir venir la récupérer:</p>
+                     <p>
+                         <a href="https://www.google.com/maps/dir/?api=1&destination=Aspenvillas%%2C%%20XHJF%%2BM6W%%2C%%20Topize%%20Rd%%2C%%20Grand%%20Baie" target="_blank">
+                            📌 Voir la localisation sur Google Maps
+                         </a>
+                     </p>
+                    <p>Nous vous remercions pour votre confiance,<br/>
+                    L’équipe <b>L’Artisan-des-saveurs</b>.</p>
+                </body>
+                </html>
+                """,
+                    order.getUser().getFirstName(),
+                    order.getUser().getLastName(),
+                    order.getId(),
+                    itemsDescription.toString(),
+                    order.getTotal(),
+                    order.getCreatedAt().toLocalDate()
+            );
+
+            return message;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("SendRecoveryCustomerMessage_ERROR :: " + e.getMessage());
+        }
     }
 
     @Transactional
@@ -473,34 +546,44 @@ public class OrderService {
             String status = "";
         };
         System.out.println("Status :: " + body.get("status"));
-        switch (body.get("status")) {
-            case "pending":
-                ref.status = "En attente";
-                break;
-            case "processing":
-                ref.status = "En cours";
-                break;
-            case "shipped":
-                ref.status = "Expédiée";
-                break;
-            case "delivered":
-                ref.status = "Livrée";
-                break;
-            default:
-                ref.status = "Annulée";
+        try{
+            switch (body.get("status")) {
+                case "pending":
+                    ref.status = "En attente";
+                    break;
+                case "processing":
+                    ref.status = "En cours";
+                    break;
+                case "recovery":
+                    ref.status = "Récupération";
+                    break;
+                case "shipped":
+                    ref.status = "Expédiée";
+                    break;
+                case "delivered":
+                    ref.status = "Livrée";
+                    break;
+                default:
+                    ref.status = "Annulée";
+            }
+            Map<String, OrderDTO> map = new HashMap<>();
+            return orderRepository.findById(orderId)
+                    .map(order -> {
+                        order.setDelivered(ref.status);
+                        if(ref.status.equals("Expédiée")){
+                            String customerMessage = sendDeliveryCustomerMessage(order);
+                            brevoService.sentResponseToCustomerFromCartPage(user.get(), customerMessage);
+                        }else if(ref.status.equals(("Récupération"))){
+                            String customerMessage = sendRecoveryCustomerMessage(order);
+                            brevoService.sentResponseToCustomerFromCartPage(user.get(), customerMessage);
+                        }
+                        order.setUpdatedAt(LocalDateTime.now());
+                        orderRepository.save(order);
+                        return ResponseEntity.ok(map.put("order",orderMapper.toDTO(order)));
+                    })
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("UpdateStatusOrder_ERROR :: " + e.getMessage());
         }
-        Map<String, OrderDTO> map = new HashMap<>();
-        return orderRepository.findById(orderId)
-                .map(order -> {
-                    order.setDelivered(ref.status);
-                    if(ref.status.equals("Expédiée")){
-                        String customerMessage = sendDeliveryCustomerMessage(order);
-                        brevoService.sentResponseToCustomerFromCartPage(user.get(), customerMessage);
-                    }
-                    order.setUpdatedAt(LocalDateTime.now());
-                    orderRepository.save(order);
-                    return ResponseEntity.ok(map.put("order",orderMapper.toDTO(order)));
-                })
-                .orElse(ResponseEntity.notFound().build());
     }
 }
