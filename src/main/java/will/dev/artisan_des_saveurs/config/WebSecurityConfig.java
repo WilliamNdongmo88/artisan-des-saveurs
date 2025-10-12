@@ -54,7 +54,7 @@ public class WebSecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 👈 Autorise toutes les preflight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Autorise toutes les preflight
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/users/**").permitAll()
@@ -109,8 +109,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
                 lienDuSite,
-                baseurl,
-                "https://sol-solution-qrcode.vercel.app"
+                baseurl
                 //"http://localhost:4200",
                 //"https://4200-i7hbc3sl6b2onaqzwiqit-4b2240f8.manus.computer/"
         ));

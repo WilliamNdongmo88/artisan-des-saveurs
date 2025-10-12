@@ -38,7 +38,7 @@ public class Product {
     @Size(max = 50)
     private String category;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "files_id")
     private Files productImage;
 

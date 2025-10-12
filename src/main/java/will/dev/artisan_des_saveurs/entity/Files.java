@@ -22,9 +22,8 @@ public class Files {
     private String fileName;
     private String filePath; // URL publique nginx
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id") // clé étrangère vers Product
-    @JsonBackReference
     private Product product;
 
     public Files(){}

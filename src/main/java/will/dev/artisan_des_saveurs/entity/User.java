@@ -98,7 +98,7 @@ public class User implements UserDetails {
 
     private LocalDateTime resetPasswordExpiry;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "role_id")
     private Role role;
 

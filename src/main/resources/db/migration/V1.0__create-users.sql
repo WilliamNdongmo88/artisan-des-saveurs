@@ -13,6 +13,5 @@ CREATE TABLE users (
     activation_token TEXT,
     reset_password_token TEXT,
     reset_password_expiry TIMESTAMP,
-    role_id BIGINT,
-    CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role(id)
+    role_id BIGINT
 );

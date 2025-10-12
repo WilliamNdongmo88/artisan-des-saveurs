@@ -36,10 +36,6 @@ public class ProductController {
     private final FileService fileService;
 
 
-
-//    @PostMapping("/files-upload")
-
-
     @GetMapping("/all-products")
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
         List<ProductDTO> products = productService.getAllProducts();

@@ -17,4 +17,8 @@ public class Role {
     private Long id;
     @Enumerated(EnumType.STRING)
     private TypeDeRole libelle;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User userId;
 }

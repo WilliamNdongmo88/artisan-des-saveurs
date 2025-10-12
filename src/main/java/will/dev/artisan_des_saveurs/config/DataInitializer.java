@@ -12,6 +12,7 @@ import will.dev.artisan_des_saveurs.entity.Role;
 import will.dev.artisan_des_saveurs.entity.User;
 import will.dev.artisan_des_saveurs.enums.TypeDeRole;
 import will.dev.artisan_des_saveurs.repository.ProductRepository;
+import will.dev.artisan_des_saveurs.repository.RoleRepository;
 import will.dev.artisan_des_saveurs.repository.UserRepository;
 
 import java.math.BigDecimal;
@@ -24,6 +25,7 @@ public class DataInitializer {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ProductRepository productRepository;
+    private final RoleRepository roleRepository;
 
     @Value("${app.company.username}")
     private String companyUsername;
@@ -46,9 +48,10 @@ public class DataInitializer {
             admin.setPhone("+23059221613");
             admin.setEnabled(true);
             admin.setAvatar("https://res.cloudinary.com/dcjjwjheh/image/upload/v1756025207/ko5cyz724dqdgujlckn9.jpg");
-            //admin.setRoles(Set.of(Role.ROLE_ADMIN, Role.ROLE_USER));
             admin.setRole(userRole);
-            userRepository.save(admin);
+            User user_saved = userRepository.save(admin);
+            userRole.setUserId(user_saved);
+            roleRepository.save(userRole);
             System.out.println("Utilisateur admin créé: admin / admin123");
         }
 
@@ -524,7 +527,7 @@ public class DataInitializer {
 
                     will.dev.artisan_des_saveurs.entity.Files img = new Files();
                     img.setFilePath((String) file[1]);
-                    img.setFileName("");
+                    img.setProduct(product);
 
                     product.setProductImage(img);
                     productRepository.save(product);
