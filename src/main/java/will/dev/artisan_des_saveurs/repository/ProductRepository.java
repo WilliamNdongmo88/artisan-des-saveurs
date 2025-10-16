@@ -12,12 +12,6 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    /**
-     * Récupère tous les produits qui sont disponibles (available = true)
-     * en chargeant immédiatement ("FETCH") leurs images associées.
-     *
-     * @return Une liste des produits disponibles avec leurs images déjà chargées.
-     */
     @Query("SELECT p FROM Product p JOIN FETCH p.productImage WHERE p.available = true")
     List<Product> findByAvailableTrueWithImage();
 

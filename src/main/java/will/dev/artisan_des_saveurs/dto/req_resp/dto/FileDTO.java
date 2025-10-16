@@ -9,7 +9,7 @@ public class FileDTO {
     private String temp;
     private String content;
     private String fileName;
-    private String filePath; // URL publique nginx
+    private String filePath;
 
     public FileDTO() {
     }

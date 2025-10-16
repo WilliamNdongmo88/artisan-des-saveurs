@@ -50,12 +50,12 @@ public class UserController {
 
     @GetMapping("/home")
     public String hello() {
-        System.out.println("✅ /api/users/test atteint !");
-        return "Bravo votre application fonctionne correctement ✅";
+        System.out.println("/api/users/test atteint !");
+        return "Bravo votre application fonctionne correctement";
     }
 
     /**
-     * Endpoint pour vérifier si l'utilisateur connecté existe (utile pour les tests)
+     * Endpoint pour vérifier si l'utilisateur connecté existe
      *
      * @return ResponseEntity avec les informations de l'utilisateur
      */
@@ -97,27 +97,27 @@ public class UserController {
 
     @PostMapping("/place-order")
     public ResponseEntity<MessageRetourDto> createUser(@RequestBody @Valid UserDto userDto) {
-        System.out.println("📦 Requête reçue pour créer un utilisateur : " + userDto.getEmail());
+        System.out.println("Requête reçue pour créer un utilisateur : " + userDto.getEmail());
         return this.userService.createUser(userDto);
     }
 
     @RequestMapping(value = "/place-order", method = RequestMethod.OPTIONS)
     public ResponseEntity<?> corsCheck() {
-        System.out.println("🛰️ Préflight OPTIONS reçu !");
+        System.out.println("Préflight OPTIONS reçu !");
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN_CREATE', 'USER_CREATE')")
     @PutMapping("personal-info")
     public ResponseEntity<MessageRetourDto> updateInfoUser(@RequestBody @Valid UserDto userDto){
-        System.out.println("📦 Requête reçue pour modifier un utilisateur : " + userDto.getEmail());
+        System.out.println("Requête reçue pour modifier un utilisateur : " + userDto.getEmail());
         return this.userService.updateUser(userDto);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN_UPDATE', 'USER_UPDATE')")
     @PutMapping("preferences")
     public ResponseEntity<MessageRetourDto> updatePreferenceUser(@RequestBody UserDto userDto){
-        System.out.println("📦 Requête reçue pour modifier les préférences de 'utilisateur : ");
+        System.out.println("Requête reçue pour modifier les préférences de 'utilisateur : ");
         return this.userService.updatePreferenceUser(userDto);
     }
 
@@ -145,7 +145,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('USER_CREATE')")
     @PostMapping(path = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<FileDTO> uploadFile(@RequestParam("file") MultipartFile file) {
-        System.out.println("✅ Appel réussi !");
+        System.out.println("### Appel réussi !");
         try {
             FileDTO dto = userService.saveAvatar(file);
             return ResponseEntity.ok(dto);

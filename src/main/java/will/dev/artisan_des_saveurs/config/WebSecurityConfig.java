@@ -54,7 +54,7 @@ public class WebSecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Autorise toutes les preflight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/users/**").permitAll()
@@ -71,7 +71,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/pdf/**").permitAll()
                         .requestMatchers("/api/qrcode/**").permitAll()
                         .requestMatchers("/api/uploads/**").permitAll()
-                         .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
+                         .anyRequest().authenticated()
                 );
 
         http.authenticationProvider(authenticationProvider());
@@ -109,9 +109,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
                 lienDuSite,
-                baseurl,
-                //"http://localhost:4200",
-                "https://4200-i7hbc3sl6b2onaqzwiqit-4b2240f8.manus.computer/"
+                baseurl
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));

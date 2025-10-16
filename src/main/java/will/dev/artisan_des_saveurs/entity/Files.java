@@ -1,13 +1,9 @@
 package will.dev.artisan_des_saveurs.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
@@ -20,10 +16,10 @@ public class Files {
     private Long id;
 
     private String fileName;
-    private String filePath; // URL publique nginx
+    private String filePath;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id") // clé étrangère vers Product
+    @JoinColumn(name = "product_id")
     private Product product;
 
     public Files(){}

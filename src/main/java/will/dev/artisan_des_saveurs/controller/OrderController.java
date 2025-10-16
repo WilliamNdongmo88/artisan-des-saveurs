@@ -18,8 +18,8 @@ public class OrderController {
 
     @GetMapping("/home")
     public String hello() {
-        System.out.println("✅ /api/orders/test atteint !");
-        return "Toutes les commande du client ✅";
+        System.out.println("/api/orders/test atteint !");
+        return "----Toutes les commande du client----";
     }
 
     @PostMapping("place-order")

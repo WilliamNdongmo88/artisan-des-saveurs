@@ -12,7 +12,7 @@ public class ContactRequestDto {
     private Boolean emailSent;
     private Boolean whatsappSent;
 
-    // Pour éviter de retourner toute l'entité User, on peut limiter à des infos essentielles :
+    // Pour éviter de retourner toute l'entité User
     private Long userId;
     private String userFullName;
 }

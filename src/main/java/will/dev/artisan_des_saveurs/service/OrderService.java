@@ -244,7 +244,7 @@ public class OrderService {
             }
             itemsDescription.append("</ul>");
 
-            // Numéro de commande (⚠️ à remplacer par un vrai ID auto-généré en prod)
+            // Numéro de commande
             int sizeOrder = orderRepository.findAll().size();
             String orderNumber = "CMD-00" + (sizeOrder);
 
@@ -295,7 +295,7 @@ public class OrderService {
 
     public String sendDeliveryCustomerMessage(Order order){
         try{
-            // ✅ Construire le contenu du mail
+            // Construire le contenu du mail
             String subject = "📦 Votre commande est en cours de livraison";
             List<ProductItem> items = order.getItems();
             // Vérification du panier

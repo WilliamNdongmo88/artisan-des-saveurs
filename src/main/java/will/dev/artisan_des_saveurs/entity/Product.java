@@ -49,7 +49,7 @@ public class Product {
     private Integer stockQuantity = 0;
 
     @Size(max = 50)
-    private String unit; // kg, pièce, litre, etc.
+    private String unit; // kg
 
     @Column(name = "is_featured")
     private boolean featured = false;

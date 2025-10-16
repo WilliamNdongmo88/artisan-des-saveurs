@@ -180,7 +180,7 @@ public class AuthController {
         Long userId = userDetails.getId();
 
         if (!Objects.equals(id, userId)) {
-            // ⚠️ l’utilisateur essaie de supprimer un autre compte
+            // l’utilisateur essaie de supprimer un autre compte
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body("Vous ne pouvez supprimer que votre propre compte.");
         }

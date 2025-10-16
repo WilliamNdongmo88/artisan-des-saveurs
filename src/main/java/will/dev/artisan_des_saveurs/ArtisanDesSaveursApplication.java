@@ -30,9 +30,8 @@ public class ArtisanDesSaveursApplication {
 		}
 		// On configure Dotenv pour qu'il charge le fichier .env s'il existe,
 		// mais qu'il n'échoue PAS s'il ne le trouve pas.
-		// C'est parfait pour passer de l'environnement local à la production.
 		Dotenv dotenv = Dotenv.configure()
-				.ignoreIfMissing() // L'option magique !
+				.ignoreIfMissing()
 				.load();
 
 //		Dotenv dotenv = Dotenv.load();
@@ -64,12 +63,8 @@ public class ArtisanDesSaveursApplication {
 		System.out.println("accountSid = " + System.getProperty("TWILIO_ACCOUNT_SID"));
 		System.out.println("authToken = " + System.getProperty("TWILIO_AUTH_TOKEN"));
 		System.out.println("fromPhoneNumber = " + System.getProperty("TWILIO_WHATSAPP_FROM"));
-        System.out.println("👉 lienDuSite: " + System.getProperty("API_URL"));
-        System.out.println("👉 BaseUrl: " + System.getProperty("BASE_URL"));
+        System.out.println("👉 lienDuSite coté front: " + System.getProperty("API_URL"));
+        System.out.println("👉 BaseUrl lien coté back: " + System.getProperty("BASE_URL"));
 		System.out.println("===================================");
 	}
-
-
-	// C'est parfait pour passer de l'environnement local à la production.
-
 }

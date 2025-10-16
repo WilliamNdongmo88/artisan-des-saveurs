@@ -32,6 +32,7 @@ public class FileService {
         this.fileRepository = fileRepository;
     }
 
+    // Non utilisé parce que Railway ne permet pas cela
     public FileDTO save(MultipartFile multipartFile) throws IOException {
         if (multipartFile.isEmpty()) {
             throw new RuntimeException("Fichier vide !");
@@ -58,13 +59,11 @@ public class FileService {
 
         // Construire l’URL publique
         String fileUrl = uploadUrl + "/" + fileName;
-        // Construit l’URL publique qui sera servie par Nginx
-
 
         // Sauvegarder en DB
         will.dev.artisan_des_saveurs.entity.Files fileEntity = new will.dev.artisan_des_saveurs.entity.Files();
         fileEntity.setFileName(fileName);
-        fileEntity.setFilePath(fileUrl); // stocke l’URL nginx
+        fileEntity.setFilePath(fileUrl);
         fileRepository.save(fileEntity);
 
         // Retourner un DTO
@@ -76,6 +75,7 @@ public class FileService {
         return dto;
     }
 
+    // Non utilisé parce que Railway ne permet pas cela
     public ResponseEntity<FileDTO> uploadFile(MultipartFile file) {
         try {
             // Vérifie que le dossier existe, sinon crée-le

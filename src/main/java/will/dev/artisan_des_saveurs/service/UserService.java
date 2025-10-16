@@ -73,7 +73,6 @@ public class UserService {
                 contactRequest.setWhatsappSent(false);
                 ContactRequest savedContactReq = contactRequestRepository.save(contactRequest);
 
-                //userConnected.setContactRequests(List.of(contactRequest)); // Crée une nouvelle liste et génère l'erreur. Pour utiliser cette logique, mettre orphanRemoval = false dans l'entité User
                 userConnected.getContactRequests().clear();
                 userConnected.getContactRequests().add(contactRequest); // Modifie la liste
 
@@ -306,15 +305,7 @@ public class UserService {
     private void performPreDeletionCleanup(User user) {
         log.info("Début du nettoyage pré-suppression pour l'utilisateur: {}", user.getEmail());
 
-        // Logique à ajouter pour la version future:
-        // - Supprimer les commandes associées
-        // - Supprimer les fichiers uploadés par l'utilisateur
-        // - Envoyer des notifications aux administrateurs
-        // - Archiver certaines données si nécessaire
-        // - Supprimer les sessions actives
-
         // Nettoyage des données associées:
-
         try{
             Order order = orderRepository.findByUserId(user.getId());
             System.out.println("order :: " + order);

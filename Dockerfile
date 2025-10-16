@@ -29,6 +29,5 @@ COPY --from=build /app/target/artisan-des-saveurs-0.0.1-SNAPSHOT.jar app.jar
 # On expose le port sur lequel l'application va tourner
 EXPOSE 8080
 
-# C'est la commande qui sera lancée au démarrage du conteneur
-# On utilise la variable d'environnement PORT fournie par Render
+# Commande qui sera lancée au démarrage du conteneur
 ENTRYPOINT ["sh", "-c", "echo MAIL_USERNAME=$MAIL_USERNAME && java -jar app.jar"]

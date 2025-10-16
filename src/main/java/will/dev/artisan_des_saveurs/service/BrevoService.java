@@ -34,7 +34,7 @@ public class BrevoService {
             // Initialisation du client
             ApiClient defaultClient = Configuration.getDefaultApiClient();
 
-            // ⚡ Initialise bien l’authentification
+            // Initialise bien l’authentification
             defaultClient.setApiKey(brevoApiKey);
 
             TransactionalEmailsApi apiInstance = new TransactionalEmailsApi(defaultClient);
@@ -137,7 +137,7 @@ public class BrevoService {
             // Initialisation du client
             ApiClient defaultClient = Configuration.getDefaultApiClient();
 
-            // ⚡ Initialise bien l’authentification
+            // Initialise bien l’authentification
             defaultClient.setApiKey(brevoApiKey);
 
             TransactionalEmailsApi apiInstance = new TransactionalEmailsApi(defaultClient);
