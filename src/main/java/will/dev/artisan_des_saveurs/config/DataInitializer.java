@@ -102,7 +102,7 @@ public class DataInitializer {
                 {35L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757732693/ep24ykngkm4i0rzovf5e.jpg"},
                 {36L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757984244/mtgtgqjpawbsuxeofoib.jpg"},
                 {37L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1757984725/ooheouoxzp93fblwanmt.jpg"},
-
+                {38L, "https://res.cloudinary.com/dcjjwjheh/image/upload/v1758990409/kjnh59pp9c5ra0dwkwqv.png"},
         };
 
         List<Product> products = List.of(
@@ -225,7 +225,7 @@ public class DataInitializer {
                         false,
                         "Réchauffer 15–20 min à 160°C; servir avec moutarde et pommes de terre.",
                         "Porc, Porc cuit, sel, poivre, poivrons, épices, soja",
-                        11L
+                        38L
                 ),
                 new Product(
                         "Jambon Cuit Torchon",
@@ -258,7 +258,7 @@ public class DataInitializer {
                         false,
                         "Saisir les morceaux, ajouter pâte de cari, tomates et oignons; mijoter 35–45 min jusqu’à tendreté.",
                         "Porc",
-                        14L
+                        15L
                 ),
                 new Product(
                         "Brochette porc Marinée",
@@ -357,7 +357,7 @@ public class DataInitializer {
                         false,
                         "Cuire au four 18–22 min à 200°C jusqu’à cœur fondant; servir avec salade.",
                         "Porc, jambon, emmental, chapelure, œufs, farine",
-                        23L
+                        21L
                 ),
                 new Product(
                         "Rôti de porc cuit",
@@ -368,7 +368,7 @@ public class DataInitializer {
                         false,
                         "Servir chaud avec de la moutarde et du pain frais, ou réchauffer doucement au four avec un jus ou une sauce pour un repas complet.",
                         "Porc cuit, sel, poivre",
-                        24L
+                        37L
                 ),
                 new Product(
                         "Boudin Mauricien",
