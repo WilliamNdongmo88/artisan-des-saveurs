@@ -359,17 +359,17 @@ public class DataInitializer {
                         "Porc, jambon, emmental, chapelure, œufs, farine",
                         21L
                 ),
-                new Product(
-                        "Rôti de porc cuit",
-                        "Pièce de porc rôtie lentement au four, déjà cuite et prête à être dégustée, offrant une viande tendre et savoureuse.",
-                        new BigDecimal(360.00),
-                        "produits-transformes",
-                        "France",
-                        false,
-                        "Servir chaud avec de la moutarde et du pain frais, ou réchauffer doucement au four avec un jus ou une sauce pour un repas complet.",
-                        "Porc cuit, sel, poivre",
-                        37L
-                ),
+//                new Product(
+//                        "Rôti de porc cuit",
+//                        "Pièce de porc rôtie lentement au four, déjà cuite et prête à être dégustée, offrant une viande tendre et savoureuse.",
+//                        new BigDecimal(360.00),
+//                        "produits-transformes",
+//                        "France",
+//                        false,
+//                        "Servir chaud avec de la moutarde et du pain frais, ou réchauffer doucement au four avec un jus ou une sauce pour un repas complet.",
+//                        "Porc cuit, sel, poivre",
+//                        37L
+//                ),
                 new Product(
                         "Boudin Mauricien",
                         "Spécialité locale à base de sang et de viande de porc, relevée avec des épices créoles et des herbes aromatiques.",
@@ -511,7 +511,7 @@ public class DataInitializer {
                         false,
                         "Servir frais, en tranches épaisses, avec pain de campagne et moutarde.",
                         "Porc, epices, légume, saumure, gélatine",
-                        27L
+                        37L
                 )
         );
 
@@ -534,6 +534,6 @@ public class DataInitializer {
                 }
             }
         }
-        System.out.println("Products :: "+ products);
+        //System.out.println("Products :: "+ products);
     }
 }

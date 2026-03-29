@@ -62,7 +62,7 @@ public class ProductService {
     @Transactional
     public List<ProductDTO> getAllProducts() {
         List<Product> products = (List<Product>) this.productRepository.findAll();
-        System.out.println("products ::"+ products);
+        //System.out.println("products ::"+ products);
         List<ProductDTO> productDTOList = new ArrayList<>(List.of());
         for (Product product: products){
             productDTOList.add(productMapper.toDTO(product));
@@ -72,7 +72,7 @@ public class ProductService {
 
     public List<ProductDTO> getAvailableProducts() {
         List<Product> products = (List<Product>) this.productRepository.findByAvailableTrueWithImage();
-        System.out.println("products ::"+ products);
+        //System.out.println("products ::"+ products);
         List<ProductDTO> productDTOList = new ArrayList<>(List.of());
         for (Product product: products){
             productDTOList.add(productMapper.toDTO(product));
